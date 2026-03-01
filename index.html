@@ -1067,6 +1067,8 @@ async function parseBasketCommandAI(rawText) {
     const data = await res.json();
 
     if (data.actions) {
+      const beforeIds = new Set(state.basket.map(v => v.id));
+
       data.actions.forEach(a => {
         const entity = a.entity_type && a.entity_value ? { type: a.entity_type, value: a.entity_value } : null;
         if (a.action === 'reset') { state.chatExclusions = []; state.chatBoosts = []; generateBasket(); }
@@ -1094,11 +1096,18 @@ async function parseBasketCommandAI(rawText) {
         }
       });
       applyBasketAdjustments();
+
+      // Build diff for display
+      const added = state.basket.filter(v => !beforeIds.has(v.id)).map(v => v.name);
+      const removed = [...beforeIds].filter(id => !state.basket.some(v => v.id === id))
+        .map(id => { const v = state.allCompatible.find(v => v.id === id); return v ? v.name : id; });
+      const diffParts = [];
+      if (removed.length) diffParts.push('— ' + removed.join(', '));
+      if (added.length) diffParts.push('+ ' + added.join(', '));
+      state.chatDiff = diffParts.join('  ');
     }
 
     state.chatLastReply = data.reply || '';
-    if (replyEl) replyEl.textContent = state.chatLastReply;
-    // Re-render only the basket content (not the whole screen) to preserve input focus
     renderBasket();
 
   } catch (err) {
@@ -1206,10 +1215,15 @@ function renderBasket() {
 
   // Chat zone
   const replyText = state.chatLastReply || '';
+  const diffText = state.chatDiff || '';
   html += '<div class="chat-zone" style="margin-top:1.5rem">';
   html += '<p style="font-size:.8rem;opacity:.6;margin-bottom:.5rem;text-align:center">Ajuste ton panier en langage naturel</p>';
-  if (replyText) html += '<div id="chat-reply" style="font-size:.85rem;padding:.6rem .75rem;background:#f0f7ec;border-radius:.75rem;margin-bottom:.5rem;color:#2d5a27">' + replyText + '</div>';
-  else html += '<div id="chat-reply" style="font-size:.85rem;padding:.6rem .75rem;background:#f0f7ec;border-radius:.75rem;margin-bottom:.5rem;color:#2d5a27;opacity:0"> </div>';
+  if (replyText) {
+    html += '<div id="chat-reply" style="font-size:.85rem;padding:.6rem .75rem;background:#f0f7ec;border-radius:.75rem;margin-bottom:.35rem;color:#2d5a27">' + replyText + '</div>';
+    if (diffText) html += '<div style="font-size:.78rem;padding:.35rem .75rem;color:#666;font-family:monospace">' + diffText + '</div>';
+  } else {
+    html += '<div id="chat-reply" style="font-size:.85rem;padding:.6rem .75rem;border-radius:.75rem;margin-bottom:.35rem;opacity:0"> </div>';
+  }
   html += '<div style="display:flex;gap:.5rem">';
   html += '<input id="chat-input" type="text" placeholder="J\'ai déjà des tomates, plus de fleurs..." style="flex:1;padding:.65rem .85rem;border:1.5px solid #d5c8b0;border-radius:2rem;font-size:.9rem;background:#fff;font-family:inherit;outline:none" onkeydown="chatSubmit(event)">';
   html += '<button onclick="chatSubmit()" style="background:var(--vert2);color:#fff;border:none;border-radius:50%;width:2.5rem;height:2.5rem;font-size:1.1rem;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">↑</button>';
@@ -1231,7 +1245,7 @@ function renderBasket() {
 function resetAll() {
   if (!confirm('Tu vas perdre ta s\u00e9lection actuelle. Continuer ?')) return;
   localStorage.removeItem('seedelli-session');
-  state = { location: null, answers: {}, basket: [], allCompatible: [], currentScreen: 1, chatExclusions: [], chatBoosts: [], chatLastReply: '' };
+  state = { location: null, answers: {}, basket: [], allCompatible: [], currentScreen: 1, chatExclusions: [], chatBoosts: [], chatLastReply: '', chatDiff: '' };
   goTo(1);
 }
 
