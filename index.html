@@ -100,12 +100,34 @@ input[type="text"]:focus,input[type="email"]:focus{border-color:var(--vert2)}
 .quick-adjust button:active{background:var(--vert2);color:#fff}
 .form-errors{color:#c44;font-size:.85rem;margin-bottom:1rem;padding:.75rem;background:#fef2f2;border-radius:.5rem;display:none}
 
+/* Guided checkout overlay */
+.guided-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;display:flex;align-items:flex-end;justify-content:center}
+.guided-panel{background:#FDF8F0;border-radius:1.5rem 1.5rem 0 0;padding:1.5rem;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
+.guided-progress{height:6px;background:#e8dcc8;border-radius:3px;margin:1rem 0 1.5rem}
+.guided-progress-bar{height:100%;background:var(--vert2);border-radius:3px;transition:width .4s ease}
+.guided-card{background:#fff;border-radius:1rem;padding:1.25rem;border:1px solid #e8dcc8;margin-bottom:1rem;text-align:center}
+.guided-card .gc-name{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--vert1);font-weight:700;margin-bottom:.25rem}
+.guided-card .gc-price{font-size:1.5rem;font-weight:700;color:var(--accent);margin:.5rem 0}
+.guided-card .gc-cat{font-size:.85rem;opacity:.6;margin-bottom:.75rem}
+.guided-next{font-size:.8rem;opacity:.5;margin-top:.75rem;text-align:center}
+/* Sticky CTA on screen 5 */
+.sticky-cta{position:sticky;bottom:0;background:linear-gradient(transparent,#FDF8F0 30%);padding:1rem 0 .5rem;margin-top:1rem}
+/* Progress bar questions */
+.q-progress{height:4px;background:#e8dcc8;border-radius:2px;margin-bottom:1.5rem}
+.q-progress-fill{height:100%;background:var(--vert2);border-radius:2px;transition:width .3s}
+/* GPS button */
+.gps-btn{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;padding:.875rem;border:2px dashed var(--vert2);border-radius:.75rem;background:#f0f7eb;color:var(--vert1);font-weight:600;cursor:pointer;font-size:1rem;margin-bottom:.75rem;transition:all .2s}
+.gps-btn:active{background:#e0f0d0}
+/* Trust badges */
+.trust-badges{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:.75rem;opacity:.6;font-size:.8rem}
+.trust-badges span{display:flex;align-items:center;gap:.25rem}
+
 /* ===== RESPONSIVE DESKTOP ===== */
 @media(min-width:768px){
   body{background:#e8e0d4}
   .screen{max-width:700px;min-height:auto;background:#FDF8F0;border-radius:1.5rem;box-shadow:0 8px 40px rgba(0,0,0,.12);padding:2rem 2.5rem;margin:2rem auto}
   /* Narrative screens stay narrow */
-  #s1>div,#s2>div,#s4>div,#s8>div{max-width:600px;margin:0 auto}
+  #s1>div,#s2>div,#s4>div{max-width:600px;margin:0 auto}
   #s1 .seed-anim .seed{font-size:3rem}
   #s1 .seed-anim .leaves{font-size:2rem}
   #s2 h1{font-size:2.25rem}
@@ -637,7 +659,11 @@ function animateIntro() {
     }, delay);
     delay += 1500;
   });
-  setTimeout(() => { document.getElementById('s1-btn').style.opacity = '1'; }, delay + 500);
+  setTimeout(() => {
+    document.getElementById('s1-btn').style.opacity = '1';
+    const b = document.getElementById('s1-badges');
+    if (b) b.style.opacity = '1';
+  }, delay + 500);
 }
 
 // ========== SCREEN 2 — GEOCODING ==========
@@ -709,6 +735,43 @@ function manualLocation() {
   showLocationResult();
 }
 
+async function geolocateMe() {
+  const btn = document.getElementById('gps-btn');
+  if (!navigator.geolocation) { showFallback(); return; }
+  btn.textContent = '⏳ Localisation en cours...';
+  btn.disabled = true;
+  navigator.geolocation.getCurrentPosition(async function(pos) {
+    const lat = pos.coords.latitude;
+    const lon = pos.coords.longitude;
+    const resultDiv = document.getElementById('geo-result');
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = '<p style="text-align:center;opacity:.6" class="pulse">Identification de ta zone...</p>';
+    try {
+      const res = await fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lon + '&format=json&addressdetails=1', { headers: { 'Accept-Language': 'fr' } });
+      const data = await res.json();
+      const addr = data.address || {};
+      const postcode = addr.postcode || '';
+      const dept = postcode.substring(0, 2);
+      const commune = addr.village || addr.town || addr.city || addr.hamlet || '';
+      const departement = addr.county || addr.state || '';
+      let altitude = 200;
+      try {
+        const elevRes = await fetch('https://api.open-elevation.com/api/v1/lookup?locations=' + lat + ',' + lon);
+        const elevData = await elevRes.json();
+        if (elevData.results && elevData.results[0]) altitude = Math.round(elevData.results[0].elevation);
+      } catch(e) {}
+      const zone = getZone(dept);
+      state.location = { commune, dept, departement, altitude, lat, lon, zone, postcode };
+      localStorage.setItem('seedelli-session', JSON.stringify(state));
+      showLocationResult();
+    } catch(e) { showFallback(); }
+  }, function() {
+    btn.textContent = '📷 Me géolocaliser automatiquement';
+    btn.disabled = false;
+    showFallback();
+  });
+}
+
 function showLocationResult() {
   const loc = state.location;
   const resultDiv = document.getElementById('geo-result');
@@ -778,7 +841,9 @@ function renderQuestion() {
   const cols = q.options.length <= 3 ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)';
 
   let html = '<div class="fade-up" style="text-align:center;padding-top:2rem">';
-  html += '<p style="font-size:.85rem;opacity:.5;margin-bottom:.5rem">' + (currentQ + 1) + ' / ' + questions.length + '</p>';
+  const pct = Math.round((currentQ / questions.length) * 100);
+  html += '<div class="q-progress"><div class="q-progress-fill" style="width:' + pct + '%"></div></div>';
+  html += '<p style="font-size:.8rem;opacity:.4;margin-bottom:.75rem">' + (currentQ + 1) + ' sur ' + questions.length + '</p>';
   html += '<h2 style="font-size:1.5rem;margin-bottom:1.5rem">' + q.title + '</h2>';
   if (q.multi) html += '<p style="font-size:.85rem;opacity:.6;margin-bottom:1rem">Choisis autant que tu veux</p>';
   html += '<div style="display:grid;grid-template-columns:' + cols + ';gap:.75rem">';
@@ -841,15 +906,11 @@ function showGrowthAnimation() {
   const selected = state.basket.length;
 
   const lines = [
-    { icon: '\ud83c\udf31', text: commune + ', ' + altitude + " m\u00e8tres d'altitude..." },
-    { icon: '\u2744\ufe0f', text: altitude >= 800 ? "L'hiver recule doucement en mars..." : 'Le printemps arrive...' },
-    { icon: '\ud83c\udfe0', text: altitude >= 800 ? 'Premiers semis sous abri en avril...' : 'Premiers semis sous abri en mars...' },
-    { icon: '\u2600\ufe0f', text: altitude >= 800 ? 'Repiquage mi-mai, apr\u00e8s les Saints de Glace...' : 'Repiquage en avril-mai...' },
-    { icon: '\ud83c\udf31', text: 'Les premi\u00e8res pousses pointent...' },
-    { icon: '\ud83c\udf45', text: altitude >= 800 ? 'Et les r\u00e9coltes de juillet \u00e0 octobre !' : 'Et les r\u00e9coltes de juin \u00e0 novembre !' },
+    { icon: '\ud83d\udccd', text: commune + ' \u2014 ' + altitude + '\u202fm, zone ' + loc.zone.label },
     { icon: '\ud83e\uddee', text: VARIETIES.length + ' vari\u00e9t\u00e9s analys\u00e9es...' },
-    { icon: '\u2705', text: compatible + ' compatibles avec ton climat' },
-    { icon: '\ud83c\udfaf', text: selected + ' s\u00e9lectionn\u00e9es pour ton potager' }
+    { icon: '\u2705', text: compatible + ' compatibles avec ton profil' },
+    { icon: '\ud83c\udfaf', text: selected + ' s\u00e9lectionn\u00e9es pour toi' },
+    { icon: '\ud83c\udf31', text: 'Ton potager est pr\u00eat !' }
   ];
 
   const container = document.getElementById('s4-lines');
@@ -864,9 +925,9 @@ function showGrowthAnimation() {
       div.innerHTML = '<span style="margin-right:.5rem">' + line.icon + '</span>' + line.text;
       container.appendChild(div);
       if (i === lines.length - 1) {
-        setTimeout(() => { document.getElementById('s4-btn').style.opacity = '1'; }, 800);
+        setTimeout(() => { document.getElementById('s4-btn').style.opacity = '1'; }, 600);
       }
-    }, i * 600);
+    }, i * 450);
   });
 }
 
@@ -1020,7 +1081,7 @@ function renderBasket() {
   html += '<div style="display:flex;gap:.75rem;margin-top:1.5rem">';
   html += '<button class="btn btn-primary" style="flex:1" onclick="goTo(6)">Voir le calendrier \ud83d\udcc5</button>';
   html += '</div>';
-  html += '<button class="btn btn-secondary" style="width:100%;margin-top:.75rem" onclick="goTo(7)">Valider mon choix \u2192</button>';
+  html += '<div class="sticky-cta"><button class="btn btn-primary" style="width:100%;font-size:1.1rem" onclick="goTo(7)">\ud83d\uded2 Commander mes graines \u2192</button></div>';
 
   html += '<div style="text-align:center;margin-top:2rem;padding-top:1rem;border-top:1px solid #e8dcc8">';
   html += '<button style="background:none;border:none;color:#999;font-size:.8rem;cursor:pointer;padding:.5rem" onclick="resetAll()">\u21bb Recommencer le questionnaire</button>';
@@ -1287,54 +1348,154 @@ function getShipping(total) {
 }
 
 // ========== SCREEN 7 — MA SÉLECTION ==========
+let guidedStep = 0;
+let guidedDone = new Set();
+
 function renderOrder() {
   const container = document.getElementById('s7-content');
   const total = state.basket.reduce((s, v) => s + v.price, 0);
   const nbVar = state.basket.length;
-  let shipping = getShipping(total);
+  const shipping = getShipping(total);
   const grandTotal = total + shipping;
-  const pollinators = state.basket.filter(v => v.pollinator_friendly).length;
   const loc = state.location;
 
-  let html = '<div style="text-align:center;margin-bottom:1.5rem">';
-  html += '<h2 style="font-size:1.5rem">\ud83c\udf3f Ma s\u00e9lection</h2>';
-  html += '<p style="opacity:.6;font-size:.9rem;margin-top:.5rem">Commander directement sur Kokopelli</p>';
-  html += '</div>';
-
-  html += '<div class="card" style="margin-bottom:1.5rem">';
-  html += '<div class="summary-stat"><div class="ss-icon">\ud83c\udf31</div><div><div class="ss-value">' + nbVar + ' vari\u00e9t\u00e9s</div><div style="font-size:.85rem;opacity:.6">Graines libres et reproductibles</div></div></div>';
-  html += '<div class="summary-stat"><div class="ss-icon">\ud83d\udcb0</div><div><div class="ss-value">' + total.toFixed(2) + '\u20ac</div><div style="font-size:.85rem;opacity:.6">+ ' + (shipping === 0 ? 'livraison offerte' : shipping.toFixed(2) + '\u20ac de livraison') + ' = ' + grandTotal.toFixed(2) + '\u20ac</div></div></div>';
   const harvestMonths = new Set();
   state.basket.forEach(v => {
     const adj = adjustMonths(v.harvest, loc.zone.key, loc.altitude, 'harvest');
     adj.forEach(m => harvestMonths.add(m));
   });
-  html += '<div class="summary-stat"><div class="ss-icon">\ud83c\udf3d</div><div><div class="ss-value">~' + (nbVar * 15) + '\u20ac de r\u00e9coltes</div><div style="font-size:.85rem;opacity:.6">Estimation \u00e0 15\u20ac/vari\u00e9t\u00e9</div></div></div>';
-  html += '<div class="summary-stat"><div class="ss-icon">\ud83d\udcc5</div><div><div class="ss-value">' + harvestMonths.size + ' mois de r\u00e9coltes</div><div style="font-size:.85rem;opacity:.6">De ' + MONTH_FULL[Math.min(...harvestMonths)-1] + ' \u00e0 ' + MONTH_FULL[Math.max(...harvestMonths)-1] + '</div></div></div>';
-  if (pollinators > 0) {
-    html += '<div class="summary-stat"><div class="ss-icon">\ud83d\udc1d</div><div><div class="ss-value">' + pollinators + ' vari\u00e9t\u00e9s pollinisatrices</div><div style="font-size:.85rem;opacity:.6">Pour les abeilles et papillons</div></div></div>';
+
+  let html = '<div style="text-align:center;margin-bottom:1.5rem">';
+  html += '<h2 style="font-size:1.5rem">\ud83c\udf3f Ma s\u00e9lection</h2>';
+  html += '<p style="opacity:.6;font-size:.9rem;margin-top:.5rem">' + nbVar + ' vari\u00e9t\u00e9s · ' + total.toFixed(2) + '\u20ac + ' + (shipping === 0 ? 'livraison offerte' : shipping.toFixed(2) + '\u20ac livraison') + '</p>';
+  html += '</div>';
+
+  html += '<div class="card" style="margin-bottom:1rem">';
+  html += '<div class="summary-stat"><div class="ss-icon">\ud83c\udf31</div><div><div class="ss-value">' + nbVar + ' vari\u00e9t\u00e9s</div><div style="font-size:.85rem;opacity:.6">Semences libres et reproductibles</div></div></div>';
+  html += '<div class="summary-stat"><div class="ss-icon">\ud83d\udcb0</div><div><div class="ss-value">' + grandTotal.toFixed(2) + '\u20ac</div><div style="font-size:.85rem;opacity:.6">livraison ' + (shipping === 0 ? 'offerte' : shipping.toFixed(2) + '\u20ac') + ' incluse</div></div></div>';
+  if (harvestMonths.size > 0) {
+    html += '<div class="summary-stat"><div class="ss-icon">\ud83d\udcc5</div><div><div class="ss-value">' + harvestMonths.size + ' mois de r\u00e9coltes</div><div style="font-size:.85rem;opacity:.6">De ' + MONTH_FULL[Math.min(...harvestMonths)-1] + ' \u00e0 ' + MONTH_FULL[Math.max(...harvestMonths)-1] + '</div></div></div>';
   }
   html += '</div>';
 
-  html += '<div class="card" style="margin-bottom:1.5rem">';
-  html += '<h3 style="font-size:1.05rem;margin-bottom:1rem">\ud83d\udd17 Commander sur Kokopelli</h3>';
-  html += '<div style="display:flex;flex-direction:column;gap:.5rem">';
+  html += '<button class="btn btn-primary" style="width:100%;font-size:1.1rem;padding:1rem" onclick="startGuidedCheckout()">';
+  html += '\ud83d\uded2 Commander \u2014 mode guid\u00e9 (' + nbVar + ' vari\u00e9t\u00e9s)</button>';
+  html += '<p style="text-align:center;font-size:.8rem;opacity:.5;margin:.5rem 0 1.25rem">Tu ajouteras chaque vari\u00e9t\u00e9 une par une sur Kokopelli</p>';
+
+  html += '<div style="display:flex;gap:.5rem;margin-bottom:1.5rem">';
+  html += '<button class="btn btn-secondary" style="flex:1" onclick="copyList()">\ud83d\udccb Copier la liste</button>';
+  html += '<button class="btn btn-secondary" style="flex:1" onclick="printCalendar()">\ud83d\udda8\ufe0f Imprimer</button>';
+  html += '</div>';
+
+  html += '<div class="card" style="margin-bottom:1rem">';
+  html += '<p style="font-weight:600;font-size:.9rem;margin-bottom:.75rem;opacity:.7">Toutes les vari\u00e9t\u00e9s</p>';
   state.basket.forEach(function(v) {
     const url = v.kokopelli_url ? v.kokopelli_url + '?ref=seedelli' : 'https://www.kokopelli-semences.fr?ref=seedelli';
-    html += '<a href="' + url + '" target="_blank" rel="noopener" style="display:flex;justify-content:space-between;align-items:center;padding:.6rem .75rem;border:1px solid #e8dcc8;border-radius:.5rem;text-decoration:none;color:var(--vert1);background:#fff">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid #f0e8d8">';
     html += '<span style="font-size:.9rem">' + v.name + '</span>';
-    html += '<span style="font-size:.9rem;font-weight:600;color:var(--terre1)">' + v.price.toFixed(2) + '\u20ac \u2197</span>';
-    html += '</a>';
+    html += '<a href="' + url + '" target="_blank" rel="noopener" style="font-size:.85rem;font-weight:600;color:var(--terre1);text-decoration:none;white-space:nowrap;margin-left:.5rem">' + v.price.toFixed(2) + '\u20ac \u2197</a>';
+    html += '</div>';
   });
   html += '</div>';
-  html += '</div>';
 
-  html += '<div style="display:flex;flex-direction:column;gap:.75rem;margin-top:.75rem">';
-  html += '<button class="btn btn-primary" onclick="printCalendar()">\ud83d\udda8\ufe0f Imprimer ma liste</button>';
-  html += '<button class="btn btn-secondary" onclick="goTo(5)">\u2190 Modifier mes graines</button>';
-  html += '</div>';
+  html += '<button class="btn btn-secondary" style="width:100%;margin-top:.5rem" onclick="goTo(5)">\u2190 Modifier mes graines</button>';
 
   container.innerHTML = html;
+}
+
+function startGuidedCheckout() {
+  guidedStep = 0;
+  guidedDone = new Set();
+  renderGuidedStep();
+}
+
+function renderGuidedStep() {
+  document.querySelectorAll('.guided-overlay').forEach(e => e.remove());
+
+  const basket = state.basket;
+  if (guidedStep >= basket.length) {
+    renderGuidedComplete();
+    return;
+  }
+
+  const v = basket[guidedStep];
+  const total = basket.reduce((s, x) => s + x.price, 0);
+  const shipping = getShipping(total);
+  const pct = Math.round((guidedStep / basket.length) * 100);
+  const url = v.kokopelli_url ? v.kokopelli_url + '?ref=seedelli' : 'https://www.kokopelli-semences.fr?ref=seedelli';
+  const catEmoji = CAT_EMOJI[v.category] || '\ud83c\udf31';
+  const nextV = basket[guidedStep + 1];
+
+  const overlay = document.createElement('div');
+  overlay.className = 'guided-overlay';
+  overlay.innerHTML =
+    '<div class="guided-panel">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center">' +
+    '<span style="font-weight:700;font-size:1rem">Commande guid\u00e9e</span>' +
+    '<button onclick="document.querySelector(\'.guided-overlay\').remove()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#999;min-width:44px;min-height:44px">\u00d7</button>' +
+    '</div>' +
+    '<div class="guided-progress"><div class="guided-progress-bar" style="width:' + pct + '%"></div></div>' +
+    '<p style="text-align:center;font-size:.85rem;opacity:.5;margin-bottom:1rem">Vari\u00e9t\u00e9 ' + (guidedStep + 1) + ' sur ' + basket.length + '</p>' +
+    '<div class="guided-card">' +
+    '<div class="gc-cat">' + catEmoji + ' ' + (v.subcategory || v.category || '') + '</div>' +
+    '<div class="gc-name">' + v.name + '</div>' +
+    (v.desc ? '<div style="font-size:.85rem;opacity:.6;margin:.5rem 0">' + v.desc + '</div>' : '') +
+    '<div class="gc-price">' + v.price.toFixed(2) + '\u20ac</div>' +
+    '</div>' +
+    '<a href="' + url + '" target="_blank" rel="noopener" class="btn btn-primary" style="display:flex;width:100%;margin-bottom:.75rem;font-size:1.05rem;text-decoration:none;box-sizing:border-box" onclick="markGuidedOpened(' + guidedStep + ')">' +
+    '\ud83d\uded2 Ajouter au panier Kokopelli \u2197' +
+    '</a>' +
+    '<button class="btn btn-secondary" style="width:100%;margin-bottom:.5rem" onclick="advanceGuided()">' +
+    (guidedDone.has(guidedStep) ? '\u2705 Dans mon panier \u2014 suivant \u2192' : '\u2713 D\u00e9j\u00e0 ajout\u00e9 \u2014 suivant \u2192') +
+    '</button>' +
+    (nextV ? '<p class="guided-next">Suivant : ' + (CAT_EMOJI[nextV.category] || '\ud83c\udf31') + ' ' + nextV.name + '</p>' : '') +
+    '</div>';
+
+  document.body.appendChild(overlay);
+}
+
+function markGuidedOpened(idx) {
+  guidedDone.add(idx);
+  const btn = document.querySelector('.guided-panel .btn-secondary');
+  if (btn) btn.textContent = '\u2705 Dans mon panier \u2014 suivant \u2192';
+}
+
+function advanceGuided() {
+  guidedStep++;
+  renderGuidedStep();
+}
+
+function renderGuidedComplete() {
+  document.querySelectorAll('.guided-overlay').forEach(e => e.remove());
+  const total = state.basket.reduce((s, v) => s + v.price, 0);
+  const shipping = getShipping(total);
+  const grandTotal = total + shipping;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'guided-overlay';
+  overlay.innerHTML =
+    '<div class="guided-panel" style="text-align:center">' +
+    '<div style="font-size:3rem;margin-bottom:1rem">\ud83c\udf89</div>' +
+    '<h2 style="font-size:1.4rem;margin-bottom:.5rem">Toutes les vari\u00e9t\u00e9s ajout\u00e9es !</h2>' +
+    '<p style="opacity:.6;margin-bottom:1.5rem">Panier Kokopelli : ' + state.basket.length + ' vari\u00e9t\u00e9s · ' + grandTotal.toFixed(2) + '\u20ac</p>' +
+    '<a href="https://www.kokopelli-semences.fr/commande?step=1&ref=seedelli" target="_blank" rel="noopener" class="btn btn-primary" style="display:flex;width:100%;font-size:1.1rem;text-decoration:none;box-sizing:border-box;margin-bottom:.75rem;justify-content:center">' +
+    '\ud83d\uded2 Finaliser ma commande sur Kokopelli \u2197' +
+    '</a>' +
+    '<button class="btn btn-secondary" style="width:100%;margin-bottom:.5rem" onclick="printCalendar()">\ud83d\udda8\ufe0f Imprimer mon calendrier</button>' +
+    '<button onclick="document.querySelector(\'.guided-overlay\').remove()" style="background:none;border:none;color:#999;font-size:.85rem;cursor:pointer;padding:.75rem;width:100%">Fermer</button>' +
+    '</div>';
+
+  document.body.appendChild(overlay);
+}
+
+function copyList() {
+  const lines = state.basket.map(v => v.name + ' — ' + v.price.toFixed(2) + '€');
+  const total = state.basket.reduce((s, v) => s + v.price, 0);
+  const shipping = getShipping(total);
+  lines.push('');
+  lines.push('Total : ' + total.toFixed(2) + '€ + ' + (shipping === 0 ? 'livraison offerte' : shipping.toFixed(2) + '€ livraison') + ' = ' + (total + shipping).toFixed(2) + '€');
+  lines.push('Seedelli — seedelli.github.io/seedelli');
+  navigator.clipboard.writeText(lines.join('\n')).then(() => showToast('\ud83d\udccb Liste copiée !'));
 }
 
 // ========== RESTORE & INIT ==========
@@ -1376,8 +1537,13 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
     <div id="s1-text" style="margin-top:2rem"></div>
     <button class="btn btn-primary" id="s1-btn" style="margin-top:2rem;opacity:0;transition:opacity 1s" onclick="goTo(2)">
-      Commencer &#8594;
+      Trouver mes graines &#8594;
     </button>
+    <div class="trust-badges" id="s1-badges" style="opacity:0;transition:opacity 1s">
+      <span>&#8987; 2 minutes</span>
+      <span>&#128144; Gratuit</span>
+      <span>&#127807; 161 vari&#233;t&#233;s</span>
+    </div>
   </div>
 </div>
 
@@ -1394,6 +1560,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     <div class="card" style="text-align:left;margin:1rem 0">
       <label style="font-weight:600;font-size:1.1rem">&#128205; O&#249; est ton jardin ?</label>
+      <button class="gps-btn" onclick="geolocateMe()" id="gps-btn">
+        &#128247; Me g&#233;olocaliser automatiquement
+      </button>
+      <div style="text-align:center;font-size:.8rem;opacity:.4;margin:.5rem 0">— ou saisir manuellement —</div>
       <input id="address-input" type="text" placeholder="Votre ville ou code postal..."
         style="margin-top:.75rem"
         onfocus="this.style.borderColor='var(--vert2)'" onblur="this.style.borderColor='#e8dcc8'">
