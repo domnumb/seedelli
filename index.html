@@ -359,19 +359,23 @@ function generateBasket() {
 
   let scored = [];
   VARIETIES.forEach(v => {
-    if (v.altitude_max + 150 < altitude) return;
+    const tags = v.tags || [];
+    const altMax = v.altitude_max != null ? v.altitude_max : 2500;
+    const spaceM2 = v.space_m2 != null ? v.space_m2 : 0.25;
+    if (altMax + 150 < altitude) return;
     if (v.category === 'engrais-verts' && surface === 'petit') return;
-    if (surface === 'petit' && v.space_m2 > 0.5) return;
+    if (surface === 'petit' && spaceM2 > 0.5) return;
 
     let score = 50;
-    if (objectives.includes('autonomie') && (v.tags.includes('productif') || v.category === 'legumes-fruits' || v.category === 'legumes-racines')) score += 20;
-    if (objectives.includes('originalite') && (v.tags.includes('original') || v.tags.includes('rare') || v.tags.includes('gout_exceptionnel'))) score += 20;
-    if (objectives.includes('medicinales') && v.medicinal) score += 25;
+    if (objectives.includes('autonomie') && (tags.includes('productif') || v.category === 'legumes-fruits' || v.category === 'legumes-racines')) score += 20;
+    if (objectives.includes('originalite') && (tags.includes('original') || tags.includes('rare') || tags.includes('gout_exceptionnel'))) score += 20;
+    if (objectives.includes('medicinales') && (v.medicinal || v.category === 'medicinales')) score += 25;
     if (objectives.includes('pollinisateurs') && v.pollinator_friendly) score += 25;
-    if (objectives.includes('conserves') && v.tags.includes('conserves')) score += 20;
-    if (objectives.includes('enfants') && v.kids_friendly) score += 15;
+    if (objectives.includes('conserves') && tags.includes('conserves')) score += 20;
+    if (objectives.includes('enfants') && (v.kids_friendly || (v.difficulty != null && v.difficulty <= 2))) score += 15;
 
-    if (experience === 'debutant' && v.beginner_friendly) score += 15;
+    const beginner = v.beginner_friendly != null ? v.beginner_friendly : (v.difficulty != null && v.difficulty <= 2);
+    if (experience === 'debutant' && beginner) score += 15;
     if (experience === 'debutant' && v.difficulty >= 4) score -= 15;
     if (experience === 'expert' && v.difficulty >= 4) score += 10;
 
@@ -379,8 +383,7 @@ function generateBasket() {
     if (zoneKey === 'montagne' && v.cold_tolerance === 'forte') score += 10;
     if (altitude > 600 && v.cold_tolerance === 'faible') score -= 10;
     if (altitude > 1000 && v.cold_tolerance !== 'forte') score -= 20;
-
-    scored.push({ ...v, score });
+    scored.push({ ...v, score, _spaceM2: spaceM2 });
   });
 
   scored.sort((a, b) => b.score - a.score);
@@ -391,7 +394,7 @@ function generateBasket() {
 
   function canAdd(v) {
     if (spent + v.price > budget.max && budget.max < 9999) return false;
-    if (usedSpace + v.space_m2 > maxSurface) return false;
+    if (usedSpace + (v._spaceM2 || v.space_m2 || 0.25) > maxSurface) return false;
     const sc = v.subcategory;
     let maxPerSub = surface === 'grand' ? 5 : surface === 'familial' ? 3 : 2;
     if (sc === 'tomates') maxPerSub = Math.min(maxPerSub + 2, 8);
@@ -401,7 +404,7 @@ function generateBasket() {
   function doAdd(v) {
     basket.push(v);
     spent += v.price;
-    usedSpace += v.space_m2;
+    usedSpace += (v._spaceM2 || v.space_m2 || 0.25);
     const sc = v.subcategory;
     catCount[sc] = (catCount[sc] || 0) + 1;
   }
