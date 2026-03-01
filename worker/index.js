@@ -76,7 +76,9 @@ export default {
     }
 
     const data = await anthropicRes.json();
-    const text = data.content?.[0]?.text || '{}';
+    let text = data.content?.[0]?.text || '{}';
+    // Strip markdown code fences if present
+    text = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
 
     return new Response(text, {
       headers: {
