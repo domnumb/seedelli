@@ -1,0 +1,1815 @@
+[
+  {
+    "id": "aubergine-longue-violette-de-barbentane",
+    "name": "Aubergine longue violette de Barbentane",
+    "latin": "Solanum melongena",
+    "category": "legumes-fruits",
+    "subcategory": "aubergines",
+    "desc": "Variété hâtive traditionnelle, fruit allongé en massue de plus de 20 cm, violet-noir brillant, très productif même sous des climats frais",
+    "price": 3.1,
+    "difficulty": 3,
+    "sowing_indoor": [
+      2,
+      3,
+      4
+    ],
+    "sowing_outdoor": [],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "companions": [
+      "basilics",
+      "bourrache",
+      "aneth",
+      "haricots"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_fruits-aubergine_longue_violette_de_barbentane-article-AUB.awp?pgnIdCategorie=36"
+  },
+  {
+    "id": "aubergine-ronde-de-valence",
+    "name": "Aubergine ronde de Valence",
+    "latin": "Solanum melongena",
+    "category": "legumes-fruits",
+    "subcategory": "aubergines",
+    "desc": "Beaux fruits ronds, violet foncé, de la taille d'un pamplemousse. Variété rustique, un peu plus précoce que les variétés à fruits longs",
+    "price": 3.1,
+    "difficulty": 3,
+    "sowing_indoor": [
+      2,
+      3,
+      4
+    ],
+    "sowing_outdoor": [],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "companions": [
+      "basilics",
+      "poivrons"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_fruits-aubergine_ronde_de_valence-article-AUV.awp?pgnIdCategorie=36"
+  },
+  {
+    "id": "carotte-nantaise",
+    "name": "Carotte nantaise",
+    "latin": "Daucus carota",
+    "category": "legumes-racines",
+    "subcategory": "carottes",
+    "desc": "Variété classique. Racine demi-longue, cylindrique, à bout obtus quand elle est mûre. Chair bien colorée, juteuse. Se conserve bien en cave l'hiver",
+    "price": 3.1,
+    "difficulty": 1,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "transplant": [],
+    "harvest": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "companions": [
+      "laitues",
+      "oignons",
+      "poireaux"
+    ],
+    "avoid_near": [
+      "aneth"
+    ],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_racines-carotte_nantaise-article-CAN.awp?pgnIdCategorie=38"
+  },
+  {
+    "id": "carotte-de-chantenay-a-coeur-rouge",
+    "name": "Carotte de Chantenay à cœur rouge",
+    "latin": "Daucus carota",
+    "category": "legumes-racines",
+    "subcategory": "carottes",
+    "desc": "Racine conique presque triangulaire à chair très colorée et cœur rouge. Feuillage volumineux, très rustique, adaptée aux sols caillouteux",
+    "price": 3.1,
+    "difficulty": 1,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "transplant": [],
+    "harvest": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "companions": [
+      "laitues",
+      "oignons"
+    ],
+    "avoid_near": [
+      "aneth"
+    ],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_racines-carotte_de_chantenay_a_cœur_rouge-article-CAH.awp?pgnIdCategorie=38"
+  },
+  {
+    "id": "carotte-rodelika",
+    "name": "Carotte Rodelika",
+    "latin": "Daucus carota",
+    "category": "legumes-racines",
+    "subcategory": "carottes",
+    "desc": "Sélection Kultursaat, grande racine légèrement triangulaire à peau lisse, coloris rouge-orangé intense, saveur prononcée, douce et aromatique",
+    "price": 3.1,
+    "difficulty": 1,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "transplant": [],
+    "harvest": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "companions": [
+      "laitues",
+      "poireaux"
+    ],
+    "avoid_near": [
+      "aneth"
+    ],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_racines-carotte_rodelika-article-CAR.awp?pgnIdCategorie=38"
+  },
+  {
+    "id": "betterave-striee-tondo-di-chioggia",
+    "name": "Betterave striée Tondo di Chioggia",
+    "latin": "Beta vulgaris",
+    "category": "legumes-racines",
+    "subcategory": "betteraves",
+    "desc": "Betterave ronde italienne heirloom à l'extérieur rose-rouge, révélant des anneaux concentriques blancs et rouges à la coupe, très décorative en salade",
+    "price": 3.1,
+    "difficulty": 1,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "transplant": [],
+    "harvest": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "companions": [
+      "laitues",
+      "oignons"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_racines-betterave_striee_tondo_di_chioggia-article-BET.awp?pgnIdCategorie=38"
+  },
+  {
+    "id": "betterave-rouge-robuschka",
+    "name": "Betterave rouge Robuschka",
+    "latin": "Beta vulgaris",
+    "category": "legumes-racines",
+    "subcategory": "betteraves",
+    "desc": "Racine bien ronde à peau lisse et chair rouge foncé lumineuse, excellente conservation. Saveur excellente, fruitée et sucrée. Issue de sélection biodynamique",
+    "price": 3.1,
+    "difficulty": 1,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "transplant": [],
+    "harvest": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "companions": [
+      "laitues",
+      "oignons"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_racines-betterave_rouge_robuschka-article-BER.awp?pgnIdCategorie=38"
+  },
+  {
+    "id": "concombre-marketmore",
+    "name": "Concombre Marketmore",
+    "latin": "Cucumis sativus",
+    "category": "legumes-fruits",
+    "subcategory": "concombres",
+    "desc": "Fruits demi-longs à peau lisse et fine, vert foncé, de 20-25 cm. Chair ferme, croquante, peu de graines. Variété américaine très productive et résistante aux maladies",
+    "price": 3.1,
+    "difficulty": 2,
+    "sowing_indoor": [
+      3,
+      4
+    ],
+    "sowing_outdoor": [
+      5
+    ],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "companions": [
+      "basilics",
+      "haricots",
+      "mais"
+    ],
+    "avoid_near": [
+      "pommes-de-terre"
+    ],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_fruits-concombre_marketmore-article-COM.awp?pgnIdCategorie=36"
+  },
+  {
+    "id": "concombre-lemon",
+    "name": "Concombre Lemon",
+    "latin": "Cucumis sativus",
+    "category": "legumes-fruits",
+    "subcategory": "concombres",
+    "desc": "Multitude de fruits jaunes de la taille et de la couleur d'un gros citron. Très digeste, très apprécié des enfants et des adultes",
+    "price": 3.1,
+    "difficulty": 2,
+    "sowing_indoor": [
+      3,
+      4
+    ],
+    "sowing_outdoor": [
+      5
+    ],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "companions": [
+      "basilics",
+      "haricots",
+      "aneth"
+    ],
+    "avoid_near": [
+      "sauge"
+    ],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_fruits-concombre_lemon-article-COL.awp?pgnIdCategorie=36"
+  },
+  {
+    "id": "cornichon-fin-de-meaux",
+    "name": "Cornichon fin de Meaux",
+    "latin": "Cucumis sativus",
+    "category": "legumes-fruits",
+    "subcategory": "cornichons",
+    "desc": "Fruit cylindrique, demi-long (12 x 1,5 cm), sans épines sur au moins 1/3 de la longueur. Chair épaisse et savoureuse, idéale pour les cornichons au vinaigre",
+    "price": 3.1,
+    "difficulty": 2,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      5,
+      6
+    ],
+    "transplant": [],
+    "harvest": [
+      7,
+      8,
+      9
+    ],
+    "companions": [
+      "aneth",
+      "basilics",
+      "haricots"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_fruits-cornichon_fin_de_meaux-article-COF.awp?pgnIdCategorie=36"
+  },
+  {
+    "id": "courge-musquee-butternut",
+    "name": "Courge musquée Butternut",
+    "latin": "Cucurbita moschata",
+    "category": "legumes-fruits",
+    "subcategory": "courges",
+    "desc": "Fruit de 1,5 à 3 kg, beige, allongé, renflé à la base, contenant très peu de graines. Chair orange, très parfumée au grain très fin. Très bonne conservation jusqu'à Pâques",
+    "price": 3.1,
+    "difficulty": 2,
+    "sowing_indoor": [
+      4
+    ],
+    "sowing_outdoor": [
+      5
+    ],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      9,
+      10,
+      11
+    ],
+    "companions": [
+      "mais",
+      "haricots",
+      "basilics"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_fruits-courge_musquee_butternut-article-CMB.awp?pgnIdCategorie=36"
+  },
+  {
+    "id": "courge-musquee-d-hiver-de-provence",
+    "name": "Courge musquée d'hiver de Provence",
+    "latin": "Cucurbita moschata",
+    "category": "legumes-fruits",
+    "subcategory": "courges",
+    "desc": "2 à 5 gros fruits aplatis fortement côtelés de 5 à 20 kg. Chair excellente, dense et ferme, orange vif, légèrement sucrée et musquée. Conservation 4-5 mois",
+    "price": 3.1,
+    "difficulty": 2,
+    "sowing_indoor": [
+      4
+    ],
+    "sowing_outdoor": [
+      5
+    ],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      9,
+      10
+    ],
+    "companions": [
+      "basilics",
+      "bourrache",
+      "haricots"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_fruits-courge_musquee_d_hiver_de_provence-article-CPR.awp?pgnIdCategorie=36"
+  },
+  {
+    "id": "chichoree-sauvage-rouge-de-trevise",
+    "name": "Chicorée sauvage rouge de Trévise",
+    "latin": "Cichorium intybus var. foliosum",
+    "category": "legumes-feuilles",
+    "subcategory": "chicorees",
+    "desc": "Variété traditionnelle à pomme allongée au feuillage rouge grenat vif et aux côtes blanches très marquées. Saveur légèrement amère, très décorative",
+    "price": 3.1,
+    "difficulty": 2,
+    "sowing_indoor": [
+      2,
+      3
+    ],
+    "sowing_outdoor": [
+      5,
+      6,
+      7
+    ],
+    "transplant": [
+      4,
+      5
+    ],
+    "harvest": [
+      10,
+      11,
+      12
+    ],
+    "companions": [
+      "laitues"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_feuilles-chicoree_sauvage_rouge_de_trevise-article-CRT.awp?pgnIdCategorie=37"
+  },
+  {
+    "id": "chou-frise-noir-de-toscane",
+    "name": "Chou frisé noir de Toscane",
+    "latin": "Brassica oleracea var. palmifera",
+    "category": "legumes-feuilles",
+    "subcategory": "choux",
+    "desc": "Plante demi-naine très décorative avec ses longues feuilles entières, gaufrées, vert foncé presque noires. Excellente saveur, rappelant un peu celle du brocoli",
+    "price": 3.1,
+    "difficulty": 2,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      8,
+      9
+    ],
+    "transplant": [],
+    "harvest": [
+      10,
+      11,
+      12,
+      1,
+      2,
+      3
+    ],
+    "companions": [
+      "carottes",
+      "oignons"
+    ],
+    "avoid_near": [
+      "fraises"
+    ],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_feuilles-chou_frise_noir_de_toscane-article-CFT.awp?pgnIdCategorie=37"
+  },
+  {
+    "id": "chou-cabus-blanc-de-brunswick",
+    "name": "Chou cabus blanc de Brunswick",
+    "latin": "Brassica oleracea var. capitata alba",
+    "category": "legumes-feuilles",
+    "subcategory": "choux",
+    "desc": "Grosse pomme large et plate, à pied court, au feuillage d'un beau vert franc. Très vigoureux, résiste bien au froid. Très apprécié pour la choucroute",
+    "price": 3.1,
+    "difficulty": 2,
+    "sowing_indoor": [
+      2,
+      3
+    ],
+    "sowing_outdoor": [
+      4,
+      5,
+      6
+    ],
+    "transplant": [
+      4,
+      5,
+      6
+    ],
+    "harvest": [
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "companions": [
+      "carottes",
+      "oignons",
+      "salade"
+    ],
+    "avoid_near": [
+      "fraises",
+      "tomates"
+    ],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_feuilles-chou_cabus_blanc_de_brunswick-article-CHU.awp?pgnIdCategorie=37"
+  },
+  {
+    "id": "celeri-a-couper-jets-fins-de-huy",
+    "name": "Céleri à couper à jets fins de Huÿ",
+    "latin": "Apium graveolens var. dulce",
+    "category": "legumes-feuilles",
+    "subcategory": "celeris",
+    "desc": "Feuilles vert vif très parfumées, côtes creuses. À mi-chemin entre le persil et le céleri. Variété de population belge hors catalogue, récolte continue",
+    "price": 3.1,
+    "difficulty": 4,
+    "sowing_indoor": [
+      2,
+      3,
+      4
+    ],
+    "sowing_outdoor": [],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "companions": [
+      "poireaux",
+      "tomates"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_feuilles-celeri_a_couper_a_jets_fins_de_huy-article-CEL.awp?pgnIdCategorie=37"
+  },
+  {
+    "id": "artichaut-camus-de-breizh",
+    "name": "Artichaut camus de Breizh",
+    "latin": "Cynara cardunculus var. scolymus",
+    "category": "legumes-feuilles",
+    "subcategory": "artichauts",
+    "desc": "Grosse tête capitule bien arrondie et serrée, avec des écailles larges et courtes. Cœur tendre et savoureux. La plante occupe le sol pendant 3 ans",
+    "price": 3.1,
+    "difficulty": 4,
+    "sowing_indoor": [
+      3,
+      4
+    ],
+    "sowing_outdoor": [],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      9,
+      10,
+      11
+    ],
+    "companions": [
+      "carottes"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": true,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_feuilles-artichaut_camus_de_breizh-article-ACB.awp?pgnIdCategorie=37"
+  },
+  {
+    "id": "basilic-grand-vert",
+    "name": "Basilic grand vert",
+    "latin": "Ocimum basilicum",
+    "category": "aromatiques",
+    "subcategory": "basilics",
+    "desc": "Plante buissonnante à port dressé dépassant 50 cm. Longues feuilles brillantes et vertes de 7 cm sur 4 cm, saveur caractéristique du basilic très parfumée",
+    "price": 3.1,
+    "difficulty": 2,
+    "sowing_indoor": [
+      3,
+      4,
+      5
+    ],
+    "sowing_outdoor": [],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "companions": [
+      "tomates",
+      "aubergines",
+      "poivrons",
+      "carottes"
+    ],
+    "avoid_near": [
+      "sauge"
+    ],
+    "pollinator_friendly": true,
+    "product_url": "https://www.germinance.com/boutique/semences_aromatiques_et_medicinales-basilic_grand_vert-article-BAG.awp?pgnIdCategorie=33"
+  },
+  {
+    "id": "aneth-officinale",
+    "name": "Aneth officinale",
+    "latin": "Anethum graveolens",
+    "category": "aromatiques",
+    "subcategory": "aneth",
+    "desc": "Tige dressée et ramifiée portant des feuilles finement découpées et des ombelles jaune-vert. Odeur anisée caractéristique. Graines utilisées pour les cornichons et vinaigres",
+    "price": 3.1,
+    "difficulty": 1,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "transplant": [],
+    "harvest": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "companions": [
+      "concombres",
+      "carottes",
+      "laitues"
+    ],
+    "avoid_near": [
+      "fenouil",
+      "carottes"
+    ],
+    "pollinator_friendly": true,
+    "product_url": "https://www.germinance.com/boutique/semences_aromatiques_et_medicinales-aneth_officinale-article-ANE.awp?pgnIdCategorie=33"
+  },
+  {
+    "id": "coriandre",
+    "name": "Coriandre",
+    "latin": "Coriandrum sativum",
+    "category": "aromatiques",
+    "subcategory": "coriandre",
+    "desc": "Plante de 20 à 80 cm à feuilles lobées ressemblant au persil, à fleurs en ombelles blanc-rosé. Feuilles et graines utilisées en cuisine. Très mellifère",
+    "price": 3.1,
+    "difficulty": 1,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      3,
+      4,
+      9
+    ],
+    "transplant": [],
+    "harvest": [
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "companions": [
+      "carottes",
+      "tomates",
+      "epinards"
+    ],
+    "avoid_near": [
+      "fenouil"
+    ],
+    "pollinator_friendly": true,
+    "product_url": "https://www.germinance.com/boutique/semences_aromatiques_et_medicinales-coriandre-article-COR.awp?pgnIdCategorie=33"
+  },
+  {
+    "id": "thym-commun",
+    "name": "Thym commun",
+    "latin": "Thymus vulgaris",
+    "category": "aromatiques",
+    "subcategory": "thym",
+    "desc": "Petit sous-arbrisseau vivace touffu à feuilles étroites gris-bleu et petites fleurs blanc-rosé très mellifères. Odeur évoquant le garrigue provençal",
+    "price": 3.1,
+    "difficulty": 2,
+    "sowing_indoor": [
+      3,
+      4
+    ],
+    "sowing_outdoor": [
+      5,
+      6
+    ],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "companions": [
+      "choux",
+      "aubergines",
+      "tomates"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": true,
+    "product_url": "https://www.germinance.com/boutique/semences_aromatiques_et_medicinales-thym_commun-article-THY.awp?pgnIdCategorie=33"
+  },
+  {
+    "id": "bourrache-officinale-bleue",
+    "name": "Bourrache officinale bleue",
+    "latin": "Borago officinalis",
+    "category": "aromatiques",
+    "subcategory": "bourrache",
+    "desc": "Plante buissonnante d'environ 80 cm à feuilles poilues en rosette, produisant une multitude de magnifiques fleurs étoilées bleues jusqu'aux premières gelées",
+    "price": 3.1,
+    "difficulty": 1,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "transplant": [],
+    "harvest": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "companions": [
+      "tomates",
+      "courgettes",
+      "fraises"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": true,
+    "product_url": "https://www.germinance.com/boutique/semences_aromatiques_et_medicinales-bourrache_officinale_bleue-article-BOU.awp?pgnIdCategorie=33"
+  },
+  {
+    "id": "camomille-matricaire",
+    "name": "Camomille matricaire",
+    "latin": "Matricaria recutita",
+    "category": "medicinales",
+    "subcategory": "camomilles",
+    "desc": "Plante indigène de 50 cm à feuilles filiformes et capitules caractéristiques blancs à cœur bombé jaune d'or. La meilleure camomille pour les tisanes calmantes et digestives",
+    "price": 3.1,
+    "difficulty": 1,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      3,
+      4,
+      5
+    ],
+    "transplant": [],
+    "harvest": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "companions": [
+      "choux",
+      "oignons"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": true,
+    "product_url": "https://www.germinance.com/boutique/semences_aromatiques_et_medicinales-camomille_matricaire-article-CAM.awp?pgnIdCategorie=33"
+  },
+  {
+    "id": "cosmos-sensations-en-melange",
+    "name": "Cosmos Sensations en mélange",
+    "latin": "Cosmos bipinnatus",
+    "category": "fleurs",
+    "subcategory": "cosmos",
+    "desc": "Magnifique mélange offrant de nombreuses fleurs blanches, roses, rouges ou bicolores aux motifs frappants. Très décoratif en massifs et en bouquets. Se ressème spontanément",
+    "price": 3.1,
+    "difficulty": 1,
+    "sowing_indoor": [
+      3,
+      4
+    ],
+    "sowing_outdoor": [
+      4,
+      5
+    ],
+    "transplant": [
+      5
+    ],
+    "harvest": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "companions": [
+      "tomates",
+      "concombres"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": true,
+    "product_url": "https://www.germinance.com/boutique/semences_fleurs-cosmos_sensations_en_melange-article-COS.awp?pgnIdCategorie=34"
+  },
+  {
+    "id": "centauree-bleuet-bleu",
+    "name": "Centaurée Bleuet bleu",
+    "latin": "Centaurea cyanus",
+    "category": "fleurs",
+    "subcategory": "centaurees",
+    "desc": "Fleurs simples d'un bleu remarquable. Hauteur à floraison : 80 cm. Fleur comestible pour le potager, ornementale et médicinale. Très mellifère",
+    "price": 3.1,
+    "difficulty": 1,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      3,
+      4,
+      9,
+      10
+    ],
+    "transplant": [],
+    "harvest": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "companions": [
+      "cereales",
+      "laitues"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": true,
+    "product_url": "https://www.germinance.com/boutique/semences_fleurs-centauree_bleuet_bleu-article-BLE.awp?pgnIdCategorie=34"
+  },
+  {
+    "id": "capucines-grimpantes-en-melange",
+    "name": "Capucines grimpantes en mélange",
+    "latin": "Tropaeolum majus",
+    "category": "fleurs",
+    "subcategory": "capucines",
+    "desc": "Plante grimpante dépassant 2 mètres, feuilles charnues rondes et fleurs en trompette éperonnées rouges, orangées ou jaunes. Riche en vitamine C. Feuilles et fleurs comestibles",
+    "price": 3.1,
+    "difficulty": 1,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      4,
+      5
+    ],
+    "transplant": [],
+    "harvest": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "companions": [
+      "courgettes",
+      "tomates",
+      "concombres"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": true,
+    "product_url": "https://www.germinance.com/boutique/semences_fleurs-capucines_grimpantes_en_melange-article-CAP.awp?pgnIdCategorie=34"
+  },
+  {
+    "id": "bouillon-blanc",
+    "name": "Bouillon blanc",
+    "latin": "Verbascum phlomoides",
+    "category": "medicinales",
+    "subcategory": "molenes",
+    "desc": "Bisannuel formant une grande rosette de feuilles molles gris-vert duveteuses la 1ère année, puis une tige florale atteignant 1,5 m portant des fleurs jaunes de l'été aux premières gelées",
+    "price": 3.1,
+    "difficulty": 2,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "transplant": [],
+    "harvest": [
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "companions": [],
+    "avoid_near": [],
+    "pollinator_friendly": true,
+    "product_url": "https://www.germinance.com/boutique/semences_fleurs-bouillon_blanc-article-BOB.awp?pgnIdCategorie=34"
+  },
+  {
+    "id": "avoine-blanche-population",
+    "name": "Avoine blanche population",
+    "latin": "Avena sativa",
+    "category": "engrais-verts",
+    "subcategory": "cereales",
+    "desc": "Céréale produisant une magnifique panicule de graines très graphique. Système racinaire fasciculé, forte production de biomasse. Excellent engrais vert déstructurant le sol",
+    "price": 3.1,
+    "difficulty": 1,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      3,
+      4,
+      9,
+      10
+    ],
+    "transplant": [],
+    "harvest": [
+      6,
+      7,
+      8
+    ],
+    "companions": [],
+    "avoid_near": [],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_engrais_verts-avoine_blanche_population-article-AVB.awp?pgnIdCategorie=35"
+  },
+  {
+    "id": "aubergine-violette-diamond",
+    "name": "Aubergine violette Diamond",
+    "latin": "Solanum melongena",
+    "category": "legumes-fruits",
+    "subcategory": "aubergines",
+    "desc": "Variété productive à fruits oblongs, violet foncé brillant, de taille moyenne. Chair ferme avec peu de graines, idéale pour la cuisine méditerranéenne",
+    "price": 3.1,
+    "difficulty": 3,
+    "sowing_indoor": [
+      2,
+      3,
+      4
+    ],
+    "sowing_outdoor": [],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "companions": [
+      "basilics",
+      "bourrache"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_fruits-aubergine_violette_diamond-article-AVD.awp?pgnIdCategorie=36"
+  },
+  {
+    "id": "aubergine-japonaise-kamo",
+    "name": "Aubergine japonaise Kamo",
+    "latin": "Solanum melongena",
+    "category": "legumes-fruits",
+    "subcategory": "aubergines",
+    "desc": "Variété japonaise traditionnelle à fruits ronds, violet foncé, de 10-12 cm de diamètre. Chair fine et crémeuse, très peu amère. Idéale pour la cuisine asiatique",
+    "price": 3.1,
+    "difficulty": 3,
+    "sowing_indoor": [
+      2,
+      3,
+      4
+    ],
+    "sowing_outdoor": [],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "companions": [
+      "basilics"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_fruits-aubergine_japonaise_kamo-article-AUK.awp?pgnIdCategorie=36"
+  },
+  {
+    "id": "concombre-d-armenie",
+    "name": "Concombre d'Arménie",
+    "latin": "Cucumis melo var. flexuosus",
+    "category": "legumes-fruits",
+    "subcategory": "concombres",
+    "desc": "Long fruit sinueux de 60 à 80 cm, vert pâle strié, à chair blanche délicate et douce, sans amertume. Très digestible, proche du melon par ses caractéristiques botaniques",
+    "price": 3.1,
+    "difficulty": 2,
+    "sowing_indoor": [
+      4
+    ],
+    "sowing_outdoor": [
+      5
+    ],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "companions": [
+      "basilics",
+      "haricots"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_fruits-concombre_d_armenie-article-COA.awp?pgnIdCategorie=36"
+  },
+  {
+    "id": "courge-jack-be-little",
+    "name": "Courge Jack be little",
+    "latin": "Cucurbita pepo",
+    "category": "legumes-fruits",
+    "subcategory": "courges",
+    "desc": "Petits fruits miniatures très décoratifs de 7-8 cm, orange vif et côtelés. Comestibles et décoratifs pour Halloween. Se conserve longtemps. Très productive",
+    "price": 3.1,
+    "difficulty": 2,
+    "sowing_indoor": [
+      4
+    ],
+    "sowing_outdoor": [
+      5
+    ],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      9,
+      10
+    ],
+    "companions": [
+      "mais",
+      "haricots"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_fruits-courge_jack_be_little-article-CJL.awp?pgnIdCategorie=36"
+  },
+  {
+    "id": "courge-delicata",
+    "name": "Courge Delicata",
+    "latin": "Cucurbita pepo",
+    "category": "legumes-fruits",
+    "subcategory": "courges",
+    "desc": "Fruits allongés de 15-20 cm, crème striée de vert et orange. Chair jaune très sucrée et parfumée, goût de châtaigne et de patate douce. Excellente conservation",
+    "price": 3.1,
+    "difficulty": 2,
+    "sowing_indoor": [
+      4
+    ],
+    "sowing_outdoor": [
+      5
+    ],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      9,
+      10
+    ],
+    "companions": [
+      "mais",
+      "haricots",
+      "basilics"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_fruits-courge_delicata-article-CDE.awp?pgnIdCategorie=36"
+  },
+  {
+    "id": "carotte-blanche-de-kuttingen",
+    "name": "Carotte blanche de Küttingen",
+    "latin": "Daucus carota",
+    "category": "legumes-racines",
+    "subcategory": "carottes",
+    "desc": "Carotte à racine blanche, demi-longue et cylindrique, chair tendre et sucrée. Variété ancienne suisse de population. Saveur douce, idéale crue ou cuite",
+    "price": 3.1,
+    "difficulty": 1,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "transplant": [],
+    "harvest": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "companions": [
+      "oignons",
+      "laitues"
+    ],
+    "avoid_near": [
+      "aneth"
+    ],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_racines-carotte_blanche_de_kuttingen-article-CBK.awp?pgnIdCategorie=38"
+  },
+  {
+    "id": "carotte-violette-gniff",
+    "name": "Carotte violette Gniff",
+    "latin": "Daucus carota",
+    "category": "legumes-racines",
+    "subcategory": "carottes",
+    "desc": "Carotte à racine violet foncé à l'extérieur avec un cœur orange. Variété ancestrale à la saveur prononcée et légèrement épicée. Très décorative et originale",
+    "price": 3.1,
+    "difficulty": 2,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "transplant": [],
+    "harvest": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "companions": [
+      "oignons",
+      "laitues"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_racines-carotte_violette_gniff-article-GNI.awp?pgnIdCategorie=38"
+  },
+  {
+    "id": "betterave-jaune-golden",
+    "name": "Betterave jaune Golden",
+    "latin": "Beta vulgaris",
+    "category": "legumes-racines",
+    "subcategory": "betteraves",
+    "desc": "Racine ronde dorée à chair jaune vif ne tachant pas. Saveur douce et sucrée, plus fine que la betterave rouge. Très décorative dans les salades",
+    "price": 3.1,
+    "difficulty": 1,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "transplant": [],
+    "harvest": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "companions": [
+      "laitues",
+      "oignons"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_racines-betterave_jaune_golden-article-BETGOL.awp?pgnIdCategorie=38"
+  },
+  {
+    "id": "betterave-crapaudine",
+    "name": "Betterave crapaudine",
+    "latin": "Beta vulgaris",
+    "category": "legumes-racines",
+    "subcategory": "betteraves",
+    "desc": "Ancienne variété française à racine allongée et rugueuse à l'aspect de bois. Parmi les plus anciennes variétés connues (XVIIe siècle). Chair rouge foncé, très sucrée et savoureuse",
+    "price": 3.1,
+    "difficulty": 1,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "transplant": [],
+    "harvest": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "companions": [
+      "laitues",
+      "oignons"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_racines-betterave_crapaudine-article-BEC.awp?pgnIdCategorie=38"
+  },
+  {
+    "id": "chicoree-scarole-grosse-blonde-a-coeur-plein",
+    "name": "Chicorée scarole grosse blonde à cœur plein",
+    "latin": "Cichorium endivia var. latifolium",
+    "category": "legumes-feuilles",
+    "subcategory": "chicorees",
+    "desc": "Grande scarole à larges feuilles ondulées vert pâle à cœur bien formé et blanchi. Saveur légèrement amère, croquante. Résiste bien aux basses températures",
+    "price": 3.1,
+    "difficulty": 2,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      5,
+      6,
+      7,
+      8
+    ],
+    "transplant": [],
+    "harvest": [
+      9,
+      10,
+      11,
+      12
+    ],
+    "companions": [
+      "carottes",
+      "radis"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_feuilles-chicoree_scarole_grosse_blonde_a_coeur_plein-article-CGC.awp?pgnIdCategorie=37"
+  },
+  {
+    "id": "chou-brocoli-calabrais-a-jets-verts",
+    "name": "Chou brocoli calabrais à jets verts",
+    "latin": "Brassica oleracea var. italica",
+    "category": "legumes-feuilles",
+    "subcategory": "choux",
+    "desc": "Brocoli à tête centrale verte puis nombreux jets latéraux abondants. Très productive sur longue période. Saveur fine et légèrement sucrée, excellente crue ou cuite",
+    "price": 3.1,
+    "difficulty": 2,
+    "sowing_indoor": [
+      3,
+      4,
+      5
+    ],
+    "sowing_outdoor": [
+      5,
+      6,
+      7
+    ],
+    "transplant": [
+      5,
+      6,
+      7
+    ],
+    "harvest": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "companions": [
+      "carottes",
+      "oignons",
+      "salade"
+    ],
+    "avoid_near": [
+      "fraises",
+      "tomates"
+    ],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_feuilles-chou_brocoli_calabrais_a_jets_verts-article-CHC.awp?pgnIdCategorie=37"
+  },
+  {
+    "id": "chou-japonais-mizuna-vert",
+    "name": "Chou japonais Mizuna vert",
+    "latin": "Brassica rapa var. nipposinica",
+    "category": "legumes-feuilles",
+    "subcategory": "choux",
+    "desc": "Feuilles finement découpées vert vif à côtes blanches, légèrement piquantes. Idéal en salade ou wok. Croissance rapide, résistant au froid, récolte continue",
+    "price": 3.1,
+    "difficulty": 1,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "transplant": [],
+    "harvest": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "companions": [
+      "carottes",
+      "laitues"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_feuilles-chou_japonais_mizuna_vert-article-MIZ.awp?pgnIdCategorie=37"
+  },
+  {
+    "id": "basilic-pourpre-dark-opal",
+    "name": "Basilic pourpre Dark Opal",
+    "latin": "Ocimum basilicum",
+    "category": "aromatiques",
+    "subcategory": "basilics",
+    "desc": "Plante ornementale et aromatique à feuilles pourpres brillantes et fleurs rose-lilas. Même saveur que le basilic vert. Très décoratif dans les salades et les jardins",
+    "price": 3.1,
+    "difficulty": 2,
+    "sowing_indoor": [
+      3,
+      4,
+      5
+    ],
+    "sowing_outdoor": [],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "companions": [
+      "tomates",
+      "poivrons"
+    ],
+    "avoid_near": [
+      "sauge"
+    ],
+    "pollinator_friendly": true,
+    "product_url": "https://www.germinance.com/boutique/semences_aromatiques_et_medicinales-basilic_pourpre_dark_opal-article-BAO.awp?pgnIdCategorie=33"
+  },
+  {
+    "id": "basilic-thai",
+    "name": "Basilic thaï",
+    "latin": "Ocimum basilicum var. thyrsiflora",
+    "category": "aromatiques",
+    "subcategory": "basilics",
+    "desc": "Feuilles lancéolées vert foncé à tiges et fleurs violettes. Arôme d'anis et de réglisse caractéristique. Indispensable dans la cuisine thaïlandaise et vietnamienne",
+    "price": 3.1,
+    "difficulty": 2,
+    "sowing_indoor": [
+      3,
+      4,
+      5
+    ],
+    "sowing_outdoor": [],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "companions": [
+      "tomates",
+      "aubergines"
+    ],
+    "avoid_near": [
+      "sauge"
+    ],
+    "pollinator_friendly": true,
+    "product_url": "https://www.germinance.com/boutique/semences_aromatiques_et_medicinales-basilic_thai-article-BAT.awp?pgnIdCategorie=33"
+  },
+  {
+    "id": "ciboulette-commune",
+    "name": "Ciboulette commune",
+    "latin": "Allium schoenoprasum",
+    "category": "aromatiques",
+    "subcategory": "ciboulette",
+    "desc": "Plante vivace formant des touffes de tiges fines et creuses à saveur alliacée douce. Fleurs roses comestibles et mellifères. Facile et rustique, repousse chaque année",
+    "price": 3.1,
+    "difficulty": 1,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      3,
+      4,
+      5
+    ],
+    "transplant": [],
+    "harvest": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "companions": [
+      "carottes",
+      "tomates",
+      "roses"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": true,
+    "product_url": "https://www.germinance.com/boutique/semences_aromatiques_et_medicinales-ciboulette_commune-article-CIB.awp?pgnIdCategorie=33"
+  },
+  {
+    "id": "calendula-souci-officinal",
+    "name": "Calendula Souci officinal",
+    "latin": "Calendula officinalis",
+    "category": "medicinales",
+    "subcategory": "calendula",
+    "desc": "Plante annuelle aux fleurs orangées éclatantes aux vertus cicatrisantes et anti-inflammatoires. Très mellifère, compagne idéale du potager, repousse les nématodes",
+    "price": 3.1,
+    "difficulty": 1,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      3,
+      4,
+      5,
+      9,
+      10
+    ],
+    "transplant": [],
+    "harvest": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "companions": [
+      "tomates",
+      "carottes",
+      "asperges"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": true,
+    "product_url": "https://www.germinance.com/boutique/semences_aromatiques_et_medicinales-calendula_souci_officinal-article-SOO.awp?pgnIdCategorie=33"
+  },
+  {
+    "id": "carvi",
+    "name": "Carvi",
+    "latin": "Carum carvi",
+    "category": "aromatiques",
+    "subcategory": "carvi",
+    "desc": "Plante bisannuelle à feuilles finement découpées et ombelles blanches. Graines aromatiques utilisées dans le pain de seigle, choucroute, fromages et liqueurs. Très mellifère",
+    "price": 3.1,
+    "difficulty": 2,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "transplant": [],
+    "harvest": [
+      7,
+      8
+    ],
+    "companions": [
+      "choux",
+      "laitues"
+    ],
+    "avoid_near": [
+      "fenouil"
+    ],
+    "pollinator_friendly": true,
+    "product_url": "https://www.germinance.com/boutique/semences_aromatiques_et_medicinales-carvi-article-CUP.awp?pgnIdCategorie=33"
+  },
+  {
+    "id": "cosmos-jaune-xanthos",
+    "name": "Cosmos jaune Xanthos",
+    "latin": "Cosmos sulphureus",
+    "category": "fleurs",
+    "subcategory": "cosmos",
+    "desc": "Fleurs jaune citron très lumineuses en boutons doubles. Plante compacte de 30-40 cm très florifère du début de l'été aux gelées. Très mellifère",
+    "price": 3.1,
+    "difficulty": 1,
+    "sowing_indoor": [
+      3,
+      4
+    ],
+    "sowing_outdoor": [
+      4,
+      5
+    ],
+    "transplant": [
+      5
+    ],
+    "harvest": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "companions": [
+      "tomates",
+      "courges"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": true,
+    "product_url": "https://www.germinance.com/boutique/semences_fleurs-cosmos_jaune_xanthos-article-CJX.awp?pgnIdCategorie=34"
+  },
+  {
+    "id": "coquelicots-des-champs-en-melange",
+    "name": "Coquelicots des champs en mélange",
+    "latin": "Papaver rhoeas",
+    "category": "fleurs",
+    "subcategory": "coquelicots",
+    "desc": "Mélange de coquelicots aux couleurs variées : rouge, rose, orange, blanc, bicolore. Fleurs légères et gracieuses, faciles à cultiver, se ressèment spontanément",
+    "price": 3.1,
+    "difficulty": 1,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      3,
+      4,
+      9,
+      10
+    ],
+    "transplant": [],
+    "harvest": [
+      5,
+      6,
+      7,
+      8
+    ],
+    "companions": [
+      "cereales",
+      "laitues"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": true,
+    "product_url": "https://www.germinance.com/boutique/semences_fleurs-coquelicots_des_champs_en_melange-article-COQ.awp?pgnIdCategorie=34"
+  },
+  {
+    "id": "ancolies-des-jardins-en-melange",
+    "name": "Ancolies des jardins en mélange",
+    "latin": "Aquilegia vulgaris",
+    "category": "fleurs",
+    "subcategory": "ancolies",
+    "desc": "Mélange de vivaces à fleurs gracieuses en éperon de nombreuses couleurs : violet, bleu, rose, blanc, bicolore. Se ressème facilement. Floraison printanière",
+    "price": 3.1,
+    "difficulty": 2,
+    "sowing_indoor": [
+      3,
+      4
+    ],
+    "sowing_outdoor": [
+      5,
+      6
+    ],
+    "transplant": [
+      9,
+      10
+    ],
+    "harvest": [
+      4,
+      5,
+      6
+    ],
+    "companions": [],
+    "avoid_near": [],
+    "pollinator_friendly": true,
+    "product_url": "https://www.germinance.com/boutique/semences_fleurs-ancolies_des_jardins_en_melange-article-ANC.awp?pgnIdCategorie=34"
+  },
+  {
+    "id": "cardon-epineux-argente-de-plainpalais",
+    "name": "Cardon épineux argenté de Plainpalais",
+    "latin": "Cynara cardunculus var. altilis",
+    "category": "legumes-feuilles",
+    "subcategory": "cardons",
+    "desc": "Grande plante monumentale aux feuilles argentées épineuses pouvant dépasser 2 m. Côtes charnues blanchies consommées en gratin. Variété genevoise classée patrimoine culinaire suisse",
+    "price": 3.1,
+    "difficulty": 4,
+    "sowing_indoor": [
+      4,
+      5
+    ],
+    "sowing_outdoor": [
+      5,
+      6
+    ],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      10,
+      11,
+      12
+    ],
+    "companions": [],
+    "avoid_near": [],
+    "pollinator_friendly": true,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_feuilles-cardon_epineux_argente_de_plainpalais-article-CPL.awp?pgnIdCategorie=37"
+  },
+  {
+    "id": "citrouille-de-touraine",
+    "name": "Citrouille de Touraine",
+    "latin": "Cucurbita pepo",
+    "category": "legumes-fruits",
+    "subcategory": "courges",
+    "desc": "Grosse citrouille ronde et côtelée, orange vif. Fruits de 5 à 15 kg, très ornementaux pour Halloween. Chair ferme et savoureuse pour soupes et purées",
+    "price": 3.1,
+    "difficulty": 2,
+    "sowing_indoor": [
+      4
+    ],
+    "sowing_outdoor": [
+      5
+    ],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      9,
+      10
+    ],
+    "companions": [
+      "mais",
+      "haricots"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_fruits-citrouille_de_touraine-article-CTO.awp?pgnIdCategorie=36"
+  },
+  {
+    "id": "ail-des-ours",
+    "name": "Ail des ours",
+    "latin": "Allium ursinum",
+    "category": "medicinales",
+    "subcategory": "ails",
+    "desc": "Plante vivace forestière à larges feuilles lisses et fleurs blanches étoilées. Toute la plante est comestible avec une saveur d'ail doux. Vertus antioxydantes et cardiovasculaires",
+    "price": 3.1,
+    "difficulty": 3,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      8,
+      9,
+      10
+    ],
+    "transplant": [],
+    "harvest": [
+      3,
+      4,
+      5
+    ],
+    "companions": [
+      "arbres_fruitiers"
+    ],
+    "avoid_near": [
+      "legumineuses"
+    ],
+    "pollinator_friendly": true,
+    "product_url": "https://www.germinance.com/boutique/semences_aromatiques_et_medicinales-ail_des_ours-article-AIL.awp?pgnIdCategorie=33"
+  },
+  {
+    "id": "agastache-anisee",
+    "name": "Agastache anisée",
+    "latin": "Agastache foeniculum",
+    "category": "medicinales",
+    "subcategory": "agastaches",
+    "desc": "Vivace aromatique à épis de fleurs bleu-violet très mellifères de juillet à octobre. Feuilles anisées utilisées en tisane ou en cuisine. Résistante à la sécheresse",
+    "price": 3.1,
+    "difficulty": 2,
+    "sowing_indoor": [
+      3,
+      4
+    ],
+    "sowing_outdoor": [
+      4,
+      5
+    ],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "companions": [
+      "lavandes",
+      "sauges"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": true,
+    "product_url": "https://www.germinance.com/boutique/semences_aromatiques_et_medicinales-agastache_anisee-article-AGA.awp?pgnIdCategorie=33"
+  },
+  {
+    "id": "bles-population-en-melange",
+    "name": "Blés population en mélange",
+    "latin": "Triticum aestivum",
+    "category": "engrais-verts",
+    "subcategory": "cereales",
+    "desc": "Mélange de blés de population issus de sélection participative. Grande diversité génétique, adapté aux conditions locales. Excellent engrais vert hivernant et couverture du sol",
+    "price": 3.1,
+    "difficulty": 1,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      9,
+      10,
+      11
+    ],
+    "transplant": [],
+    "harvest": [
+      6,
+      7
+    ],
+    "companions": [],
+    "avoid_near": [],
+    "pollinator_friendly": false,
+    "product_url": "https://www.germinance.com/boutique/semences_engrais_verts-bles_population_en_melange-article-BLP.awp?pgnIdCategorie=35"
+  },
+  {
+    "id": "amarante-rouge-alegria",
+    "name": "Amarante rouge Alegria",
+    "latin": "Amaranthus cruentus",
+    "category": "legumes-feuilles",
+    "subcategory": "amarantes",
+    "desc": "Plante à feuilles rouges ornementales et comestibles, aux épis dressés rouge vif. Graines très nutritives et sans gluten. Résistante à la chaleur et à la sécheresse",
+    "price": 3.1,
+    "difficulty": 1,
+    "sowing_indoor": [],
+    "sowing_outdoor": [
+      4,
+      5,
+      6
+    ],
+    "transplant": [],
+    "harvest": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "companions": [
+      "mais",
+      "courgettes"
+    ],
+    "avoid_near": [],
+    "pollinator_friendly": true,
+    "product_url": "https://www.germinance.com/boutique/semences_potageres_legumes_feuilles-amarante_rouge_alegria-article-AAL.awp?pgnIdCategorie=37"
+  }
+]

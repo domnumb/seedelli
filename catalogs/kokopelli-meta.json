@@ -7,5 +7,6 @@
   "accent": "#E07A2F",
   "logo_emoji": "🌱",
   "contact": "contact@kokopelli-semences.fr",
-  "utm": "utm_source=seedelli&utm_medium=referral&utm_campaign=recommandation"
+  "utm": "utm_source=seedelli&utm_medium=referral&utm_campaign=recommandation",
+  "url_field": "kokopelli_url"
 }

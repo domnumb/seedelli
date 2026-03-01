@@ -918,7 +918,8 @@ function renderBasket() {
       html += '<div class="vc-header">';
       html += '<div><span class="vc-name">' + varEmoji + ' ' + v.name + '</span>';
       if (v.latin) html += '<div style="font-size:.75rem;font-style:italic;opacity:.5">' + v.latin + '</div>';
-      if (v.kokopelli_url) html += '<a href="' + v.kokopelli_url + '?' + SEMENCIER.utm + '" target="_blank" rel="noopener" style="font-size:.7rem;color:var(--terre1);text-decoration:none;opacity:.6">Voir sur Kokopelli \u2197</a>';
+      const _vurl = v[SEMENCIER.url_field || 'kokopelli_url'] || v.kokopelli_url || v.product_url;
+      if (_vurl) html += '<a href="' + _vurl + '?' + SEMENCIER.utm + '" target="_blank" rel="noopener" style="font-size:.7rem;color:var(--terre1);text-decoration:none;opacity:.6">Voir sur ' + SEMENCIER.name + ' \u2197</a>';
       html += '<div class="vc-desc">' + v.desc + '</div>';
       html += renderDifficulty(v.difficulty);
       html += '</div>';
@@ -1243,7 +1244,8 @@ function renderOrder() {
   html += '<div class="card" style="margin-bottom:1.25rem">';
   html += '<p style="font-weight:700;font-size:.95rem;margin-bottom:.75rem">Tes graines :</p>';
   state.basket.forEach(function(v) {
-    const url = v.kokopelli_url ? v.kokopelli_url + '?' + SEMENCIER.utm : SEMENCIER.url + '?' + SEMENCIER.utm;
+    const _purl = v[SEMENCIER.url_field || 'kokopelli_url'] || v.kokopelli_url || v.product_url;
+    const url = _purl ? _purl + '?' + SEMENCIER.utm : SEMENCIER.url + '?' + SEMENCIER.utm;
     const emoji = getVarietyEmoji(v);
     html += '<a href="' + url + '" target="_blank" rel="noopener" style="display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid #f5ede0;text-decoration:none;color:inherit">';
     html += '<span style="font-size:.95rem">' + emoji + ' ' + v.name + '</span>';
@@ -1264,7 +1266,7 @@ function renderOrder() {
 }
 
 function copyAndGoKokopelli() {
-  const lines = ['Mes graines Kokopelli — Seedelli', ''];
+  const lines = ['Mes graines ' + SEMENCIER.name + ' — Seedelli', ''];
   state.basket.forEach(v => lines.push('• ' + v.name + ' \u2014 ' + v.price.toFixed(2) + '\u20ac'));
   const total = state.basket.reduce((s, v) => s + v.price, 0);
   const shipping = getShipping(total);
