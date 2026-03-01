@@ -952,6 +952,21 @@ const CAT_EMOJI = {
   'legumes-fruits':'\ud83c\udf45','legumes-racines':'\ud83e\udd55','legumes-feuilles':'\ud83e\udd6c','legumes-grains':'\ud83c\udf3d',
   'aromatiques':'\ud83c\udf3f','fleurs':'\ud83c\udf3b','medicinales':'\ud83c\udf3e','engrais-verts':'\ud83c\udf31'
 };
+const SUBCAT_EMOJI = {
+  'tomates':'\ud83c\udf45','poivrons':'\ud83e\uded1','piments':'\ud83c\udf36\ufe0f','aubergines':'\ud83c\udf46',
+  'courges':'\ud83c\udf83','courgettes':'\ud83e\udd52','concombres':'\ud83e\udd52','melons':'\ud83c\udf48',
+  'haricots':'\ud83e\udeab','laitues':'\ud83e\udd6c','mache':'\ud83c\udf43','epinards':'\ud83e\udd6c',
+  'choux':'\ud83e\udd66','blettes':'\ud83c\udf43','roquette':'\ud83c\udf43','pourpier':'\ud83c\udf43','cresson':'\ud83c\udf43',
+  'carottes':'\ud83e\udd55','betteraves':'\ud83d\udfe3','radis':'\ud83d\udfe5','navets':'\ud83e\udd54','panais':'\ud83e\udd54',
+  'oignons':'\ud83e\uddc5','ail':'\ud83e\uddc4','poireaux':'\ud83e\uddc5',
+  'basilics':'\ud83c\udf3f','persil':'\ud83c\udf3f','coriandre':'\ud83c\udf3f','aneth':'\ud83c\udf3f',
+  'ciboulette':'\ud83c\udf3f','thym':'\ud83e\uded6','romarin':'\ud83e\uded6','sauge':'\ud83e\uded6',
+  'marjolaine':'\ud83e\uded6','origan':'\ud83e\uded6','estragon':'\ud83e\uded6',
+  'medicinales':'\ud83c\udf3c','pavots':'\ud83c\udf38','fleurs':'\ud83c\udf38','engrais-verts':'\ud83c\udf3e'
+};
+function getVarietyEmoji(v) {
+  return SUBCAT_EMOJI[v.subcategory] || CAT_EMOJI[v.category] || '\ud83c\udf31';
+}
 
 function renderMiniCal(v) {
   const zk = state.location.zone.key;
@@ -988,10 +1003,11 @@ function showCalTooltip(e, name, action, month) {
   setTimeout(() => { if (tip.parentNode) tip.remove(); }, 2000);
 }
 
-function renderStars(diff) {
-  let s = '';
-  for (let i = 1; i <= 5; i++) s += i <= diff ? '\u2605' : '\u2606';
-  return '<span class="stars">' + s + '</span>';
+function renderDifficulty(diff) {
+  if (!diff) return '';
+  const label = diff <= 2 ? 'Facile' : diff <= 3 ? 'Interm\u00e9diaire' : 'Avanc\u00e9';
+  const color = diff <= 2 ? 'var(--vert2)' : diff <= 3 ? 'var(--terre1)' : '#c44';
+  return '<span style="font-size:.75rem;font-weight:600;color:' + color + ';background:' + color + '18;padding:.15rem .5rem;border-radius:2rem">' + label + '</span>';
 }
 
 function renderBasket() {
@@ -1052,14 +1068,14 @@ function renderBasket() {
     html += '<div class="variety-cards-grid">';
 
     items.forEach(v => {
-      const catEmoji = CAT_EMOJI[v.category] || '\ud83c\udf31';
+      const varEmoji = getVarietyEmoji(v);
       html += '<div class="variety-card" id="vc-' + v.id + '">';
       html += '<div class="vc-header">';
-      html += '<div><span class="vc-name">' + catEmoji + ' ' + v.name + '</span>';
+      html += '<div><span class="vc-name">' + varEmoji + ' ' + v.name + '</span>';
       if (v.latin) html += '<div style="font-size:.75rem;font-style:italic;opacity:.5">' + v.latin + '</div>';
       if (v.kokopelli_url) html += '<a href="' + v.kokopelli_url + '?ref=seedelli" target="_blank" rel="noopener" style="font-size:.7rem;color:var(--terre1);text-decoration:none;opacity:.6">Voir sur Kokopelli \u2197</a>';
       html += '<div class="vc-desc">' + v.desc + '</div>';
-      html += renderStars(v.difficulty);
+      html += renderDifficulty(v.difficulty);
       html += '</div>';
       html += '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:.25rem">';
       html += '<span class="vc-price">' + v.price.toFixed(2) + '\u20ac</span>';
@@ -1348,9 +1364,7 @@ function getShipping(total) {
 }
 
 // ========== SCREEN 7 — MA SÉLECTION ==========
-let guidedStep = 0;
-let guidedDone = new Set();
-
+// TODO v2: cart injection via Kokopelli partnership API ou backend Seedelli (Stripe)
 function renderOrder() {
   const container = document.getElementById('s7-content');
   const total = state.basket.reduce((s, v) => s + v.price, 0);
@@ -1365,137 +1379,55 @@ function renderOrder() {
     adj.forEach(m => harvestMonths.add(m));
   });
 
-  let html = '<div style="text-align:center;margin-bottom:1.5rem">';
-  html += '<h2 style="font-size:1.5rem">\ud83c\udf3f Ma s\u00e9lection</h2>';
-  html += '<p style="opacity:.6;font-size:.9rem;margin-top:.5rem">' + nbVar + ' vari\u00e9t\u00e9s · ' + total.toFixed(2) + '\u20ac + ' + (shipping === 0 ? 'livraison offerte' : shipping.toFixed(2) + '\u20ac livraison') + '</p>';
+  let html = '<div style="text-align:center;padding-top:1rem;margin-bottom:1.5rem">';
+  html += '<div style="font-size:2.5rem;margin-bottom:.5rem">\ud83c\udf3f</div>';
+  html += '<h2 style="font-size:1.5rem">Ton potager est pr\u00eat</h2>';
+  html += '<p style="opacity:.6;font-size:.9rem;margin-top:.5rem">' + nbVar + ' vari\u00e9t\u00e9s s\u00e9lectionn\u00e9es pour toi</p>';
   html += '</div>';
 
-  html += '<div class="card" style="margin-bottom:1rem">';
+  // Stats
+  html += '<div class="card" style="margin-bottom:1.5rem">';
   html += '<div class="summary-stat"><div class="ss-icon">\ud83c\udf31</div><div><div class="ss-value">' + nbVar + ' vari\u00e9t\u00e9s</div><div style="font-size:.85rem;opacity:.6">Semences libres et reproductibles</div></div></div>';
-  html += '<div class="summary-stat"><div class="ss-icon">\ud83d\udcb0</div><div><div class="ss-value">' + grandTotal.toFixed(2) + '\u20ac</div><div style="font-size:.85rem;opacity:.6">livraison ' + (shipping === 0 ? 'offerte' : shipping.toFixed(2) + '\u20ac') + ' incluse</div></div></div>';
+  html += '<div class="summary-stat"><div class="ss-icon">\ud83d\udcb0</div><div><div class="ss-value">' + grandTotal.toFixed(2) + '\u20ac</div><div style="font-size:.85rem;opacity:.6">' + total.toFixed(2) + '\u20ac graines + ' + (shipping === 0 ? 'livraison offerte' : shipping.toFixed(2) + '\u20ac livraison') + '</div></div></div>';
   if (harvestMonths.size > 0) {
     html += '<div class="summary-stat"><div class="ss-icon">\ud83d\udcc5</div><div><div class="ss-value">' + harvestMonths.size + ' mois de r\u00e9coltes</div><div style="font-size:.85rem;opacity:.6">De ' + MONTH_FULL[Math.min(...harvestMonths)-1] + ' \u00e0 ' + MONTH_FULL[Math.max(...harvestMonths)-1] + '</div></div></div>';
   }
   html += '</div>';
 
-  html += '<button class="btn btn-primary" style="width:100%;font-size:1.1rem;padding:1rem" onclick="startGuidedCheckout()">';
-  html += '\ud83d\uded2 Commander \u2014 mode guid\u00e9 (' + nbVar + ' vari\u00e9t\u00e9s)</button>';
-  html += '<p style="text-align:center;font-size:.8rem;opacity:.5;margin:.5rem 0 1.25rem">Tu ajouteras chaque vari\u00e9t\u00e9 une par une sur Kokopelli</p>';
-
-  html += '<div style="display:flex;gap:.5rem;margin-bottom:1.5rem">';
-  html += '<button class="btn btn-secondary" style="flex:1" onclick="copyList()">\ud83d\udccb Copier la liste</button>';
-  html += '<button class="btn btn-secondary" style="flex:1" onclick="printCalendar()">\ud83d\udda8\ufe0f Imprimer</button>';
-  html += '</div>';
-
-  html += '<div class="card" style="margin-bottom:1rem">';
-  html += '<p style="font-weight:600;font-size:.9rem;margin-bottom:.75rem;opacity:.7">Toutes les vari\u00e9t\u00e9s</p>';
+  // Liste des variétés avec liens directs
+  html += '<div class="card" style="margin-bottom:1.25rem">';
+  html += '<p style="font-weight:700;font-size:.95rem;margin-bottom:.75rem">Tes graines :</p>';
   state.basket.forEach(function(v) {
     const url = v.kokopelli_url ? v.kokopelli_url + '?ref=seedelli' : 'https://www.kokopelli-semences.fr?ref=seedelli';
-    html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid #f0e8d8">';
-    html += '<span style="font-size:.9rem">' + v.name + '</span>';
-    html += '<a href="' + url + '" target="_blank" rel="noopener" style="font-size:.85rem;font-weight:600;color:var(--terre1);text-decoration:none;white-space:nowrap;margin-left:.5rem">' + v.price.toFixed(2) + '\u20ac \u2197</a>';
-    html += '</div>';
+    const emoji = getVarietyEmoji(v);
+    html += '<a href="' + url + '" target="_blank" rel="noopener" style="display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid #f5ede0;text-decoration:none;color:inherit">';
+    html += '<span style="font-size:.95rem">' + emoji + ' ' + v.name + '</span>';
+    html += '<span style="font-size:.9rem;font-weight:600;color:var(--terre1);white-space:nowrap;margin-left:.5rem">' + v.price.toFixed(2) + '\u20ac \u2197</span>';
+    html += '</a>';
   });
   html += '</div>';
 
-  html += '<button class="btn btn-secondary" style="width:100%;margin-top:.5rem" onclick="goTo(5)">\u2190 Modifier mes graines</button>';
+  // Actions secondaires
+  html += '<div style="display:flex;gap:.75rem;margin-bottom:.75rem">';
+  html += '<button class="btn btn-secondary" style="flex:1" onclick="copyAndGoKokopelli()">\ud83d\udccb Copier la liste</button>';
+  html += '<button class="btn btn-secondary" style="flex:1" onclick="printCalendar()">\ud83d\udda8\ufe0f Imprimer</button>';
+  html += '</div>';
+
+  html += '<button class="btn btn-secondary" style="width:100%;" onclick="goTo(5)">\u2190 Modifier mes graines</button>';
 
   container.innerHTML = html;
 }
 
-function startGuidedCheckout() {
-  guidedStep = 0;
-  guidedDone = new Set();
-  renderGuidedStep();
-}
-
-function renderGuidedStep() {
-  document.querySelectorAll('.guided-overlay').forEach(e => e.remove());
-
-  const basket = state.basket;
-  if (guidedStep >= basket.length) {
-    renderGuidedComplete();
-    return;
-  }
-
-  const v = basket[guidedStep];
-  const total = basket.reduce((s, x) => s + x.price, 0);
-  const shipping = getShipping(total);
-  const pct = Math.round((guidedStep / basket.length) * 100);
-  const url = v.kokopelli_url ? v.kokopelli_url + '?ref=seedelli' : 'https://www.kokopelli-semences.fr?ref=seedelli';
-  const catEmoji = CAT_EMOJI[v.category] || '\ud83c\udf31';
-  const nextV = basket[guidedStep + 1];
-
-  const overlay = document.createElement('div');
-  overlay.className = 'guided-overlay';
-  overlay.innerHTML =
-    '<div class="guided-panel">' +
-    '<div style="display:flex;justify-content:space-between;align-items:center">' +
-    '<span style="font-weight:700;font-size:1rem">Commande guid\u00e9e</span>' +
-    '<button onclick="document.querySelector(\'.guided-overlay\').remove()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#999;min-width:44px;min-height:44px">\u00d7</button>' +
-    '</div>' +
-    '<div class="guided-progress"><div class="guided-progress-bar" style="width:' + pct + '%"></div></div>' +
-    '<p style="text-align:center;font-size:.85rem;opacity:.5;margin-bottom:1rem">Vari\u00e9t\u00e9 ' + (guidedStep + 1) + ' sur ' + basket.length + '</p>' +
-    '<div class="guided-card">' +
-    '<div class="gc-cat">' + catEmoji + ' ' + (v.subcategory || v.category || '') + '</div>' +
-    '<div class="gc-name">' + v.name + '</div>' +
-    (v.desc ? '<div style="font-size:.85rem;opacity:.6;margin:.5rem 0">' + v.desc + '</div>' : '') +
-    '<div class="gc-price">' + v.price.toFixed(2) + '\u20ac</div>' +
-    '</div>' +
-    '<a href="' + url + '" target="_blank" rel="noopener" class="btn btn-primary" style="display:flex;width:100%;margin-bottom:.75rem;font-size:1.05rem;text-decoration:none;box-sizing:border-box" onclick="markGuidedOpened(' + guidedStep + ')">' +
-    '\ud83d\uded2 Ajouter au panier Kokopelli \u2197' +
-    '</a>' +
-    '<button class="btn btn-secondary" style="width:100%;margin-bottom:.5rem" onclick="advanceGuided()">' +
-    (guidedDone.has(guidedStep) ? '\u2705 Dans mon panier \u2014 suivant \u2192' : '\u2713 D\u00e9j\u00e0 ajout\u00e9 \u2014 suivant \u2192') +
-    '</button>' +
-    (nextV ? '<p class="guided-next">Suivant : ' + (CAT_EMOJI[nextV.category] || '\ud83c\udf31') + ' ' + nextV.name + '</p>' : '') +
-    '</div>';
-
-  document.body.appendChild(overlay);
-}
-
-function markGuidedOpened(idx) {
-  guidedDone.add(idx);
-  const btn = document.querySelector('.guided-panel .btn-secondary');
-  if (btn) btn.textContent = '\u2705 Dans mon panier \u2014 suivant \u2192';
-}
-
-function advanceGuided() {
-  guidedStep++;
-  renderGuidedStep();
-}
-
-function renderGuidedComplete() {
-  document.querySelectorAll('.guided-overlay').forEach(e => e.remove());
-  const total = state.basket.reduce((s, v) => s + v.price, 0);
-  const shipping = getShipping(total);
-  const grandTotal = total + shipping;
-
-  const overlay = document.createElement('div');
-  overlay.className = 'guided-overlay';
-  overlay.innerHTML =
-    '<div class="guided-panel" style="text-align:center">' +
-    '<div style="font-size:3rem;margin-bottom:1rem">\ud83c\udf89</div>' +
-    '<h2 style="font-size:1.4rem;margin-bottom:.5rem">Toutes les vari\u00e9t\u00e9s ajout\u00e9es !</h2>' +
-    '<p style="opacity:.6;margin-bottom:1.5rem">Panier Kokopelli : ' + state.basket.length + ' vari\u00e9t\u00e9s · ' + grandTotal.toFixed(2) + '\u20ac</p>' +
-    '<a href="https://www.kokopelli-semences.fr/commande?step=1&ref=seedelli" target="_blank" rel="noopener" class="btn btn-primary" style="display:flex;width:100%;font-size:1.1rem;text-decoration:none;box-sizing:border-box;margin-bottom:.75rem;justify-content:center">' +
-    '\ud83d\uded2 Finaliser ma commande sur Kokopelli \u2197' +
-    '</a>' +
-    '<button class="btn btn-secondary" style="width:100%;margin-bottom:.5rem" onclick="printCalendar()">\ud83d\udda8\ufe0f Imprimer mon calendrier</button>' +
-    '<button onclick="document.querySelector(\'.guided-overlay\').remove()" style="background:none;border:none;color:#999;font-size:.85rem;cursor:pointer;padding:.75rem;width:100%">Fermer</button>' +
-    '</div>';
-
-  document.body.appendChild(overlay);
-}
-
-function copyList() {
-  const lines = state.basket.map(v => v.name + ' — ' + v.price.toFixed(2) + '€');
+function copyAndGoKokopelli() {
+  const lines = ['Mes graines Kokopelli — Seedelli', ''];
+  state.basket.forEach(v => lines.push('• ' + v.name + ' \u2014 ' + v.price.toFixed(2) + '\u20ac'));
   const total = state.basket.reduce((s, v) => s + v.price, 0);
   const shipping = getShipping(total);
   lines.push('');
-  lines.push('Total : ' + total.toFixed(2) + '€ + ' + (shipping === 0 ? 'livraison offerte' : shipping.toFixed(2) + '€ livraison') + ' = ' + (total + shipping).toFixed(2) + '€');
-  lines.push('Seedelli — seedelli.github.io/seedelli');
-  navigator.clipboard.writeText(lines.join('\n')).then(() => showToast('\ud83d\udccb Liste copiée !'));
+  lines.push('Total : ' + (total + shipping).toFixed(2) + '\u20ac (' + (shipping === 0 ? 'livraison offerte' : '+' + shipping.toFixed(2) + '\u20ac livraison') + ')');
+  navigator.clipboard.writeText(lines.join('\n')).then(() => {
+    showToast('\ud83d\udccb Liste copiée dans le presse-papier !');
+  }).catch(() => {});
 }
 
 // ========== RESTORE & INIT ==========
