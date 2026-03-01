@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Seedelli — Ton potager sur mesure</title>
+<meta name="description" content="Trouve les graines faites pour ton potager. Semences libres, reproductibles, adaptées à ta région. Sélection personnalisée Kokopelli.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap">
+<style>
+:root{--vert1:#2d5016;--vert2:#4a7c2e;--terre1:#8B6914;--terre2:#D4A843;--accent:#E07A2F;--rose:#e8a0bf}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:#FDF8F0;color:#333;min-height:100vh;
+background-image:repeating-radial-gradient(circle at 50% 50%,transparent 0,#FDF8F0 1px,transparent 1px,transparent 2px);
+padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+-webkit-text-size-adjust:100%}
+h1,h2,h3,h4{font-family:'Playfair Display',Georgia,serif;color:var(--vert1)}
+.screen{display:none;opacity:0;transition:opacity 0.5s ease;max-width:500px;margin:0 auto;padding:1rem;min-height:100vh}
+.screen.active{display:block;opacity:1}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.875rem 1.75rem;border-radius:.75rem;font-weight:600;cursor:pointer;transition:all .2s;border:none;font-size:1rem;min-height:44px;min-width:44px;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.btn-primary{background:var(--vert2);color:#fff}
+.btn-primary:active{transform:scale(0.97)}
+.btn-secondary{background:#fff;color:var(--vert1);border:2px solid var(--vert2)}
+.card{background:#fff;border-radius:1rem;padding:1.25rem;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1px solid #e8dcc8}
+.opt{border:2px solid #e8dcc8;border-radius:1rem;padding:1rem;cursor:pointer;text-align:center;background:#fff;transition:all .2s;min-height:44px;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.opt.selected{border-color:var(--vert2);background:#e8f5e0;transform:scale(1.03);box-shadow:0 0 0 3px rgba(74,124,46,.15)}
+.opt .emoji{font-size:2.5rem;display:block;margin-bottom:.5rem}
+.bar-indoor{background:#a78bfa}.bar-outdoor{background:#34d399}.bar-transplant{background:#60a5fa}.bar-harvest{background:#f87171}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.pulse{animation:pulse 2s ease infinite}
+@keyframes fadeUp{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp 0.6s ease both}
+@keyframes seedDrop{0%{transform:translateY(-60px);opacity:0}40%{transform:translateY(0);opacity:1}100%{transform:translateY(0);opacity:1}}
+@keyframes sprout{0%{height:0;opacity:0}100%{height:40px;opacity:1}}
+@keyframes leaf{0%{transform:scale(0) rotate(-30deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+.seed-anim .seed{animation:seedDrop 1.5s ease both;font-size:2rem}
+.seed-anim .stem{width:3px;background:var(--vert2);margin:0 auto;animation:sprout 1.5s ease 1.5s both;border-radius:2px}
+.seed-anim .leaves{animation:leaf 1s ease 2.5s both;font-size:1.5rem}
+.cal-scroll{overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.cal-scroll>*{scroll-snap-align:start}
+.back-btn{position:absolute;top:1rem;left:1rem;background:none;border:none;font-size:1.5rem;cursor:pointer;min-height:44px;min-width:44px;display:flex;align-items:center;justify-content:center;gap:.35rem;-webkit-tap-highlight-color:transparent;color:var(--vert1);z-index:10}
+.back-btn .back-label{display:none;font-size:.9rem;font-weight:600}
+.nav-dots{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);display:flex;gap:.5rem;z-index:100}
+.nav-dots .dot{width:8px;height:8px;border-radius:50%;background:#ccc;transition:all .3s;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.nav-dots .dot.active{background:var(--vert2);transform:scale(1.3)}
+.quick-nav{position:fixed;bottom:2.5rem;right:1rem;display:flex;flex-direction:column;gap:.5rem;z-index:100}
+.quick-nav .qn-btn{width:44px;height:44px;border-radius:50%;background:#fff;border:2px solid var(--vert2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.1);-webkit-tap-highlight-color:transparent}
+.quick-nav .qn-btn .qn-label{display:none}
+.mini-cal{display:grid;grid-template-columns:repeat(12,1fr);gap:1px;margin:.5rem 0}
+.mini-cal .mc{width:100%;aspect-ratio:1;border-radius:2px;background:#f0f0f0;font-size:.5rem;display:flex;align-items:center;justify-content:center}
+.variety-card{background:#fff;border-radius:1rem;padding:1rem;margin-bottom:.75rem;border:1px solid #e8dcc8;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.variety-card .vc-header{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem}
+.variety-card .vc-name{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--vert1);font-weight:700}
+.variety-card .vc-desc{font-size:.85rem;opacity:.7;margin:.25rem 0}
+.variety-card .vc-price{font-weight:700;color:var(--accent);white-space:nowrap}
+.remove-btn{background:none;border:none;color:#ccc;font-size:1.2rem;cursor:pointer;min-height:44px;min-width:44px;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent}
+.remove-btn:active{color:#e55}
+.season-group{margin-bottom:1.5rem}
+.season-group h3{margin-bottom:.75rem;font-size:1.1rem}
+.stars{color:#d4a843;letter-spacing:2px;font-size:.8rem}
+.legend{display:flex;flex-wrap:wrap;gap:.75rem;margin:.75rem 0;font-size:.75rem}
+.legend span{display:flex;align-items:center;gap:.25rem}
+.legend span::before{content:'';width:12px;height:12px;border-radius:2px;display:inline-block}
+.legend .l-indoor::before{background:#a78bfa}
+.legend .l-outdoor::before{background:#34d399}
+.legend .l-transplant::before{background:#60a5fa}
+.legend .l-harvest::before{background:#f87171}
+.cal-table{width:100%;border-collapse:collapse;font-size:.7rem;min-width:700px;display:none}
+.cal-table th,.cal-table td{padding:4px 2px;text-align:center;border:1px solid #e8dcc8}
+.cal-table th{background:#f5f0e6;font-weight:600;position:sticky;top:0;z-index:1}
+.cal-table .current-month{background:rgba(74,124,46,.08)}
+.cal-table .var-name{text-align:left;white-space:nowrap;padding-left:6px;font-weight:600;min-width:140px;position:sticky;left:0;background:#fff;z-index:2}
+.cal-table .ci{width:100%;height:16px;border-radius:2px}
+/* Mobile calendar cards */
+.cal-cards{display:block}
+.cal-card{background:#fff;border-radius:1rem;padding:.75rem 1rem;margin-bottom:.75rem;border:1px solid #e8dcc8;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.cal-card .cc-name{font-family:'Playfair Display',serif;font-size:1rem;color:var(--vert1);font-weight:700}
+.cal-card .cc-now{font-size:.8rem;margin:.25rem 0;font-weight:600}
+.cal-card .cc-bar{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;margin-top:.5rem}
+.cal-card .cc-bar .cb{height:22px;border-radius:3px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:.55rem;color:#666;font-weight:600}
+.cal-card .cc-bar .cb.now{outline:2px solid var(--vert1);outline-offset:-1px}
+.summary-stat{display:flex;align-items:center;gap:.75rem;padding:.75rem 0;border-bottom:1px solid #f0e8d8}
+.summary-stat:last-child{border:none}
+.summary-stat .ss-icon{font-size:1.5rem;min-width:40px;text-align:center}
+.summary-stat .ss-value{font-size:1.2rem;font-weight:700;color:var(--vert1)}
+input[type="text"],input[type="email"]{width:100%;padding:.875rem;border:2px solid #e8dcc8;border-radius:.75rem;font-size:1rem;outline:none;transition:border-color .2s;background:#fff;font-family:inherit}
+input[type="text"]:focus,input[type="email"]:focus{border-color:var(--vert2)}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-weight:600;margin-bottom:.25rem;font-size:.9rem}
+.nav-dots .dot.disabled{opacity:.3;cursor:default;pointer-events:none}
+.toast{position:fixed;bottom:4rem;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:.75rem 1.25rem;border-radius:.75rem;font-size:.9rem;z-index:200;animation:fadeUp .4s ease;max-width:90vw;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.toast button{background:var(--vert2);color:#fff;border:none;padding:.35rem .75rem;border-radius:.5rem;margin-left:.5rem;cursor:pointer;font-weight:600;font-size:.85rem}
+.toast .toast-no{background:#666}
+.cal-tooltip{position:fixed;background:#333;color:#fff;padding:.5rem .75rem;border-radius:.5rem;font-size:.8rem;z-index:200;pointer-events:none;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.quick-adjust{display:flex;flex-wrap:wrap;gap:.5rem;margin:.75rem 0}
+.quick-adjust button{padding:.4rem .75rem;border-radius:2rem;border:1.5px solid var(--vert2);background:#fff;color:var(--vert1);font-size:.8rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .2s}
+.quick-adjust button:active{background:var(--vert2);color:#fff}
+.form-errors{color:#c44;font-size:.85rem;margin-bottom:1rem;padding:.75rem;background:#fef2f2;border-radius:.5rem;display:none}
+
+/* ===== RESPONSIVE DESKTOP ===== */
+@media(min-width:768px){
+  body{background:#e8e0d4}
+  .screen{max-width:700px;min-height:auto;background:#FDF8F0;border-radius:1.5rem;box-shadow:0 8px 40px rgba(0,0,0,.12);padding:2rem 2.5rem;margin:2rem auto}
+  /* Narrative screens stay narrow */
+  #s1>div,#s2>div,#s4>div,#s8>div{max-width:600px;margin:0 auto}
+  #s1 .seed-anim .seed{font-size:3rem}
+  #s1 .seed-anim .leaves{font-size:2rem}
+  #s2 h1{font-size:2.25rem}
+  /* Questions */
+  #s3-content{max-width:650px;margin:0 auto}
+  .opt{padding:1.5rem}
+  .opt .emoji{font-size:3rem}
+  /* Variety grid */
+  .variety-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  .variety-cards-grid .variety-card{margin-bottom:0}
+  /* Order form grid */
+  .order-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem 1rem}
+  .order-form-grid .full-width{grid-column:1/-1}
+  /* Nav dots pills */
+  .nav-dots{bottom:1.5rem}
+  .nav-dots .dot{width:10px;height:10px;border-radius:5px;transition:all .3s}
+  .nav-dots .dot.active{width:24px;border-radius:5px}
+  /* Quick nav with labels */
+  .quick-nav{bottom:3rem;right:2rem}
+  .quick-nav .qn-btn{width:auto;border-radius:.75rem;padding:.5rem 1rem;font-size:1rem}
+  .quick-nav .qn-btn .qn-label{display:inline;margin-left:.35rem;font-size:.8rem;font-weight:600}
+  /* Back button larger */
+  .back-btn{font-size:1.2rem;padding:.5rem 1rem;border-radius:.5rem}
+  .back-btn .back-label{display:inline;font-size:.9rem}
+  /* Sticky header full-width in card */
+  #basket-header{margin:0 -2.5rem;padding-left:2.5rem;padding-right:2.5rem;border-radius:1.5rem 1.5rem 0 0}
+  /* Calendar: show table, hide cards on tablet+ */
+  .cal-table{display:table;min-width:auto}
+  .cal-cards{display:none}
+}
+@media(min-width:1024px){
+  body{background:#f0ece4}
+  .screen{max-width:900px;padding:3rem;margin-top:2rem;margin-bottom:2rem;min-height:calc(100vh - 4rem)}
+  #basket-header{margin:0 -3rem;padding-left:3rem;padding-right:3rem}
+  .cal-table{min-width:auto;font-size:.85rem}
+  .cal-table th,.cal-table td{padding:6px 4px}
+  .cal-table .var-name{min-width:180px}
+  .cal-table .ci{height:22px}
+  .cal-scroll{overflow-x:visible}
+}
+@media(min-width:1200px){
+  .variety-cards-grid{grid-template-columns:1fr 1fr 1fr}
+  #s7-content{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start}
+}
+@media(min-width:1400px){
+  .screen{max-width:1100px}
+}
+@media(hover:hover){
+  .btn-primary:hover{background:var(--vert1);transform:translateY(-1px);box-shadow:0 4px 12px rgba(45,80,22,.2)}
+  .btn-secondary:hover{background:#f0f7eb;border-color:var(--vert1)}
+  .opt:hover:not(.selected){border-color:var(--vert2);box-shadow:0 2px 8px rgba(74,124,46,.1)}
+  .variety-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08);transform:translateY(-2px);transition:all .2s}
+  .remove-btn:hover{color:#e55}
+  .quick-adjust button:hover{background:var(--vert2);color:#fff}
+  .quick-nav .qn-btn:hover{background:#f0f7eb;transform:scale(1.05)}
+  .back-btn:hover{background:#f0f7eb}
+  .nav-dots .dot:hover:not(.disabled){background:var(--vert2);opacity:.6}
+}
+
+@media print{
+@page{size:A4 landscape;margin:1cm}
+.no-print{display:none!important}
+body{background:#fff!important;background-image:none!important}
+.screen{display:none!important}
+.nav-dots,.quick-nav,.back-btn{display:none!important}
+#print-calendar{display:block!important;break-inside:avoid}
+#print-list{display:block!important;page-break-before:always}
+.print-footer{display:block!important;text-align:center;font-family:'Playfair Display',Georgia,serif;margin-top:2rem;font-size:1rem;color:var(--vert1)}
+.print-legend{display:flex!important;gap:1.5rem;margin-bottom:.75rem;font-size:.85rem}
+.print-legend span{display:flex;align-items:center;gap:.35rem}
+.print-legend .pl-box{width:14px;height:14px;border-radius:2px;display:inline-block}
+}
+</style>
+</head>
+<body>
+<script>
+const VARIETIES = [
+// ========== TOMATES ==========
+{id:"TOM-noir-crimee",name:"Noire de Crimée",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Noire%20de%20Crim%C3%A9e",price:3.40,difficulty:2,desc:"Fruits charnus rouge-brun, goût exceptionnel",altitude_max:1000,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.5,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"3-5 kg/plant",tags:["ancien","gout_exceptionnel"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-green-zebra",name:"Green Zebra",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Green%20Zebra",price:3.40,difficulty:2,desc:"Fruits verts zébrés de jaune, saveur acidulée",altitude_max:1000,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.5,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"2-4 kg/plant",tags:["original","gout_exceptionnel"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-rose-berne",name:"Rose de Berne",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Rose%20de%20Berne",price:3.40,difficulty:2,desc:"Fruits roses juteux, peau fine, saveur douce",altitude_max:1100,cold_tolerance:"moyenne",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.5,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"3-5 kg/plant",tags:["ancien","gout_exceptionnel","productif"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-brandywine",name:"Brandywine",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Brandywine",price:3.40,difficulty:2,desc:"Gros fruits roses, considérée comme la meilleure tomate au monde",altitude_max:1000,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.5,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[8,9,10],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"3-4 kg/plant",tags:["ancien","gout_exceptionnel","tardif"],beginner_friendly:false,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-coeur-boeuf",name:"Coeur de Boeuf",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Coeur%20de%20Boeuf",price:3.40,difficulty:2,desc:"Gros fruits en forme de coeur, chair dense",altitude_max:1000,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.5,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"3-5 kg/plant",tags:["ancien","gout_exceptionnel","productif"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-marmande",name:"Marmande",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Marmande",price:3.40,difficulty:1,desc:"Variété classique française, fruits côtelés, très productive",altitude_max:1100,cold_tolerance:"moyenne",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.5,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"4-6 kg/plant",tags:["ancien","productif","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-ananas",name:"Ananas",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Ananas",price:3.40,difficulty:2,desc:"Très gros fruits jaune-orangé marbrés de rouge, sucrés",altitude_max:1000,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.5,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[8,9,10],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"3-5 kg/plant",tags:["ancien","gout_exceptionnel","original"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-black-cherry",name:"Black Cherry",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Black%20Cherry",price:3.40,difficulty:1,desc:"Tomate cerise pourpre foncé, saveur riche et sucrée",altitude_max:1100,cold_tolerance:"moyenne",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.4,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"2-3 kg/plant",tags:["productif","gout_exceptionnel","enfants"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-cerise-rouge",name:"Cerise Rouge",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Cerise%20Rouge",price:3.40,difficulty:1,desc:"Petits fruits rouges en grappes, très productive",altitude_max:1100,cold_tolerance:"moyenne",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.4,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"2-4 kg/plant",tags:["productif","debutant","enfants"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-cerise-jaune",name:"Cerise Jaune",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Cerise%20Jaune",price:3.40,difficulty:1,desc:"Petits fruits jaune doré, saveur douce et sucrée",altitude_max:1100,cold_tolerance:"moyenne",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.4,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"2-3 kg/plant",tags:["productif","enfants","original"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-san-marzano",name:"San Marzano",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=San%20Marzano",price:3.40,difficulty:2,desc:"Tomate allongée idéale pour sauces et conserves",altitude_max:1000,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.5,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"3-5 kg/plant",tags:["ancien","conserves","productif"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:false},
+{id:"TOM-roma",name:"Roma",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Roma",price:3.40,difficulty:1,desc:"Tomate oblongue charnue, peu de graines, parfaite pour coulis",altitude_max:1000,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.4,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"4-6 kg/plant",tags:["productif","conserves","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:false},
+{id:"TOM-stupice",name:"Stupice",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Stupice",price:3.40,difficulty:1,desc:"Variété tchèque très précoce, petits fruits rouges savoureux",altitude_max:1300,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.4,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[6,7,8,9],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"2-4 kg/plant",tags:["precoce","resistant","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-tigerella",name:"Tigerella",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Tigerella",price:3.40,difficulty:1,desc:"Fruits rouges striés de jaune, précoce et productive",altitude_max:1100,cold_tolerance:"moyenne",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.4,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"3-4 kg/plant",tags:["precoce","original","productif"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-cherokee-purple",name:"Cherokee Purple",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Cherokee%20Purple",price:3.40,difficulty:2,desc:"Fruits violet-brun, saveur complexe fumée",altitude_max:1000,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.5,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[8,9,10],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"3-4 kg/plant",tags:["ancien","gout_exceptionnel","rare"],beginner_friendly:false,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-paul-robeson",name:"Paul Robeson",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Paul%20Robeson",price:3.40,difficulty:2,desc:"Fruits brun-noir, saveur intense et sucrée, origine russe",altitude_max:1000,cold_tolerance:"moyenne",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.5,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"3-4 kg/plant",tags:["ancien","gout_exceptionnel","rare"],beginner_friendly:false,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-costoluto",name:"Costoluto Fiorentino",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Costoluto%20Fiorentino",price:3.40,difficulty:2,desc:"Fruits très côtelés, chair ferme, idéale en salade",altitude_max:1000,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.5,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"3-5 kg/plant",tags:["ancien","gout_exceptionnel"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:false},
+{id:"TOM-jaune-flamme",name:"Jaune Flamme",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Jaune%20Flamme",price:3.40,difficulty:1,desc:"Petits fruits orangés en grappes, saveur fruitée",altitude_max:1100,cold_tolerance:"moyenne",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.4,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"3-4 kg/plant",tags:["productif","precoce","gout_exceptionnel"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-prune-noire",name:"Prune Noire",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Prune%20Noire",price:3.40,difficulty:2,desc:"Fruits allongés brun foncé, chair dense et sucrée",altitude_max:1000,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.4,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"2-4 kg/plant",tags:["ancien","gout_exceptionnel","conserves"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-voyage",name:"Voyage",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Voyage",price:3.40,difficulty:1,desc:"Fruits à lobes détachables, pratique en pique-nique",altitude_max:1000,cold_tolerance:"moyenne",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.4,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"2-3 kg/plant",tags:["original","enfants"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-glacier",name:"Glacier",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Glacier",price:3.40,difficulty:1,desc:"Très précoce, résistante au froid, petits fruits rouges",altitude_max:1600,cold_tolerance:"forte",heat_preference:"faible",sun_need:"plein_soleil",water_need:"modere",space_m2:0.4,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[6,7,8,9],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"2-3 kg/plant",tags:["precoce","resistant","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-sub-arctic",name:"Sub-Arctic Plenty",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Sub-Arctic%20Plenty",price:3.40,difficulty:1,desc:"Ultra-précoce, adaptée aux climats froids et courts",altitude_max:1800,cold_tolerance:"forte",heat_preference:"faible",sun_need:"plein_soleil",water_need:"modere",space_m2:0.3,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[6,7,8],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"1-2 kg/plant",tags:["precoce","resistant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-siberian",name:"Siberian",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Siberian",price:3.40,difficulty:1,desc:"Variété compacte très résistante au froid, fruits moyens",altitude_max:1800,cold_tolerance:"forte",heat_preference:"faible",sun_need:"plein_soleil",water_need:"modere",space_m2:0.3,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[6,7,8,9],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"2-3 kg/plant",tags:["precoce","resistant","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-moneymaker",name:"Moneymaker",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Moneymaker",price:3.40,difficulty:1,desc:"Variété classique fiable, fruits ronds rouges réguliers",altitude_max:1100,cold_tolerance:"moyenne",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.4,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"4-6 kg/plant",tags:["productif","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-principe-borghese",name:"Principe Borghese",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Principe%20Borghese",price:3.40,difficulty:1,desc:"Petits fruits ovales, idéale pour séchage au soleil",altitude_max:1000,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"faible",space_m2:0.4,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"2-4 kg/plant",tags:["conserves","secheresse","productif"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:false},
+{id:"TOM-matts-wild",name:"Matt's Wild Cherry",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Matt%27s%20Wild%20Cherry",price:3.40,difficulty:1,desc:"Minuscules fruits très sucrés, croissance vigoureuse",altitude_max:1100,cold_tolerance:"moyenne",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.5,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"2-3 kg/plant",tags:["productif","resistant","enfants"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-reine-ste-marthe",name:"Reine de Sainte Marthe",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Reine%20de%20Sainte%20Marthe",price:3.40,difficulty:2,desc:"Gros fruits rouges aplatis, chair dense et parfumée",altitude_max:1000,cold_tolerance:"moyenne",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.5,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"3-5 kg/plant",tags:["ancien","gout_exceptionnel","rare"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-petit-moineau",name:"Petit Moineau",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Petit%20Moineau",price:3.40,difficulty:1,desc:"Toute petite tomate cerise rouge, très productive en grappes",altitude_max:1100,cold_tolerance:"moyenne",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.3,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"2-3 kg/plant",tags:["productif","enfants","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-yellow-pear",name:"Yellow Pear",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Yellow%20Pear",price:3.40,difficulty:1,desc:"Petits fruits jaunes en forme de poire, saveur douce",altitude_max:1100,cold_tolerance:"moyenne",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.4,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"2-3 kg/plant",tags:["ancien","original","enfants"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"TOM-thessaloniki",name:"Thessaloniki",latin:"Solanum lycopersicum",category:"legumes-fruits",subcategory:"tomates",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Thessaloniki",price:3.40,difficulty:1,desc:"Variété grecque productive, fruits ronds rouges, résistante à la chaleur",altitude_max:600,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.4,sowing_indoor:[2,3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["basilic","carotte","persil","oeillet-d-inde","poireau","celeri","laitue"],avoid_near:["fenouil","chou","pomme-de-terre","aubergine","betterave"],yield_desc:"4-6 kg/plant",tags:["productif","secheresse","resistant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+// ========== POIVRONS / PIMENTS ==========
+{id:"POI-corne-taureau",name:"Corne de Taureau",latin:"Capsicum annuum",category:"legumes-fruits",subcategory:"poivrons",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Corne%20de%20Taureau",price:3.40,difficulty:2,desc:"Long poivron rouge pointu, chair épaisse et douce",altitude_max:900,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.4,sowing_indoor:[2,3,4],sowing_outdoor:[],transplant:[5,6],harvest:[7,8,9,10],companions:["tomate","basilic","carotte","aubergine"],avoid_near:["fenouil","chou"],yield_desc:"1-2 kg/plant",tags:["ancien","productif"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"POI-doux-landes",name:"Doux des Landes",latin:"Capsicum annuum",category:"legumes-fruits",subcategory:"poivrons",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Doux%20des%20Landes",price:3.40,difficulty:2,desc:"Poivron allongé vert devenant rouge, très doux",altitude_max:900,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.4,sowing_indoor:[2,3,4],sowing_outdoor:[],transplant:[5,6],harvest:[7,8,9,10],companions:["tomate","basilic","carotte","aubergine"],avoid_near:["fenouil","chou"],yield_desc:"1-2 kg/plant",tags:["ancien","gout_exceptionnel"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"POI-california-wonder",name:"California Wonder",latin:"Capsicum annuum",category:"legumes-fruits",subcategory:"poivrons",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=California%20Wonder",price:3.40,difficulty:2,desc:"Poivron carré classique, vert puis rouge, chair épaisse",altitude_max:900,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.4,sowing_indoor:[2,3,4],sowing_outdoor:[],transplant:[5,6],harvest:[7,8,9,10],companions:["tomate","basilic","carotte","aubergine"],avoid_near:["fenouil","chou"],yield_desc:"1-2 kg/plant",tags:["productif","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"POI-marconi",name:"Marconi",latin:"Capsicum annuum",category:"legumes-fruits",subcategory:"poivrons",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Marconi",price:3.40,difficulty:2,desc:"Long poivron italien, idéal grillé, saveur sucrée",altitude_max:900,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.4,sowing_indoor:[2,3,4],sowing_outdoor:[],transplant:[5,6],harvest:[7,8,9,10],companions:["tomate","basilic","carotte","aubergine"],avoid_near:["fenouil","chou"],yield_desc:"1-2 kg/plant",tags:["gout_exceptionnel","productif"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"PIM-padron",name:"Padron",latin:"Capsicum annuum",category:"legumes-fruits",subcategory:"piments",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Padron",price:3.40,difficulty:2,desc:"Petit piment espagnol doux, parfois piquant, idéal en tapas",altitude_max:600,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.3,sowing_indoor:[2,3,4],sowing_outdoor:[],transplant:[5,6],harvest:[7,8,9,10],companions:["tomate","basilic","carotte","aubergine"],avoid_near:["fenouil","chou"],yield_desc:"0.5-1 kg/plant",tags:["original","gout_exceptionnel"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:false},
+{id:"PIM-espelette",name:"Espelette",latin:"Capsicum annuum",category:"legumes-fruits",subcategory:"piments",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Espelette",price:3.40,difficulty:2,desc:"Piment basque doux à modérément piquant, pour séchage",altitude_max:600,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.4,sowing_indoor:[2,3,4],sowing_outdoor:[],transplant:[5,6],harvest:[8,9,10],companions:["tomate","basilic","carotte","aubergine"],avoid_near:["fenouil","chou"],yield_desc:"0.5-1 kg/plant",tags:["ancien","conserves"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:false},
+{id:"PIM-cayenne",name:"Cayenne",latin:"Capsicum annuum",category:"legumes-fruits",subcategory:"piments",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Cayenne",price:3.40,difficulty:2,desc:"Piment long et fin très piquant, productif",altitude_max:500,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.3,sowing_indoor:[2,3,4],sowing_outdoor:[],transplant:[5,6],harvest:[7,8,9,10],companions:["tomate","basilic","carotte","aubergine"],avoid_near:["fenouil","chou"],yield_desc:"0.5-1 kg/plant",tags:["productif","conserves"],beginner_friendly:true,medicinal:true,pollinator_friendly:false,kids_friendly:false},
+{id:"PIM-habanero",name:"Habanero",latin:"Capsicum chinense",category:"legumes-fruits",subcategory:"piments",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Habanero",price:3.95,difficulty:3,desc:"Piment très fort, arôme fruité intense",altitude_max:400,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.4,sowing_indoor:[1,2,3],sowing_outdoor:[],transplant:[5,6],harvest:[8,9,10],companions:["tomate","basilic","carotte","aubergine"],avoid_near:["fenouil","chou"],yield_desc:"0.3-0.5 kg/plant",tags:["original","rare"],beginner_friendly:false,medicinal:true,pollinator_friendly:false,kids_friendly:false},
+{id:"PIM-aji-amarillo",name:"Aji Amarillo",latin:"Capsicum baccatum",category:"legumes-fruits",subcategory:"piments",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Aji%20Amarillo",price:3.95,difficulty:3,desc:"Piment péruvien orange, piquant et fruité",altitude_max:500,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.4,sowing_indoor:[1,2,3],sowing_outdoor:[],transplant:[5,6],harvest:[8,9,10],companions:["tomate","basilic","carotte","aubergine"],avoid_near:["fenouil","chou"],yield_desc:"0.3-0.5 kg/plant",tags:["original","rare"],beginner_friendly:false,medicinal:false,pollinator_friendly:false,kids_friendly:false},
+{id:"PIM-jalapeno",name:"Jalapeño",latin:"Capsicum annuum",category:"legumes-fruits",subcategory:"piments",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Jalape%C3%B1o",price:3.40,difficulty:2,desc:"Piment mexicain charnu, piquant modéré, très populaire",altitude_max:600,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.3,sowing_indoor:[2,3,4],sowing_outdoor:[],transplant:[5,6],harvest:[7,8,9,10],companions:["tomate","basilic","carotte","aubergine"],avoid_near:["fenouil","chou"],yield_desc:"0.5-1 kg/plant",tags:["productif","conserves"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:false},
+// ========== AUBERGINES ==========
+{id:"AUB-longue-violette",name:"Longue Violette",latin:"Solanum melongena",category:"legumes-fruits",subcategory:"aubergines",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Longue%20Violette",price:3.40,difficulty:2,desc:"Aubergine classique allongée violet foncé",altitude_max:600,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.5,sowing_indoor:[2,3,4],sowing_outdoor:[],transplant:[5,6],harvest:[7,8,9,10],companions:["haricot","basilic","thym","poivron"],avoid_near:["fenouil","pomme-de-terre"],yield_desc:"2-4 kg/plant",tags:["ancien","productif"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:false},
+{id:"AUB-black-beauty",name:"Black Beauty",latin:"Solanum melongena",category:"legumes-fruits",subcategory:"aubergines",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Black%20Beauty%20aubergine",price:3.40,difficulty:2,desc:"Gros fruits ronds violet-noir, chair ferme",altitude_max:600,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.5,sowing_indoor:[2,3,4],sowing_outdoor:[],transplant:[5,6],harvest:[7,8,9,10],companions:["haricot","basilic","thym","poivron"],avoid_near:["fenouil","pomme-de-terre"],yield_desc:"2-4 kg/plant",tags:["productif","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:false},
+{id:"AUB-listada-gandia",name:"Listada de Gandia",latin:"Solanum melongena",category:"legumes-fruits",subcategory:"aubergines",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Listada%20de%20Gandia",price:3.40,difficulty:2,desc:"Fruits striés violet et blanc, chair douce sans amertume",altitude_max:500,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.5,sowing_indoor:[2,3,4],sowing_outdoor:[],transplant:[5,6],harvest:[7,8,9,10],companions:["haricot","basilic","thym","poivron"],avoid_near:["fenouil","pomme-de-terre"],yield_desc:"2-3 kg/plant",tags:["original","gout_exceptionnel"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:false},
+{id:"AUB-rosa-bianca",name:"Rosa Bianca",latin:"Solanum melongena",category:"legumes-fruits",subcategory:"aubergines",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Rosa%20Bianca",price:3.95,difficulty:2,desc:"Fruits ronds rose-violet, chair crémeuse, saveur délicate",altitude_max:500,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.5,sowing_indoor:[2,3,4],sowing_outdoor:[],transplant:[5,6],harvest:[7,8,9,10],companions:["haricot","basilic","thym","poivron"],avoid_near:["fenouil","pomme-de-terre"],yield_desc:"2-3 kg/plant",tags:["gout_exceptionnel","rare"],beginner_friendly:false,medicinal:false,pollinator_friendly:false,kids_friendly:false},
+{id:"AUB-thai-long-green",name:"Thai Long Green",latin:"Solanum melongena",category:"legumes-fruits",subcategory:"aubergines",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Thai%20Long%20Green",price:3.95,difficulty:3,desc:"Aubergine asiatique longue et fine, verte, chair tendre",altitude_max:400,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"important",space_m2:0.5,sowing_indoor:[2,3],sowing_outdoor:[],transplant:[5,6],harvest:[7,8,9,10],companions:["haricot","basilic","thym","poivron"],avoid_near:["fenouil","pomme-de-terre"],yield_desc:"1-3 kg/plant",tags:["original","rare"],beginner_friendly:false,medicinal:false,pollinator_friendly:false,kids_friendly:false},
+// ========== COURGES / COURGETTES ==========
+{id:"COU-butternut",name:"Butternut",latin:"Cucurbita moschata",category:"legumes-fruits",subcategory:"courges",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Butternut",price:3.40,difficulty:1,desc:"Courge en forme de poire, chair orangée douce et fondante",altitude_max:1000,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:1.5,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[9,10],companions:["haricot","mais","capucine","bourrache"],avoid_near:["pomme-de-terre","fenouil"],yield_desc:"3-5 fruits/plant",tags:["productif","debutant","conserves"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"COU-musquee-provence",name:"Musquée de Provence",latin:"Cucurbita moschata",category:"legumes-fruits",subcategory:"courges",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Musqu%C3%A9e%20de%20Provence",price:3.40,difficulty:2,desc:"Grosse courge aplatie côtelée, chair orangée musquée",altitude_max:900,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"important",space_m2:2.0,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[9,10],companions:["haricot","mais","capucine","bourrache"],avoid_near:["pomme-de-terre","fenouil"],yield_desc:"2-3 fruits/plant",tags:["ancien","gout_exceptionnel","conserves"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"COU-spaghetti",name:"Courge Spaghetti",latin:"Cucurbita pepo",category:"legumes-fruits",subcategory:"courges",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Courge%20Spaghetti",price:3.40,difficulty:1,desc:"Chair se défaisant en filaments comme des spaghettis",altitude_max:1000,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:1.5,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[9,10],companions:["haricot","mais","capucine","bourrache"],avoid_near:["pomme-de-terre","fenouil"],yield_desc:"3-5 fruits/plant",tags:["original","enfants","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"COU-patisson",name:"Pâtisson",latin:"Cucurbita pepo",category:"legumes-fruits",subcategory:"courges",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=P%C3%A2tisson",price:3.40,difficulty:1,desc:"Courge en forme de soucoupe, chair fine et délicate",altitude_max:1000,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:1.0,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["haricot","mais","capucine","bourrache"],avoid_near:["pomme-de-terre","fenouil"],yield_desc:"4-8 fruits/plant",tags:["original","productif"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"COU-potimarron",name:"Potimarron",latin:"Cucurbita maxima",category:"legumes-fruits",subcategory:"courges",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Potimarron",price:3.40,difficulty:1,desc:"Courge au goût de châtaigne, peau comestible",altitude_max:1000,cold_tolerance:"moyenne",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:1.5,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[9,10],companions:["haricot","mais","capucine","bourrache"],avoid_near:["pomme-de-terre","fenouil"],yield_desc:"3-5 fruits/plant",tags:["ancien","gout_exceptionnel","debutant","conserves"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"CRG-longue-nice",name:"Courgette Longue de Nice",latin:"Cucurbita pepo",category:"legumes-fruits",subcategory:"courgettes",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Longue%20de%20Nice",price:3.40,difficulty:1,desc:"Courgette allongée vert clair, très productive",altitude_max:1000,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:1.0,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[6,7,8,9,10],companions:["haricot","mais","capucine","bourrache"],avoid_near:["pomme-de-terre","fenouil"],yield_desc:"5-10 fruits/plant",tags:["ancien","productif","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"CRG-black-beauty",name:"Courgette Black Beauty",latin:"Cucurbita pepo",category:"legumes-fruits",subcategory:"courgettes",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Black%20Beauty%20courgette",price:3.40,difficulty:1,desc:"Courgette vert foncé classique, très productive",altitude_max:1000,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:1.0,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[6,7,8,9,10],companions:["haricot","mais","capucine","bourrache"],avoid_near:["pomme-de-terre","fenouil"],yield_desc:"5-10 fruits/plant",tags:["productif","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"CRG-ronde-nice",name:"Ronde de Nice",latin:"Cucurbita pepo",category:"legumes-fruits",subcategory:"courgettes",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Ronde%20de%20Nice",price:3.40,difficulty:1,desc:"Courgette ronde vert clair, idéale farcie",altitude_max:900,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:1.0,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[6,7,8,9,10],companions:["haricot","mais","capucine","bourrache"],avoid_near:["pomme-de-terre","fenouil"],yield_desc:"5-8 fruits/plant",tags:["ancien","original","productif"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"COU-jack-be-little",name:"Jack Be Little",latin:"Cucurbita pepo",category:"legumes-fruits",subcategory:"courges",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Jack%20Be%20Little",price:3.40,difficulty:1,desc:"Mini courge décorative orange, comestible et adorable",altitude_max:1000,cold_tolerance:"moyenne",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:1.0,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[9,10],companions:["haricot","mais","capucine","bourrache"],avoid_near:["pomme-de-terre","fenouil"],yield_desc:"8-15 fruits/plant",tags:["original","enfants","productif"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"COU-blue-hubbard",name:"Blue Hubbard",latin:"Cucurbita maxima",category:"legumes-fruits",subcategory:"courges",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Blue%20Hubbard",price:3.40,difficulty:2,desc:"Grosse courge bleu-gris, chair orangée sucrée, longue conservation",altitude_max:1000,cold_tolerance:"moyenne",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:2.0,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[9,10],companions:["haricot","mais","capucine","bourrache"],avoid_near:["pomme-de-terre","fenouil"],yield_desc:"2-3 fruits/plant",tags:["ancien","conserves","rare"],beginner_friendly:false,medicinal:false,pollinator_friendly:true,kids_friendly:false},
+// ========== CONCOMBRES ==========
+{id:"CON-marketmore",name:"Marketmore",latin:"Cucumis sativus",category:"legumes-fruits",subcategory:"concombres",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Marketmore",price:3.40,difficulty:1,desc:"Concombre vert foncé croquant, résistant aux maladies",altitude_max:900,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"important",space_m2:0.5,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9],companions:["aneth","haricot","laitue","oignon","pois"],avoid_near:["tomate","pomme-de-terre","sauge"],yield_desc:"10-15 fruits/plant",tags:["productif","resistant","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"CON-lemon",name:"Concombre Lemon",latin:"Cucumis sativus",category:"legumes-fruits",subcategory:"concombres",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Concombre%20Lemon",price:3.40,difficulty:1,desc:"Fruit rond jaune citron, croquant et doux",altitude_max:900,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"important",space_m2:0.5,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9],companions:["aneth","haricot","laitue","oignon","pois"],avoid_near:["tomate","pomme-de-terre","sauge"],yield_desc:"8-12 fruits/plant",tags:["original","ancien","enfants"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"CON-long-anglais",name:"Long Anglais",latin:"Cucumis sativus",category:"legumes-fruits",subcategory:"concombres",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Long%20Anglais",price:3.40,difficulty:2,desc:"Concombre long lisse, sans amertume",altitude_max:900,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"important",space_m2:0.5,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9],companions:["aneth","haricot","laitue","oignon","pois"],avoid_near:["tomate","pomme-de-terre","sauge"],yield_desc:"6-10 fruits/plant",tags:["productif"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"CON-cornichon-paris",name:"Cornichon Vert Petit de Paris",latin:"Cucumis sativus",category:"legumes-fruits",subcategory:"concombres",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Cornichon%20Vert%20Petit%20de%20Paris",price:3.40,difficulty:2,desc:"Petit cornichon croquant, idéal en conserves au vinaigre",altitude_max:900,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"important",space_m2:0.5,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9],companions:["aneth","haricot","laitue","oignon","pois"],avoid_near:["tomate","pomme-de-terre","sauge"],yield_desc:"20-30 fruits/plant",tags:["ancien","conserves","productif"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:false},
+{id:"CON-tanja",name:"Tanja",latin:"Cucumis sativus",category:"legumes-fruits",subcategory:"concombres",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Tanja",price:3.40,difficulty:1,desc:"Concombre vert mi-long, productif et résistant",altitude_max:900,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"important",space_m2:0.5,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9],companions:["aneth","haricot","laitue","oignon","pois"],avoid_near:["tomate","pomme-de-terre","sauge"],yield_desc:"10-15 fruits/plant",tags:["productif","resistant","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+// ========== MELONS ==========
+{id:"MEL-charentais",name:"Charentais",latin:"Cucumis melo",category:"legumes-fruits",subcategory:"melons",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Charentais",price:3.40,difficulty:3,desc:"Melon français par excellence, chair orangée très parfumée",altitude_max:500,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:1.0,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9],companions:["basilic","tournesol"],avoid_near:["concombre"],yield_desc:"3-5 fruits/plant",tags:["ancien","gout_exceptionnel"],beginner_friendly:false,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"MEL-petit-gris-rennes",name:"Petit Gris de Rennes",latin:"Cucumis melo",category:"legumes-fruits",subcategory:"melons",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Petit%20Gris%20de%20Rennes",price:3.40,difficulty:2,desc:"Petit melon adapté au climat breton, très parfumé",altitude_max:700,cold_tolerance:"moyenne",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:1.0,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9],companions:["basilic","tournesol"],avoid_near:["concombre"],yield_desc:"4-6 fruits/plant",tags:["ancien","resistant","precoce"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"MEL-prescott",name:"Prescott Fond Blanc",latin:"Cucumis melo",category:"legumes-fruits",subcategory:"melons",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Prescott%20Fond%20Blanc",price:3.95,difficulty:3,desc:"Ancien melon côtelé, chair verte sucrée et parfumée",altitude_max:500,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:1.5,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[8,9],companions:["basilic","tournesol"],avoid_near:["concombre"],yield_desc:"2-3 fruits/plant",tags:["ancien","rare","gout_exceptionnel"],beginner_friendly:false,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+// ========== HARICOTS ==========
+{id:"HAR-contender",name:"Contender",latin:"Phaseolus vulgaris",category:"legumes-fruits",subcategory:"haricots",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Contender",price:3.40,difficulty:1,desc:"Haricot nain vert sans fil, précoce et productif",altitude_max:1300,cold_tolerance:"moyenne",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.1,sowing_indoor:[],sowing_outdoor:[4,5,6,7],transplant:[],harvest:[6,7,8,9,10],companions:["mais","courge","carotte","chou","celeri"],avoid_near:["ail","oignon","echalote","fenouil"],yield_desc:"1-2 kg/m²",tags:["productif","debutant","precoce"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"HAR-la-victoire",name:"La Victoire",latin:"Phaseolus vulgaris",category:"legumes-fruits",subcategory:"haricots",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=La%20Victoire",price:3.40,difficulty:1,desc:"Haricot nain vert extra-fin, très tendre",altitude_max:1150,cold_tolerance:"moyenne",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.1,sowing_indoor:[],sowing_outdoor:[5,6,7],transplant:[],harvest:[7,8,9,10],companions:["mais","courge","carotte","chou","celeri"],avoid_near:["ail","oignon","echalote","fenouil"],yield_desc:"1-2 kg/m²",tags:["ancien","productif","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"HAR-coco-nain-blanc",name:"Coco Nain Blanc",latin:"Phaseolus vulgaris",category:"legumes-fruits",subcategory:"haricots",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Coco%20Nain%20Blanc",price:3.40,difficulty:1,desc:"Haricot à écosser nain, grains blancs ronds",altitude_max:1150,cold_tolerance:"moyenne",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.1,sowing_indoor:[],sowing_outdoor:[5,6,7],transplant:[],harvest:[8,9,10],companions:["mais","courge","carotte","chou","celeri"],avoid_near:["ail","oignon","echalote","fenouil"],yield_desc:"0.5-1 kg/m²",tags:["ancien","conserves"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"HAR-reine-nectars",name:"Reine des Nectars",latin:"Phaseolus vulgaris",category:"legumes-fruits",subcategory:"haricots",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Reine%20des%20Nectars",price:3.40,difficulty:1,desc:"Haricot nain mangetout jaune, saveur délicate",altitude_max:1150,cold_tolerance:"moyenne",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.1,sowing_indoor:[],sowing_outdoor:[5,6,7],transplant:[],harvest:[7,8,9,10],companions:["mais","courge","carotte","chou","celeri"],avoid_near:["ail","oignon","echalote","fenouil"],yield_desc:"1-2 kg/m²",tags:["ancien","gout_exceptionnel"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"HAR-beurre-rocquencourt",name:"Beurre de Rocquencourt",latin:"Phaseolus vulgaris",category:"legumes-fruits",subcategory:"haricots",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Beurre%20de%20Rocquencourt",price:3.40,difficulty:1,desc:"Haricot beurre nain jaune, tendre et savoureux",altitude_max:1150,cold_tolerance:"moyenne",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.1,sowing_indoor:[],sowing_outdoor:[5,6,7],transplant:[],harvest:[7,8,9,10],companions:["mais","courge","carotte","chou","celeri"],avoid_near:["ail","oignon","echalote","fenouil"],yield_desc:"1-2 kg/m²",tags:["ancien","gout_exceptionnel","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"HAR-blue-lake",name:"Blue Lake",latin:"Phaseolus vulgaris",category:"legumes-fruits",subcategory:"haricots",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Blue%20Lake",price:3.40,difficulty:2,desc:"Haricot à rames vert, gousses rondes sans fil, très productif",altitude_max:1150,cold_tolerance:"moyenne",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.2,sowing_indoor:[],sowing_outdoor:[5,6],transplant:[],harvest:[7,8,9,10],companions:["mais","courge","carotte","chou","celeri"],avoid_near:["ail","oignon","echalote","fenouil"],yield_desc:"2-4 kg/plant",tags:["productif","conserves"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"HAR-lazy-housewife",name:"Lazy Housewife",latin:"Phaseolus vulgaris",category:"legumes-fruits",subcategory:"haricots",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Lazy%20Housewife",price:3.40,difficulty:2,desc:"Haricot à rames sans fil, mangetout et à écosser",altitude_max:1150,cold_tolerance:"moyenne",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.2,sowing_indoor:[],sowing_outdoor:[5,6],transplant:[],harvest:[7,8,9,10],companions:["mais","courge","carotte","chou","celeri"],avoid_near:["ail","oignon","echalote","fenouil"],yield_desc:"2-3 kg/plant",tags:["ancien","productif"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"HAR-coco-prague",name:"Coco de Prague",latin:"Phaseolus vulgaris",category:"legumes-fruits",subcategory:"haricots",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Coco%20de%20Prague",price:3.40,difficulty:1,desc:"Haricot nain à écosser, grains bicolores, précoce",altitude_max:1150,cold_tolerance:"moyenne",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.1,sowing_indoor:[],sowing_outdoor:[5,6,7],transplant:[],harvest:[8,9,10],companions:["mais","courge","carotte","chou","celeri"],avoid_near:["ail","oignon","echalote","fenouil"],yield_desc:"0.5-1 kg/m²",tags:["ancien","precoce"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"HAR-flageolet-chevrier",name:"Flageolet Chevrier",latin:"Phaseolus vulgaris",category:"legumes-fruits",subcategory:"haricots",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Flageolet%20Chevrier",price:3.40,difficulty:2,desc:"Flageolet vert pâle, fin et fondant, classique français",altitude_max:1000,cold_tolerance:"moyenne",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.1,sowing_indoor:[],sowing_outdoor:[5,6],transplant:[],harvest:[8,9,10],companions:["mais","courge","carotte","chou","celeri"],avoid_near:["ail","oignon","echalote","fenouil"],yield_desc:"0.5-1 kg/m²",tags:["ancien","gout_exceptionnel"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:false},
+{id:"HAR-soissons",name:"Soissons",latin:"Phaseolus vulgaris",category:"legumes-fruits",subcategory:"haricots",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Soissons",price:3.40,difficulty:2,desc:"Gros haricot blanc à rames pour cassoulet et ragoûts",altitude_max:1000,cold_tolerance:"moyenne",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.2,sowing_indoor:[],sowing_outdoor:[5,6],transplant:[],harvest:[9,10],companions:["mais","courge","carotte","chou","celeri"],avoid_near:["ail","oignon","echalote","fenouil"],yield_desc:"0.5-1 kg/plant",tags:["ancien","conserves","tardif"],beginner_friendly:false,medicinal:false,pollinator_friendly:true,kids_friendly:false},
+// ========== LAITUES / SALADES ==========
+{id:"LAI-reine-mai",name:"Reine de Mai",latin:"Lactuca sativa",category:"legumes-feuilles",subcategory:"laitues",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Reine%20de%20Mai",price:3.40,difficulty:1,desc:"Laitue pommée de printemps, feuilles tendres teintées de rouge",altitude_max:1700,cold_tolerance:"forte",heat_preference:"faible",sun_need:"mi_ombre",water_need:"modere",space_m2:0.1,sowing_indoor:[2,3],sowing_outdoor:[3,4,5],transplant:[3,4,5],harvest:[4,5,6,7],companions:["carotte","radis","fraisier","oignon","ciboulette"],avoid_near:["persil","tournesol"],yield_desc:"1 pomme/plant",tags:["ancien","precoce","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"LAI-merveille-4-saisons",name:"Merveille des 4 Saisons",latin:"Lactuca sativa",category:"legumes-feuilles",subcategory:"laitues",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Merveille%20des%204%20Saisons",price:3.40,difficulty:1,desc:"Laitue pommée rouge et verte, résistante toute l'année",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"mi_ombre",water_need:"modere",space_m2:0.1,sowing_indoor:[2,3],sowing_outdoor:[3,4,5,6,7,8],transplant:[3,4,5,6,7,8],harvest:[5,6,7,8,9,10],companions:["carotte","radis","fraisier","oignon","ciboulette"],avoid_near:["persil","tournesol"],yield_desc:"1 pomme/plant",tags:["ancien","resistant","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"LAI-batavia-rouge",name:"Batavia Rouge Grenobloise",latin:"Lactuca sativa",category:"legumes-feuilles",subcategory:"laitues",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Batavia%20Rouge%20Grenobloise",price:3.40,difficulty:1,desc:"Batavia croquante, feuilles bordées de rouge",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"mi_ombre",water_need:"modere",space_m2:0.1,sowing_indoor:[2,3],sowing_outdoor:[3,4,5,6,7],transplant:[3,4,5,6,7],harvest:[5,6,7,8,9],companions:["carotte","radis","fraisier","oignon","ciboulette"],avoid_near:["persil","tournesol"],yield_desc:"1 pomme/plant",tags:["ancien","resistant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"LAI-feuille-chene-rouge",name:"Feuille de Chêne Rouge",latin:"Lactuca sativa",category:"legumes-feuilles",subcategory:"laitues",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Feuille%20de%20Ch%C3%AAne%20Rouge",price:3.40,difficulty:1,desc:"Feuilles découpées rouge-brun, tendres et douces",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"mi_ombre",water_need:"modere",space_m2:0.1,sowing_indoor:[2,3],sowing_outdoor:[3,4,5,6,7,8],transplant:[3,4,5,6,7,8],harvest:[5,6,7,8,9,10],companions:["carotte","radis","fraisier","oignon","ciboulette"],avoid_near:["persil","tournesol"],yield_desc:"récolte continue",tags:["debutant","productif"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"LAI-lollo-rossa",name:"Lollo Rossa",latin:"Lactuca sativa",category:"legumes-feuilles",subcategory:"laitues",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Lollo%20Rossa",price:3.40,difficulty:1,desc:"Laitue frisée rouge, feuilles crispées décoratives",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"mi_ombre",water_need:"modere",space_m2:0.1,sowing_indoor:[2,3],sowing_outdoor:[3,4,5,6,7,8],transplant:[3,4,5,6,7,8],harvest:[5,6,7,8,9,10],companions:["carotte","radis","fraisier","oignon","ciboulette"],avoid_near:["persil","tournesol"],yield_desc:"récolte continue",tags:["original","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"LAI-romaine",name:"Romaine",latin:"Lactuca sativa",category:"legumes-feuilles",subcategory:"laitues",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Romaine",price:3.40,difficulty:1,desc:"Grande laitue allongée croquante, classique pour Caesar salad",altitude_max:1400,cold_tolerance:"moyenne",heat_preference:"moyenne",sun_need:"mi_ombre",water_need:"modere",space_m2:0.1,sowing_indoor:[2,3],sowing_outdoor:[3,4,5,6,7],transplant:[3,4,5,6,7],harvest:[5,6,7,8,9],companions:["carotte","radis","fraisier","oignon","ciboulette"],avoid_near:["persil","tournesol"],yield_desc:"1 pomme/plant",tags:["ancien","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"LAI-sucrine",name:"Sucrine",latin:"Lactuca sativa",category:"legumes-feuilles",subcategory:"laitues",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Sucrine",price:3.40,difficulty:1,desc:"Petite romaine compacte, feuilles épaisses croquantes",altitude_max:1400,cold_tolerance:"moyenne",heat_preference:"forte",sun_need:"mi_ombre",water_need:"modere",space_m2:0.08,sowing_indoor:[2,3],sowing_outdoor:[3,4,5,6,7],transplant:[3,4,5,6,7],harvest:[5,6,7,8,9],companions:["carotte","radis","fraisier","oignon","ciboulette"],avoid_near:["persil","tournesol"],yield_desc:"1 pomme/plant",tags:["resistant","secheresse","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"LAI-cressonnette",name:"Cressonnette du Maroc",latin:"Lactuca sativa",category:"legumes-feuilles",subcategory:"laitues",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Cressonnette%20du%20Maroc",price:3.40,difficulty:1,desc:"Laitue à feuilles découpées, saveur poivrée type cresson",altitude_max:1400,cold_tolerance:"moyenne",heat_preference:"moyenne",sun_need:"mi_ombre",water_need:"modere",space_m2:0.1,sowing_indoor:[2,3],sowing_outdoor:[3,4,5,6,7],transplant:[3,4,5,6,7],harvest:[5,6,7,8,9],companions:["carotte","radis","fraisier","oignon","ciboulette"],avoid_near:["persil","tournesol"],yield_desc:"récolte continue",tags:["ancien","original","gout_exceptionnel"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:false},
+{id:"LAI-langue-canari",name:"Langue de Canari",latin:"Lactuca sativa",category:"legumes-feuilles",subcategory:"laitues",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Langue%20de%20Canari",price:3.40,difficulty:1,desc:"Laitue romaine blonde allongée, feuilles gaufrées",altitude_max:1400,cold_tolerance:"moyenne",heat_preference:"moyenne",sun_need:"mi_ombre",water_need:"modere",space_m2:0.1,sowing_indoor:[2,3],sowing_outdoor:[3,4,5,6,7],transplant:[3,4,5,6,7],harvest:[5,6,7,8,9],companions:["carotte","radis","fraisier","oignon","ciboulette"],avoid_near:["persil","tournesol"],yield_desc:"1 pomme/plant",tags:["ancien","rare"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"LAI-mache-cambrai",name:"Mâche Verte de Cambrai",latin:"Valerianella locusta",category:"legumes-feuilles",subcategory:"mache",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=M%C3%A2che%20Verte%20de%20Cambrai",price:3.40,difficulty:1,desc:"Petite salade d'hiver, rosettes de feuilles rondes douces",altitude_max:2200,cold_tolerance:"forte",heat_preference:"faible",sun_need:"mi_ombre",water_need:"modere",space_m2:0.05,sowing_indoor:[],sowing_outdoor:[8,9,10],transplant:[],harvest:[10,11,12,1,2,3],companions:["oignon","poireau"],avoid_near:[],yield_desc:"50-100 g/plant",tags:["ancien","resistant","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+// ========== ÉPINARDS ==========
+{id:"EPI-geant-hiver",name:"Géant d'Hiver",latin:"Spinacia oleracea",category:"legumes-feuilles",subcategory:"epinards",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=G%C3%A9ant%20d%27Hiver",price:3.40,difficulty:1,desc:"Grandes feuilles vert foncé, très résistant au froid",altitude_max:2200,cold_tolerance:"forte",heat_preference:"faible",sun_need:"mi_ombre",water_need:"modere",space_m2:0.05,sowing_indoor:[],sowing_outdoor:[2,3,4,8,9,10],transplant:[],harvest:[4,5,6,10,11,12],companions:["fraisier","haricot","radis","chou","laitue"],avoid_near:["betterave"],yield_desc:"200-300 g/plant",tags:["ancien","resistant","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"EPI-butterflay",name:"Butterflay",latin:"Spinacia oleracea",category:"legumes-feuilles",subcategory:"epinards",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Butterflay",price:3.40,difficulty:1,desc:"Épinard résistant à la montée en graines, longue récolte",altitude_max:2000,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"mi_ombre",water_need:"modere",space_m2:0.05,sowing_indoor:[],sowing_outdoor:[3,4,5,8,9],transplant:[],harvest:[5,6,7,10,11],companions:["fraisier","haricot","radis","chou","laitue"],avoid_near:["betterave"],yield_desc:"200-300 g/plant",tags:["resistant","productif","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"EPI-viking",name:"Viking",latin:"Spinacia oleracea",category:"legumes-feuilles",subcategory:"epinards",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Viking%20%C3%A9pinard",price:3.40,difficulty:1,desc:"Grandes feuilles lisses, croissance rapide, saveur douce",altitude_max:2000,cold_tolerance:"forte",heat_preference:"faible",sun_need:"mi_ombre",water_need:"modere",space_m2:0.05,sowing_indoor:[],sowing_outdoor:[2,3,4,8,9,10],transplant:[],harvest:[4,5,6,10,11,12],companions:["fraisier","haricot","radis","chou","laitue"],avoid_near:["betterave"],yield_desc:"200-300 g/plant",tags:["productif","precoce","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+// ========== CHOUX ==========
+{id:"CHO-cabus-brunswick",name:"Cabus Brunswick",latin:"Brassica oleracea",category:"legumes-feuilles",subcategory:"choux",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Cabus%20Brunswick",price:3.40,difficulty:2,desc:"Gros chou pommé vert, variété ancienne pour choucroute",altitude_max:1700,cold_tolerance:"forte",heat_preference:"faible",sun_need:"plein_soleil",water_need:"important",space_m2:0.4,sowing_indoor:[2,3,4],sowing_outdoor:[4,5],transplant:[4,5,6],harvest:[7,8,9,10,11],companions:["haricot","betterave","celeri","oignon","aneth"],avoid_near:["fraisier","tomate","fenouil"],yield_desc:"2-4 kg/plant",tags:["ancien","conserves","productif"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:false},
+{id:"CHO-kale-rouge-russie",name:"Kale Rouge de Russie",latin:"Brassica napus",category:"legumes-feuilles",subcategory:"choux",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Kale%20Rouge%20de%20Russie",price:3.40,difficulty:1,desc:"Feuilles dentelées vert-violet, très rustique, riche en nutriments",altitude_max:2200,cold_tolerance:"forte",heat_preference:"faible",sun_need:"plein_soleil",water_need:"modere",space_m2:0.3,sowing_indoor:[3,4],sowing_outdoor:[4,5,6,7],transplant:[4,5,6,7],harvest:[6,7,8,9,10,11,12],companions:["haricot","betterave","celeri","oignon","aneth"],avoid_near:["fraisier","tomate","fenouil"],yield_desc:"récolte continue",tags:["ancien","resistant","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:false},
+{id:"CHO-rave",name:"Chou-rave",latin:"Brassica oleracea var. gongylodes",category:"legumes-feuilles",subcategory:"choux",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Chou-rave",price:3.40,difficulty:1,desc:"Bulbe tendre et croquant au goût délicat, rapide à pousser",altitude_max:1700,cold_tolerance:"forte",heat_preference:"faible",sun_need:"plein_soleil",water_need:"modere",space_m2:0.15,sowing_indoor:[2,3],sowing_outdoor:[3,4,5,6,7],transplant:[3,4,5,6,7],harvest:[5,6,7,8,9,10],companions:["haricot","betterave","celeri","oignon","aneth"],avoid_near:["fraisier","tomate","fenouil"],yield_desc:"200-400 g/plant",tags:["precoce","debutant","enfants"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"CHO-brocoli-calabrese",name:"Brocoli Calabrese",latin:"Brassica oleracea var. italica",category:"legumes-feuilles",subcategory:"choux",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Brocoli%20Calabrese",price:3.40,difficulty:2,desc:"Brocoli vert classique à grosse pomme, rejets secondaires",altitude_max:1400,cold_tolerance:"forte",heat_preference:"faible",sun_need:"plein_soleil",water_need:"important",space_m2:0.4,sowing_indoor:[2,3,4],sowing_outdoor:[4,5],transplant:[4,5,6],harvest:[7,8,9,10],companions:["haricot","betterave","celeri","oignon","aneth"],avoid_near:["fraisier","tomate","fenouil"],yield_desc:"0.5-1 kg/plant",tags:["productif","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"CHO-bruxelles",name:"Chou de Bruxelles",latin:"Brassica oleracea var. gemmifera",category:"legumes-feuilles",subcategory:"choux",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Chou%20de%20Bruxelles",price:3.40,difficulty:2,desc:"Petits choux sur tige, goût amélioré par le gel",altitude_max:1700,cold_tolerance:"forte",heat_preference:"faible",sun_need:"plein_soleil",water_need:"modere",space_m2:0.4,sowing_indoor:[2,3,4],sowing_outdoor:[4,5],transplant:[5,6],harvest:[10,11,12,1,2],companions:["haricot","betterave","celeri","oignon","aneth"],avoid_near:["fraisier","tomate","fenouil"],yield_desc:"0.5-1 kg/plant",tags:["ancien","tardif","resistant"],beginner_friendly:false,medicinal:false,pollinator_friendly:false,kids_friendly:false},
+// ========== BLETTES ==========
+{id:"BLE-blonde-carde",name:"Blonde à Carde Blanche",latin:"Beta vulgaris var. cicla",category:"legumes-feuilles",subcategory:"blettes",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Blonde%20%C3%A0%20Carde%20Blanche",price:3.40,difficulty:1,desc:"Blette classique à larges cardes blanches et feuilles vertes",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"mi_ombre",water_need:"modere",space_m2:0.15,sowing_indoor:[3,4],sowing_outdoor:[4,5,6,7],transplant:[4,5,6],harvest:[6,7,8,9,10,11],companions:["haricot","oignon","radis"],avoid_near:[],yield_desc:"1-2 kg/plant",tags:["ancien","productif","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"BLE-bright-lights",name:"Bright Lights",latin:"Beta vulgaris var. cicla",category:"legumes-feuilles",subcategory:"blettes",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Bright%20Lights",price:3.40,difficulty:1,desc:"Blette multicolore aux cardes rouge, jaune, orange, rose",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"mi_ombre",water_need:"modere",space_m2:0.15,sowing_indoor:[3,4],sowing_outdoor:[4,5,6,7],transplant:[4,5,6],harvest:[6,7,8,9,10,11],companions:["haricot","oignon","radis"],avoid_near:[],yield_desc:"1-2 kg/plant",tags:["original","enfants","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"BLE-verte-couper",name:"Verte à Couper",latin:"Beta vulgaris var. cicla",category:"legumes-feuilles",subcategory:"blettes",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Verte%20%C3%A0%20Couper",price:3.40,difficulty:1,desc:"Petite blette à feuilles vertes tendres, type perpétuel",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"mi_ombre",water_need:"modere",space_m2:0.1,sowing_indoor:[3,4],sowing_outdoor:[4,5,6,7],transplant:[4,5,6],harvest:[6,7,8,9,10,11],companions:["haricot","oignon"],avoid_near:[],yield_desc:"0.5-1 kg/plant",tags:["productif","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+// ========== ROQUETTE / POURPIER / CRESSON ==========
+{id:"ROQ-cultivee",name:"Roquette Cultivée",latin:"Eruca sativa",category:"legumes-feuilles",subcategory:"roquette",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Roquette%20Cultiv%C3%A9e",price:3.40,difficulty:1,desc:"Feuilles au goût piquant de noisette, croissance rapide",altitude_max:1700,cold_tolerance:"forte",heat_preference:"faible",sun_need:"mi_ombre",water_need:"modere",space_m2:0.05,sowing_indoor:[],sowing_outdoor:[3,4,5,6,7,8,9],transplant:[],harvest:[4,5,6,7,8,9,10],companions:["laitue","carotte"],avoid_near:[],yield_desc:"récolte continue",tags:["precoce","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:false},
+{id:"POU-dore",name:"Pourpier Doré",latin:"Portulaca oleracea",category:"legumes-feuilles",subcategory:"pourpier",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Pourpier%20Dor%C3%A9",price:3.40,difficulty:1,desc:"Feuilles charnues dorées riches en oméga-3, saveur acidulée",altitude_max:1200,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"faible",space_m2:0.05,sowing_indoor:[],sowing_outdoor:[5,6,7],transplant:[],harvest:[6,7,8,9],companions:["tomate","poivron"],avoid_near:[],yield_desc:"récolte continue",tags:["secheresse","original","medicinal"],beginner_friendly:true,medicinal:true,pollinator_friendly:false,kids_friendly:true},
+{id:"CRE-jardin",name:"Cresson de Jardin",latin:"Barbarea verna",category:"legumes-feuilles",subcategory:"cresson",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Cresson%20de%20Jardin",price:3.40,difficulty:1,desc:"Saveur piquante, facile en pleine terre, riche en vitamines",altitude_max:1700,cold_tolerance:"forte",heat_preference:"faible",sun_need:"mi_ombre",water_need:"important",space_m2:0.05,sowing_indoor:[],sowing_outdoor:[3,4,5,8,9],transplant:[],harvest:[4,5,6,7,9,10,11],companions:["laitue"],avoid_near:[],yield_desc:"récolte continue",tags:["precoce","resistant","medicinal"],beginner_friendly:true,medicinal:true,pollinator_friendly:false,kids_friendly:false},
+// ========== CAROTTES ==========
+{id:"CAR-nantaise",name:"Nantaise",latin:"Daucus carota",category:"legumes-racines",subcategory:"carottes",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Nantaise",price:3.40,difficulty:1,desc:"Carotte demi-longue orange classique, douce et croquante",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.02,sowing_indoor:[],sowing_outdoor:[3,4,5,6,7],transplant:[],harvest:[6,7,8,9,10,11],companions:["oignon","poireau","laitue","radis","tomate","ciboulette"],avoid_near:["aneth","fenouil"],yield_desc:"3-5 kg/m²",tags:["ancien","debutant","productif"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"CAR-touchon",name:"Touchon",latin:"Daucus carota",category:"legumes-racines",subcategory:"carottes",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Touchon",price:3.40,difficulty:1,desc:"Carotte demi-longue cylindrique, sucrée, sans cœur dur",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.02,sowing_indoor:[],sowing_outdoor:[3,4,5,6,7],transplant:[],harvest:[6,7,8,9,10,11],companions:["oignon","poireau","laitue","radis","tomate","ciboulette"],avoid_near:["aneth","fenouil"],yield_desc:"3-5 kg/m²",tags:["ancien","gout_exceptionnel","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"CAR-jaune-doubs",name:"Jaune du Doubs",latin:"Daucus carota",category:"legumes-racines",subcategory:"carottes",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Jaune%20du%20Doubs",price:3.40,difficulty:1,desc:"Carotte jaune longue, saveur douce, bonne conservation",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.02,sowing_indoor:[],sowing_outdoor:[3,4,5,6],transplant:[],harvest:[7,8,9,10,11],companions:["oignon","poireau","laitue","radis","tomate","ciboulette"],avoid_near:["aneth","fenouil"],yield_desc:"3-4 kg/m²",tags:["ancien","original","conserves"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"CAR-blanche-kuttigen",name:"Blanche de Küttigen",latin:"Daucus carota",category:"legumes-racines",subcategory:"carottes",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Blanche%20de%20K%C3%BCttigen",price:3.40,difficulty:1,desc:"Carotte blanche ancienne, goût fin et délicat",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.02,sowing_indoor:[],sowing_outdoor:[3,4,5,6],transplant:[],harvest:[7,8,9,10,11],companions:["oignon","poireau","laitue","radis","tomate","ciboulette"],avoid_near:["aneth","fenouil"],yield_desc:"3-4 kg/m²",tags:["ancien","original","rare"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"CAR-cosmic-purple",name:"Cosmic Purple",latin:"Daucus carota",category:"legumes-racines",subcategory:"carottes",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Cosmic%20Purple",price:3.40,difficulty:1,desc:"Carotte violet foncé à cœur orange, riche en anthocyanes",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.02,sowing_indoor:[],sowing_outdoor:[3,4,5,6,7],transplant:[],harvest:[6,7,8,9,10,11],companions:["oignon","poireau","laitue","radis","tomate","ciboulette"],avoid_near:["aneth","fenouil"],yield_desc:"3-4 kg/m²",tags:["original","enfants"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+// ========== BETTERAVES ==========
+{id:"BET-detroit",name:"Detroit",latin:"Beta vulgaris",category:"legumes-racines",subcategory:"betteraves",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Detroit%20betterave",price:3.40,difficulty:1,desc:"Betterave ronde rouge foncé, chair lisse et sucrée",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.04,sowing_indoor:[3,4],sowing_outdoor:[4,5,6,7],transplant:[4,5,6],harvest:[6,7,8,9,10,11],companions:["oignon","laitue","chou","haricot"],avoid_near:["epinard","carotte"],yield_desc:"2-4 kg/m²",tags:["ancien","debutant","productif"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"BET-chioggia",name:"Chioggia",latin:"Beta vulgaris",category:"legumes-racines",subcategory:"betteraves",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Chioggia",price:3.40,difficulty:1,desc:"Chair à anneaux concentriques rose et blanc, douce",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.04,sowing_indoor:[3,4],sowing_outdoor:[4,5,6,7],transplant:[4,5,6],harvest:[6,7,8,9,10,11],companions:["oignon","laitue","chou","haricot"],avoid_near:["epinard","carotte"],yield_desc:"2-4 kg/m²",tags:["original","ancien","enfants"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"BET-crapaudine",name:"Crapaudine",latin:"Beta vulgaris",category:"legumes-racines",subcategory:"betteraves",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Crapaudine",price:3.40,difficulty:2,desc:"Très ancienne variété allongée, peau rugueuse, goût intense",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.04,sowing_indoor:[3,4],sowing_outdoor:[4,5,6],transplant:[4,5,6],harvest:[8,9,10,11],companions:["oignon","laitue","chou","haricot"],avoid_near:["epinard","carotte"],yield_desc:"2-3 kg/m²",tags:["ancien","gout_exceptionnel","rare"],beginner_friendly:false,medicinal:false,pollinator_friendly:false,kids_friendly:false},
+// ========== RADIS ==========
+{id:"RAD-rond-ecarlate",name:"Rond Écarlate",latin:"Raphanus sativus",category:"legumes-racines",subcategory:"radis",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Rond%20%C3%89carlate",price:3.40,difficulty:1,desc:"Petit radis rond rouge vif, croquant et légèrement piquant",altitude_max:2200,cold_tolerance:"forte",heat_preference:"faible",sun_need:"plein_soleil",water_need:"modere",space_m2:0.01,sowing_indoor:[],sowing_outdoor:[2,3,4,5,6,7,8,9],transplant:[],harvest:[3,4,5,6,7,8,9,10],companions:["carotte","laitue","haricot","tomate"],avoid_near:["hysope"],yield_desc:"rapide, 3-4 semaines",tags:["precoce","debutant","enfants"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"RAD-chandelle-feu",name:"Chandelle de Feu",latin:"Raphanus sativus",category:"legumes-racines",subcategory:"radis",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Chandelle%20de%20Feu",price:3.40,difficulty:1,desc:"Radis allongé rouge à pointe blanche, doux",altitude_max:2200,cold_tolerance:"forte",heat_preference:"faible",sun_need:"plein_soleil",water_need:"modere",space_m2:0.01,sowing_indoor:[],sowing_outdoor:[2,3,4,5,6,7,8,9],transplant:[],harvest:[3,4,5,6,7,8,9,10],companions:["carotte","laitue","haricot","tomate"],avoid_near:["hysope"],yield_desc:"rapide, 3-4 semaines",tags:["precoce","debutant","enfants"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"RAD-noir-long-hiver",name:"Noir Long d'Hiver",latin:"Raphanus sativus",category:"legumes-racines",subcategory:"radis",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Noir%20Long%20d%27Hiver",price:3.40,difficulty:1,desc:"Gros radis noir allongé, chair blanche piquante, bonne conservation",altitude_max:2200,cold_tolerance:"forte",heat_preference:"faible",sun_need:"plein_soleil",water_need:"modere",space_m2:0.04,sowing_indoor:[],sowing_outdoor:[7,8,9],transplant:[],harvest:[10,11,12,1],companions:["carotte","laitue","haricot","tomate"],avoid_near:["hysope"],yield_desc:"200-400 g/radis",tags:["ancien","conserves","medicinal"],beginner_friendly:true,medicinal:true,pollinator_friendly:false,kids_friendly:false},
+{id:"RAD-daikon",name:"Daikon",latin:"Raphanus sativus var. longipinnatus",category:"legumes-racines",subcategory:"radis",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Daikon",price:3.40,difficulty:1,desc:"Grand radis blanc japonais, doux et croquant",altitude_max:1700,cold_tolerance:"forte",heat_preference:"faible",sun_need:"plein_soleil",water_need:"modere",space_m2:0.04,sowing_indoor:[],sowing_outdoor:[7,8,9],transplant:[],harvest:[9,10,11,12],companions:["carotte","laitue","haricot","tomate"],avoid_near:["hysope"],yield_desc:"300-800 g/radis",tags:["original","productif"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"RAD-rose-chine",name:"Rose de Chine",latin:"Raphanus sativus",category:"legumes-racines",subcategory:"radis",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Rose%20de%20Chine",price:3.40,difficulty:1,desc:"Radis d'hiver rose vif, chair blanche croquante",altitude_max:2000,cold_tolerance:"forte",heat_preference:"faible",sun_need:"plein_soleil",water_need:"modere",space_m2:0.04,sowing_indoor:[],sowing_outdoor:[7,8,9],transplant:[],harvest:[10,11,12],companions:["carotte","laitue","haricot","tomate"],avoid_near:["hysope"],yield_desc:"150-300 g/radis",tags:["original","conserves"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+// ========== NAVETS ==========
+{id:"NAV-boule-or",name:"Boule d'Or",latin:"Brassica rapa",category:"legumes-racines",subcategory:"navets",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Boule%20d%27Or",price:3.40,difficulty:1,desc:"Navet rond jaune doré, chair douce et sucrée",altitude_max:2000,cold_tolerance:"forte",heat_preference:"faible",sun_need:"plein_soleil",water_need:"modere",space_m2:0.04,sowing_indoor:[],sowing_outdoor:[3,4,5,7,8,9],transplant:[],harvest:[5,6,7,9,10,11,12],companions:["laitue","haricot","pois","romarin"],avoid_near:["ail"],yield_desc:"150-300 g/navet",tags:["ancien","gout_exceptionnel","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+{id:"NAV-blanc-dur-hiver",name:"Blanc Dur d'Hiver",latin:"Brassica rapa",category:"legumes-racines",subcategory:"navets",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Blanc%20Dur%20d%27Hiver",price:3.40,difficulty:1,desc:"Gros navet blanc d'hiver, bonne conservation, chair ferme",altitude_max:2000,cold_tolerance:"forte",heat_preference:"faible",sun_need:"plein_soleil",water_need:"modere",space_m2:0.04,sowing_indoor:[],sowing_outdoor:[7,8,9],transplant:[],harvest:[10,11,12,1,2],companions:["laitue","haricot","pois","romarin"],avoid_near:["ail"],yield_desc:"200-500 g/navet",tags:["ancien","conserves","resistant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:false},
+{id:"NAV-milan-rouge",name:"Milan Rouge",latin:"Brassica rapa",category:"legumes-racines",subcategory:"navets",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Milan%20Rouge",price:3.40,difficulty:1,desc:"Navet aplati blanc à collet violet, précoce et tendre",altitude_max:2000,cold_tolerance:"forte",heat_preference:"faible",sun_need:"plein_soleil",water_need:"modere",space_m2:0.04,sowing_indoor:[],sowing_outdoor:[3,4,5,8,9],transplant:[],harvest:[5,6,7,10,11],companions:["laitue","haricot","pois","romarin"],avoid_near:["ail"],yield_desc:"100-200 g/navet",tags:["ancien","precoce","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+// ========== PANAIS ==========
+{id:"PAN-guernesey",name:"Demi-Long de Guernesey",latin:"Pastinaca sativa",category:"legumes-racines",subcategory:"panais",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Demi-Long%20de%20Guernesey",price:3.40,difficulty:2,desc:"Panais blanc crème, saveur douce et sucrée après le gel",altitude_max:2000,cold_tolerance:"forte",heat_preference:"faible",sun_need:"plein_soleil",water_need:"modere",space_m2:0.04,sowing_indoor:[],sowing_outdoor:[2,3,4,5],transplant:[],harvest:[9,10,11,12,1,2],companions:["oignon","radis"],avoid_near:["carotte","aneth"],yield_desc:"200-400 g/racine",tags:["ancien","resistant","gout_exceptionnel"],beginner_friendly:false,medicinal:false,pollinator_friendly:false,kids_friendly:false},
+{id:"PAN-hollow-crown",name:"Hollow Crown",latin:"Pastinaca sativa",category:"legumes-racines",subcategory:"panais",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Hollow%20Crown",price:3.40,difficulty:2,desc:"Panais long classique anglais, chair fine, excellent rôti",altitude_max:2000,cold_tolerance:"forte",heat_preference:"faible",sun_need:"plein_soleil",water_need:"modere",space_m2:0.04,sowing_indoor:[],sowing_outdoor:[2,3,4,5],transplant:[],harvest:[9,10,11,12,1,2],companions:["oignon","radis"],avoid_near:["carotte","aneth"],yield_desc:"200-500 g/racine",tags:["ancien","gout_exceptionnel"],beginner_friendly:false,medicinal:false,pollinator_friendly:false,kids_friendly:false},
+// ========== OIGNONS ==========
+{id:"OIG-jaune-paille",name:"Jaune Paille des Vertus",latin:"Allium cepa",category:"legumes-racines",subcategory:"oignons",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Jaune%20Paille%20des%20Vertus",price:3.40,difficulty:2,desc:"Oignon jaune classique français, bonne conservation",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"faible",space_m2:0.02,sowing_indoor:[1,2,3],sowing_outdoor:[3,4],transplant:[4,5],harvest:[7,8,9],companions:["carotte","laitue","fraisier","tomate","betterave"],avoid_near:["haricot","pois","chou"],yield_desc:"100-200 g/oignon",tags:["ancien","conserves","productif"],beginner_friendly:true,medicinal:true,pollinator_friendly:false,kids_friendly:false},
+{id:"OIG-rouge-florence",name:"Rouge de Florence",latin:"Allium cepa",category:"legumes-racines",subcategory:"oignons",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Rouge%20de%20Florence",price:3.40,difficulty:2,desc:"Oignon allongé rouge, doux et sucré, idéal cru en salade",altitude_max:1400,cold_tolerance:"moyenne",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"faible",space_m2:0.02,sowing_indoor:[1,2,3],sowing_outdoor:[3,4],transplant:[4,5],harvest:[7,8,9],companions:["carotte","laitue","fraisier","tomate","betterave"],avoid_near:["haricot","pois","chou"],yield_desc:"100-200 g/oignon",tags:["ancien","gout_exceptionnel"],beginner_friendly:true,medicinal:true,pollinator_friendly:false,kids_friendly:false},
+{id:"OIG-cebette-blanche",name:"Cébette Blanche",latin:"Allium fistulosum",category:"legumes-racines",subcategory:"oignons",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=C%C3%A9bette%20Blanche",price:3.40,difficulty:1,desc:"Oignon blanc de printemps, consommé frais avec les feuilles",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.01,sowing_indoor:[],sowing_outdoor:[3,4,5,7,8,9],transplant:[],harvest:[5,6,7,9,10,11],companions:["carotte","laitue","fraisier","tomate","betterave"],avoid_near:["haricot","pois","chou"],yield_desc:"récolte continue",tags:["debutant","precoce"],beginner_friendly:true,medicinal:false,pollinator_friendly:false,kids_friendly:true},
+// ========== BASILICS ==========
+{id:"BAS-grand-vert",name:"Basilic Grand Vert",latin:"Ocimum basilicum",category:"aromatiques",subcategory:"basilics",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Basilic%20Grand%20Vert",price:3.40,difficulty:1,desc:"Basilic classique à grandes feuilles, parfum intense",altitude_max:1000,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.1,sowing_indoor:[3,4,5],sowing_outdoor:[5,6],transplant:[5,6],harvest:[6,7,8,9,10],companions:["tomate","poivron","aubergine"],avoid_near:["rue","sauge"],yield_desc:"récolte continue",tags:["debutant","gout_exceptionnel"],beginner_friendly:true,medicinal:true,pollinator_friendly:true,kids_friendly:true},
+{id:"BAS-pourpre",name:"Basilic Pourpre",latin:"Ocimum basilicum var. purpurascens",category:"aromatiques",subcategory:"basilics",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Basilic%20Pourpre",price:3.40,difficulty:1,desc:"Feuilles violet foncé, saveur légèrement épicée",altitude_max:1000,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.1,sowing_indoor:[3,4,5],sowing_outdoor:[5,6],transplant:[5,6],harvest:[6,7,8,9,10],companions:["tomate","poivron","aubergine"],avoid_near:["rue","sauge"],yield_desc:"récolte continue",tags:["original","debutant"],beginner_friendly:true,medicinal:true,pollinator_friendly:true,kids_friendly:true},
+{id:"BAS-citron",name:"Basilic Citron",latin:"Ocimum x citriodorum",category:"aromatiques",subcategory:"basilics",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Basilic%20Citron",price:3.40,difficulty:1,desc:"Parfum citronné frais, idéal pour poisson et desserts",altitude_max:1000,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.1,sowing_indoor:[3,4,5],sowing_outdoor:[5,6],transplant:[5,6],harvest:[6,7,8,9,10],companions:["tomate","poivron","aubergine"],avoid_near:["rue","sauge"],yield_desc:"récolte continue",tags:["original","gout_exceptionnel"],beginner_friendly:true,medicinal:true,pollinator_friendly:true,kids_friendly:true},
+{id:"BAS-thai",name:"Basilic Thaï",latin:"Ocimum basilicum var. thyrsiflora",category:"aromatiques",subcategory:"basilics",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Basilic%20Tha%C3%AF",price:3.40,difficulty:2,desc:"Saveur anisée prononcée, tiges violettes, cuisine asiatique",altitude_max:800,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.1,sowing_indoor:[3,4,5],sowing_outdoor:[5,6],transplant:[5,6],harvest:[6,7,8,9,10],companions:["tomate","poivron","aubergine"],avoid_near:["rue","sauge"],yield_desc:"récolte continue",tags:["original","gout_exceptionnel"],beginner_friendly:true,medicinal:true,pollinator_friendly:true,kids_friendly:false},
+{id:"BAS-cannelle",name:"Basilic Cannelle",latin:"Ocimum basilicum 'Cinnamon'",category:"aromatiques",subcategory:"basilics",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Basilic%20Cannelle",price:3.40,difficulty:1,desc:"Parfum de cannelle, tiges violettes, original en cuisine",altitude_max:1000,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.1,sowing_indoor:[3,4,5],sowing_outdoor:[5,6],transplant:[5,6],harvest:[6,7,8,9,10],companions:["tomate","poivron","aubergine"],avoid_near:["rue","sauge"],yield_desc:"récolte continue",tags:["original","rare"],beginner_friendly:true,medicinal:true,pollinator_friendly:true,kids_friendly:true},
+// ========== AROMATIQUES ==========
+{id:"ARO-persil-geant",name:"Persil Géant d'Italie",latin:"Petroselinum crispum",category:"aromatiques",subcategory:"persil",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Persil%20G%C3%A9ant%20d%27Italie",price:3.40,difficulty:1,desc:"Persil plat à grandes feuilles très parfumées",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"mi_ombre",water_need:"modere",space_m2:0.05,sowing_indoor:[2,3],sowing_outdoor:[3,4,5,6,7],transplant:[4,5,6],harvest:[5,6,7,8,9,10,11],companions:["tomate","asperge","radis"],avoid_near:["laitue"],yield_desc:"récolte continue",tags:["ancien","debutant","productif"],beginner_friendly:true,medicinal:true,pollinator_friendly:false,kids_friendly:true},
+{id:"ARO-coriandre",name:"Coriandre",latin:"Coriandrum sativum",category:"aromatiques",subcategory:"coriandre",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Coriandre",price:3.40,difficulty:1,desc:"Feuilles et graines aromatiques, indispensable en cuisine",altitude_max:1700,cold_tolerance:"moyenne",heat_preference:"faible",sun_need:"mi_ombre",water_need:"modere",space_m2:0.05,sowing_indoor:[],sowing_outdoor:[3,4,5,8,9],transplant:[],harvest:[5,6,7,8,9,10],companions:["carotte","concombre"],avoid_near:["fenouil"],yield_desc:"récolte continue",tags:["debutant","precoce"],beginner_friendly:true,medicinal:true,pollinator_friendly:true,kids_friendly:true},
+{id:"ARO-aneth",name:"Aneth",latin:"Anethum graveolens",category:"aromatiques",subcategory:"aneth",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Aneth",price:3.40,difficulty:1,desc:"Feuilles fines au parfum anisé, fleurs en ombelles",altitude_max:1700,cold_tolerance:"moyenne",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.05,sowing_indoor:[],sowing_outdoor:[4,5,6,7],transplant:[],harvest:[6,7,8,9],companions:["concombre","chou","laitue"],avoid_near:["carotte","fenouil"],yield_desc:"récolte continue",tags:["debutant","mellifere"],beginner_friendly:true,medicinal:true,pollinator_friendly:true,kids_friendly:true},
+{id:"ARO-ciboulette",name:"Ciboulette",latin:"Allium schoenoprasum",category:"aromatiques",subcategory:"ciboulette",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Ciboulette",price:3.40,difficulty:1,desc:"Vivace à fines feuilles creuses, fleurs mauves comestibles",altitude_max:2200,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.1,sowing_indoor:[2,3,4],sowing_outdoor:[3,4,5],transplant:[4,5,6],harvest:[4,5,6,7,8,9,10],companions:["carotte","tomate","fraisier"],avoid_near:["haricot","pois"],yield_desc:"récolte continue, vivace",tags:["debutant","mellifere","comestible"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"ARO-thym",name:"Thym",latin:"Thymus vulgaris",category:"aromatiques",subcategory:"thym",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Thym",price:3.40,difficulty:1,desc:"Sous-arbrisseau vivace très aromatique, résistant à la sécheresse",altitude_max:2200,cold_tolerance:"forte",heat_preference:"forte",sun_need:"plein_soleil",water_need:"faible",space_m2:0.15,sowing_indoor:[2,3,4],sowing_outdoor:[4,5],transplant:[5,6],harvest:[1,2,3,4,5,6,7,8,9,10,11,12],companions:["tomate","aubergine","fraisier"],avoid_near:[],yield_desc:"récolte continue, vivace",tags:["ancien","secheresse","medicinal","mellifere","debutant"],beginner_friendly:true,medicinal:true,pollinator_friendly:true,kids_friendly:true},
+{id:"ARO-romarin",name:"Romarin",latin:"Salvia rosmarinus",category:"aromatiques",subcategory:"romarin",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Romarin",price:3.40,difficulty:2,desc:"Arbuste vivace méditerranéen, très aromatique et mellifère",altitude_max:1400,cold_tolerance:"moyenne",heat_preference:"forte",sun_need:"plein_soleil",water_need:"faible",space_m2:0.5,sowing_indoor:[3,4],sowing_outdoor:[],transplant:[5,6],harvest:[1,2,3,4,5,6,7,8,9,10,11,12],companions:["sauge","thym","lavande"],avoid_near:[],yield_desc:"récolte continue, vivace",tags:["ancien","secheresse","medicinal","mellifere"],beginner_friendly:true,medicinal:true,pollinator_friendly:true,kids_friendly:true},
+{id:"ARO-sauge-officinale",name:"Sauge Officinale",latin:"Salvia officinalis",category:"aromatiques",subcategory:"sauge",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Sauge%20Officinale",price:3.40,difficulty:1,desc:"Vivace à feuilles gris-vert veloutées, médicinale et culinaire",altitude_max:1700,cold_tolerance:"forte",heat_preference:"forte",sun_need:"plein_soleil",water_need:"faible",space_m2:0.3,sowing_indoor:[3,4],sowing_outdoor:[4,5],transplant:[5,6],harvest:[1,2,3,4,5,6,7,8,9,10,11,12],companions:["romarin","thym","lavande"],avoid_near:["basilic"],yield_desc:"récolte continue, vivace",tags:["ancien","medicinal","mellifere","secheresse"],beginner_friendly:true,medicinal:true,pollinator_friendly:true,kids_friendly:false},
+{id:"ARO-marjolaine",name:"Marjolaine",latin:"Origanum majorana",category:"aromatiques",subcategory:"marjolaine",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Marjolaine",price:3.40,difficulty:1,desc:"Aromatique douce et parfumée, plus délicate que l'origan",altitude_max:1400,cold_tolerance:"moyenne",heat_preference:"forte",sun_need:"plein_soleil",water_need:"faible",space_m2:0.15,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[6,7,8,9],companions:["tomate","poivron"],avoid_near:[],yield_desc:"récolte continue",tags:["ancien","medicinal","mellifere"],beginner_friendly:true,medicinal:true,pollinator_friendly:true,kids_friendly:true},
+{id:"ARO-origan",name:"Origan",latin:"Origanum vulgare",category:"aromatiques",subcategory:"origan",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Origan",price:3.40,difficulty:1,desc:"Vivace rustique, saveur puissante, indispensable en cuisine méditerranéenne",altitude_max:2000,cold_tolerance:"forte",heat_preference:"forte",sun_need:"plein_soleil",water_need:"faible",space_m2:0.2,sowing_indoor:[3,4],sowing_outdoor:[4,5],transplant:[5,6],harvest:[6,7,8,9,10],companions:["tomate","poivron","haricot"],avoid_near:[],yield_desc:"récolte continue, vivace",tags:["ancien","secheresse","medicinal","mellifere","debutant"],beginner_friendly:true,medicinal:true,pollinator_friendly:true,kids_friendly:true},
+{id:"ARO-estragon",name:"Estragon",latin:"Artemisia dracunculus",category:"aromatiques",subcategory:"estragon",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Estragon",price:3.95,difficulty:2,desc:"Vivace au parfum anisé subtil, classique de la cuisine française",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.2,sowing_indoor:[3,4],sowing_outdoor:[],transplant:[5,6],harvest:[5,6,7,8,9,10],companions:["laitue","tomate"],avoid_near:[],yield_desc:"récolte continue, vivace",tags:["ancien","gout_exceptionnel"],beginner_friendly:false,medicinal:true,pollinator_friendly:false,kids_friendly:false},
+// ========== MÉDICINALES ==========
+{id:"MED-agripaume",name:"Agripaume",latin:"Leonurus cardiaca",category:"medicinales",subcategory:"medicinales",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Agripaume",price:3.40,difficulty:2,desc:"Plante du cœur, calmante et tonique cardiaque",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"mi_ombre",water_need:"modere",space_m2:0.3,sowing_indoor:[3,4],sowing_outdoor:[4,5],transplant:[5,6],harvest:[6,7,8],companions:["echinacee","camomille"],avoid_near:[],yield_desc:"récolte de feuilles et fleurs",tags:["medicinal","mellifere","ancien"],beginner_friendly:false,medicinal:true,pollinator_friendly:true,kids_friendly:false},
+{id:"MED-achillee",name:"Achillée Millefeuille",latin:"Achillea millefolium",category:"medicinales",subcategory:"medicinales",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Achill%C3%A9e%20Millefeuille",price:3.40,difficulty:1,desc:"Vivace cicatrisante, digestive, fleurs blanches en corymbes",altitude_max:2200,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"faible",space_m2:0.2,sowing_indoor:[3,4],sowing_outdoor:[4,5],transplant:[5,6],harvest:[6,7,8,9],companions:["camomille","lavande"],avoid_near:[],yield_desc:"récolte de feuilles et fleurs, vivace",tags:["medicinal","mellifere","secheresse","ancien","debutant"],beginner_friendly:true,medicinal:true,pollinator_friendly:true,kids_friendly:false},
+{id:"MED-bourrache",name:"Bourrache",latin:"Borago officinalis",category:"medicinales",subcategory:"medicinales",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Bourrache",price:3.40,difficulty:1,desc:"Fleurs bleues étoilées comestibles, très mellifère, se ressème",altitude_max:1700,cold_tolerance:"moyenne",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.3,sowing_indoor:[],sowing_outdoor:[3,4,5],transplant:[],harvest:[5,6,7,8,9],companions:["tomate","fraisier","courge"],avoid_near:[],yield_desc:"fleurs et feuilles en continu",tags:["medicinal","mellifere","comestible","debutant"],beginner_friendly:true,medicinal:true,pollinator_friendly:true,kids_friendly:true},
+{id:"MED-calendula",name:"Calendula",latin:"Calendula officinalis",category:"medicinales",subcategory:"medicinales",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Calendula",price:3.40,difficulty:1,desc:"Souci officinal, fleurs orangées cicatrisantes, anti-inflammatoires",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.1,sowing_indoor:[],sowing_outdoor:[3,4,5,9],transplant:[],harvest:[5,6,7,8,9,10],companions:["tomate","haricot"],avoid_near:[],yield_desc:"fleurs en continu",tags:["medicinal","mellifere","comestible","debutant","enfants"],beginner_friendly:true,medicinal:true,pollinator_friendly:true,kids_friendly:true},
+{id:"MED-consoude",name:"Consoude",latin:"Symphytum officinale",category:"medicinales",subcategory:"medicinales",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Consoude",price:3.95,difficulty:1,desc:"Vivace puissante, riche en potasse, engrais naturel et cicatrisante",altitude_max:2000,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"mi_ombre",water_need:"modere",space_m2:0.5,sowing_indoor:[3,4],sowing_outdoor:[4,5],transplant:[5,6],harvest:[5,6,7,8,9,10],companions:["tomate","fruitiers"],avoid_near:[],yield_desc:"feuilles abondantes, vivace",tags:["medicinal","mellifere","productif"],beginner_friendly:true,medicinal:true,pollinator_friendly:true,kids_friendly:false},
+{id:"MED-millepertuis",name:"Millepertuis",latin:"Hypericum perforatum",category:"medicinales",subcategory:"medicinales",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Millepertuis",price:3.40,difficulty:1,desc:"Vivace aux fleurs jaunes, antidépresseur et anti-inflammatoire",altitude_max:2200,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"faible",space_m2:0.2,sowing_indoor:[3,4],sowing_outdoor:[4,5],transplant:[5,6],harvest:[6,7,8],companions:["achillee","lavande"],avoid_near:[],yield_desc:"fleurs, vivace",tags:["medicinal","secheresse","ancien"],beginner_friendly:true,medicinal:true,pollinator_friendly:true,kids_friendly:false},
+{id:"MED-valeriane",name:"Valériane",latin:"Valeriana officinalis",category:"medicinales",subcategory:"medicinales",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Val%C3%A9riane",price:3.40,difficulty:2,desc:"Vivace calmante et sédative, racine utilisée en phytothérapie",altitude_max:2000,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"mi_ombre",water_need:"modere",space_m2:0.3,sowing_indoor:[3,4],sowing_outdoor:[4,5],transplant:[5,6],harvest:[9,10],companions:["echinacee"],avoid_near:[],yield_desc:"racines après 2 ans",tags:["medicinal","mellifere","ancien"],beginner_friendly:false,medicinal:true,pollinator_friendly:true,kids_friendly:false},
+{id:"MED-echinacee",name:"Échinacée",latin:"Echinacea purpurea",category:"medicinales",subcategory:"medicinales",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=%C3%89chinac%C3%A9e",price:3.40,difficulty:2,desc:"Vivace immunostimulante, belles fleurs rose-pourpre",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.3,sowing_indoor:[2,3,4],sowing_outdoor:[4,5],transplant:[5,6],harvest:[7,8,9],companions:["achillee","camomille"],avoid_near:[],yield_desc:"fleurs et racines, vivace",tags:["medicinal","mellifere"],beginner_friendly:false,medicinal:true,pollinator_friendly:true,kids_friendly:false},
+{id:"MED-melisse",name:"Mélisse",latin:"Melissa officinalis",category:"medicinales",subcategory:"medicinales",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=M%C3%A9lisse",price:3.40,difficulty:1,desc:"Vivace citronnée calmante, en tisane ou cuisine",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"mi_ombre",water_need:"modere",space_m2:0.3,sowing_indoor:[3,4],sowing_outdoor:[4,5],transplant:[5,6],harvest:[5,6,7,8,9,10],companions:["tomate","courge"],avoid_near:[],yield_desc:"feuilles en continu, vivace",tags:["medicinal","mellifere","debutant"],beginner_friendly:true,medicinal:true,pollinator_friendly:true,kids_friendly:true},
+{id:"MED-camomille",name:"Camomille Matricaire",latin:"Matricaria chamomilla",category:"medicinales",subcategory:"medicinales",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Camomille",price:3.40,difficulty:1,desc:"Petites fleurs blanches apaisantes, en tisane digestive et calmante",altitude_max:2000,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.1,sowing_indoor:[3,4],sowing_outdoor:[4,5],transplant:[5,6],harvest:[5,6,7,8,9],companions:["oignon","chou"],avoid_near:[],yield_desc:"fleurs en continu",tags:["medicinal","mellifere","debutant","enfants"],beginner_friendly:true,medicinal:true,pollinator_friendly:true,kids_friendly:true},
+// ========== PAVOTS ==========
+{id:"PAV-californie",name:"Pavot de Californie",latin:"Eschscholzia californica",category:"fleurs",subcategory:"pavots",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Pavot%20de%20Californie",price:3.40,difficulty:1,desc:"Fleurs orangées lumineuses, calmante légère, se ressème",altitude_max:1700,cold_tolerance:"forte",heat_preference:"forte",sun_need:"plein_soleil",water_need:"faible",space_m2:0.05,sowing_indoor:[],sowing_outdoor:[3,4,5,9],transplant:[],harvest:[5,6,7,8,9],companions:["lavande","graminees"],avoid_near:[],yield_desc:"floraison continue",tags:["secheresse","medicinal","mellifere","debutant","enfants"],beginner_friendly:true,medicinal:true,pollinator_friendly:true,kids_friendly:true},
+{id:"PAV-somnifere",name:"Pavot Somnifère Géant",latin:"Papaver somniferum",category:"fleurs",subcategory:"pavots",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Pavot%20Somnif%C3%A8re",price:3.40,difficulty:1,desc:"Grandes fleurs doubles, graines alimentaires, plante ornementale",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.1,sowing_indoor:[],sowing_outdoor:[3,4,9,10],transplant:[],harvest:[6,7,8],companions:["bleuet","coquelicot"],avoid_near:[],yield_desc:"graines et fleurs",tags:["ancien","original","mellifere"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:false},
+{id:"PAV-orient",name:"Pavot d'Orient",latin:"Papaver orientale",category:"fleurs",subcategory:"pavots",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Pavot%20d%27Orient",price:3.40,difficulty:2,desc:"Vivace à grandes fleurs rouge-orangé spectaculaires",altitude_max:2000,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.3,sowing_indoor:[2,3],sowing_outdoor:[4,5],transplant:[5,6],harvest:[5,6,7],companions:["lavande"],avoid_near:[],yield_desc:"floraison vivace",tags:["mellifere","ancien"],beginner_friendly:false,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+// ========== FLEURS ==========
+{id:"FLE-cosmos",name:"Cosmos Sensation",latin:"Cosmos bipinnatus",category:"fleurs",subcategory:"fleurs",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Cosmos%20Sensation",price:3.40,difficulty:1,desc:"Grandes fleurs roses, blanches et rouges, floraison abondante",altitude_max:1700,cold_tolerance:"moyenne",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"faible",space_m2:0.15,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["tomate","courge"],avoid_near:[],yield_desc:"floraison continue",tags:["mellifere","debutant","enfants"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"FLE-zinnia",name:"Zinnia Géant",latin:"Zinnia elegans",category:"fleurs",subcategory:"fleurs",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Zinnia%20G%C3%A9ant",price:3.40,difficulty:1,desc:"Grandes fleurs doubles multicolores, excellentes fleurs coupées",altitude_max:1400,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.1,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["tomate","haricot"],avoid_near:[],yield_desc:"floraison continue",tags:["mellifere","enfants","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"FLE-tournesol",name:"Tournesol Géant",latin:"Helianthus annuus",category:"fleurs",subcategory:"fleurs",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Tournesol%20G%C3%A9ant",price:3.40,difficulty:1,desc:"Fleur emblématique jusqu'à 3m, graines comestibles",altitude_max:1700,cold_tolerance:"moyenne",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.3,sowing_indoor:[],sowing_outdoor:[4,5],transplant:[],harvest:[8,9,10],companions:["concombre","haricot","courge"],avoid_near:["pomme-de-terre"],yield_desc:"1 grosse fleur/plant",tags:["enfants","mellifere","comestible","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"FLE-capucine",name:"Capucine Grande",latin:"Tropaeolum majus",category:"fleurs",subcategory:"fleurs",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Capucine%20Grande",price:3.40,difficulty:1,desc:"Fleurs comestibles orangées, repousse les pucerons, grimpante",altitude_max:1400,cold_tolerance:"faible",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.3,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[6,7,8,9,10],companions:["tomate","chou","concombre"],avoid_near:[],yield_desc:"floraison continue",tags:["comestible","mellifere","debutant","enfants"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"FLE-souci",name:"Souci Officinal",latin:"Calendula officinalis",category:"fleurs",subcategory:"fleurs",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Souci%20Officinal",price:3.40,difficulty:1,desc:"Fleurs orangées comestibles et médicinales, compagnon du potager",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.1,sowing_indoor:[],sowing_outdoor:[3,4,5,9],transplant:[],harvest:[5,6,7,8,9,10],companions:["tomate","haricot","chou"],avoid_near:[],yield_desc:"floraison continue",tags:["comestible","medicinal","mellifere","debutant","enfants"],beginner_friendly:true,medicinal:true,pollinator_friendly:true,kids_friendly:true},
+{id:"FLE-oeillet-inde",name:"Oeillet d'Inde",latin:"Tagetes patula",category:"fleurs",subcategory:"fleurs",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Oeillet%20d%27Inde",price:3.40,difficulty:1,desc:"Fleurs jaune-orangé, repousse nématodes et pucerons au potager",altitude_max:1700,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.1,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[6,7,8,9,10],companions:["tomate","poivron","aubergine","chou"],avoid_near:[],yield_desc:"floraison continue",tags:["mellifere","debutant","enfants"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"FLE-bleuet",name:"Bleuet",latin:"Centaurea cyanus",category:"fleurs",subcategory:"fleurs",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Bleuet",price:3.40,difficulty:1,desc:"Fleurs bleues comestibles, attire auxiliaires, se ressème",altitude_max:2000,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"faible",space_m2:0.05,sowing_indoor:[],sowing_outdoor:[3,4,5,9,10],transplant:[],harvest:[5,6,7,8,9],companions:["coquelicot","ble"],avoid_near:[],yield_desc:"floraison continue",tags:["comestible","mellifere","secheresse","debutant","enfants"],beginner_friendly:true,medicinal:true,pollinator_friendly:true,kids_friendly:true},
+{id:"FLE-lavatere",name:"Lavatère",latin:"Lavatera trimestris",category:"fleurs",subcategory:"fleurs",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Lavat%C3%A8re",price:3.40,difficulty:1,desc:"Grandes fleurs roses ou blanches, floraison généreuse tout l'été",altitude_max:1400,cold_tolerance:"moyenne",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.2,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[6,7,8,9,10],companions:["cosmos","zinnia"],avoid_near:[],yield_desc:"floraison continue",tags:["mellifere","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"FLE-rose-tremiere",name:"Rose Trémière",latin:"Alcea rosea",category:"fleurs",subcategory:"fleurs",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Rose%20Tr%C3%A9mi%C3%A8re",price:3.40,difficulty:1,desc:"Haute vivace à hampes florales majestueuses multicolores",altitude_max:1700,cold_tolerance:"forte",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.3,sowing_indoor:[],sowing_outdoor:[5,6,7],transplant:[],harvest:[6,7,8,9],companions:["lavande","sauge"],avoid_near:[],yield_desc:"floraison vivace",tags:["ancien","mellifere","comestible"],beginner_friendly:true,medicinal:true,pollinator_friendly:true,kids_friendly:true},
+{id:"FLE-ipomee",name:"Ipomée",latin:"Ipomoea purpurea",category:"fleurs",subcategory:"fleurs",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Ipom%C3%A9e",price:3.40,difficulty:1,desc:"Grimpante volubile à fleurs bleu-violet, croissance rapide",altitude_max:1200,cold_tolerance:"faible",heat_preference:"forte",sun_need:"plein_soleil",water_need:"modere",space_m2:0.3,sowing_indoor:[3,4],sowing_outdoor:[5],transplant:[5,6],harvest:[7,8,9,10],companions:["tournesol","haricot"],avoid_near:[],yield_desc:"floraison continue",tags:["original","enfants","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+// ========== ENGRAIS VERTS ==========
+{id:"ENV-phacelie",name:"Phacélie",latin:"Phacelia tanacetifolia",category:"engrais-verts",subcategory:"engrais-verts",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Phac%C3%A9lie",price:4.50,difficulty:1,desc:"Excellent engrais vert mellifère, décompacte le sol, fleurs mauves",altitude_max:2000,cold_tolerance:"moyenne",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"faible",space_m2:0.01,sowing_indoor:[],sowing_outdoor:[3,4,5,6,7,8,9],transplant:[],harvest:[],companions:[],avoid_near:[],yield_desc:"couverture rapide du sol",tags:["mellifere","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"ENV-trefle-incarnat",name:"Trèfle Incarnat",latin:"Trifolium incarnatum",category:"engrais-verts",subcategory:"engrais-verts",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Tr%C3%A8fle%20Incarnat",price:4.50,difficulty:1,desc:"Légumineuse fixatrice d'azote, belles fleurs rouges",altitude_max:1700,cold_tolerance:"forte",heat_preference:"faible",sun_need:"plein_soleil",water_need:"modere",space_m2:0.01,sowing_indoor:[],sowing_outdoor:[3,4,8,9],transplant:[],harvest:[],companions:[],avoid_near:[],yield_desc:"fixation azote, biomasse",tags:["mellifere","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"ENV-moutarde-blanche",name:"Moutarde Blanche",latin:"Sinapis alba",category:"engrais-verts",subcategory:"engrais-verts",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Moutarde%20Blanche",price:4.50,difficulty:1,desc:"Croissance ultra-rapide, nématicide, décompactant",altitude_max:2000,cold_tolerance:"forte",heat_preference:"faible",sun_need:"plein_soleil",water_need:"modere",space_m2:0.01,sowing_indoor:[],sowing_outdoor:[3,4,5,8,9],transplant:[],harvest:[],companions:[],avoid_near:["chou","radis","navet"],yield_desc:"couverture rapide du sol",tags:["precoce","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true},
+{id:"ENV-vesce-hiver",name:"Vesce d'Hiver",latin:"Vicia villosa",category:"engrais-verts",subcategory:"engrais-verts",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Vesce%20d%27Hiver",price:5.50,difficulty:1,desc:"Légumineuse grimpante, fixe l'azote, couvre-sol hivernal",altitude_max:2000,cold_tolerance:"forte",heat_preference:"faible",sun_need:"plein_soleil",water_need:"modere",space_m2:0.01,sowing_indoor:[],sowing_outdoor:[8,9,10],transplant:[],harvest:[],companions:["seigle","avoine"],avoid_near:[],yield_desc:"fixation azote, biomasse hivernale",tags:["mellifere","resistant"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:false},
+{id:"ENV-sarrasin",name:"Sarrasin",latin:"Fagopyrum esculentum",category:"engrais-verts",subcategory:"engrais-verts",kokopelli_url:"https://kokopelli-semences.fr/fr/c/search?search=Sarrasin",price:4.50,difficulty:1,desc:"Engrais vert rapide, très mellifère, graines comestibles",altitude_max:1700,cold_tolerance:"faible",heat_preference:"moyenne",sun_need:"plein_soleil",water_need:"modere",space_m2:0.01,sowing_indoor:[],sowing_outdoor:[5,6,7],transplant:[],harvest:[8,9],companions:[],avoid_near:[],yield_desc:"couverture rapide, graines récoltables",tags:["mellifere","comestible","debutant"],beginner_friendly:true,medicinal:false,pollinator_friendly:true,kids_friendly:true}
+];
+
+const ZONES={
+mediterraneenne:{deps:["06","11","13","30","34","66","83","84","2A","2B"],lastFrost:"03-15",firstFrost:"11-15",label:"Méditerranéenne"},
+atlantique:{deps:["17","29","33","35","40","44","56","64","85"],lastFrost:"04-01",firstFrost:"10-30",label:"Atlantique"},
+oceanique:{deps:["14","16","22","27","37","41","49","50","53","72","76","79","86"],lastFrost:"04-15",firstFrost:"10-15",label:"Océanique dégradé"},
+semi_continentale:{deps:["01","03","15","18","21","23","25","36","39","42","43","45","46","52","54","55","57","58","63","67","68","69","70","71","73","74","87","88","89","90"],lastFrost:"04-30",firstFrost:"10-01",label:"Semi-continentale"},
+montagne:{deps:["04","05","07","09","12","26","31","32","38","48","65","81","82"],lastFrost:"05-15",firstFrost:"09-15",label:"Montagne"},
+idf_nord:{deps:["02","08","10","19","20","24","28","47","51","59","60","62","75","77","78","80","91","92","93","94","95"],lastFrost:"04-15",firstFrost:"10-15",label:"Île-de-France / Nord"}
+};
+
+// ========== STATE ==========
+let state = {
+  location: null,
+  answers: {},
+  basket: [],
+  allCompatible: [],
+  currentScreen: 1
+};
+
+let currentQ = 0;
+
+const questions = [
+  {
+    id: 'objectifs',
+    title: "Qu'est-ce qui te fait r\u00eaver ?",
+    multi: true,
+    options: [
+      { value: 'autonomie', emoji: '\ud83c\udf45', label: 'Manger du jardin' },
+      { value: 'originalite', emoji: '\u2728', label: 'Vari\u00e9t\u00e9s rares' },
+      { value: 'medicinales', emoji: '\ud83d\udc8a', label: 'Plantes qui soignent' },
+      { value: 'pollinisateurs', emoji: '\ud83c\udf38', label: 'Des fleurs partout' },
+      { value: 'conserves', emoji: '\ud83e\uded9', label: "Conserves pour l'hiver" },
+      { value: 'enfants', emoji: '\ud83d\udc76', label: 'Jardin avec les enfants' }
+    ]
+  },
+  {
+    id: 'experience',
+    title: 'Ton \u00e9nergie jardin ?',
+    multi: false,
+    options: [
+      { value: 'debutant', emoji: '\ud83c\udf31', label: 'Tranquille', sub: 'je d\u00e9couvre' },
+      { value: 'quelques', emoji: '\ud83c\udf3f', label: 'Motiv\u00e9e', sub: "j'apprends" },
+      { value: 'expert', emoji: '\ud83c\udf33', label: '\u00c0 fond', sub: 'plantez tout !' }
+    ]
+  },
+  {
+    id: 'surface',
+    title: "L'espace dehors ?",
+    multi: false,
+    options: [
+      { value: 'petit', emoji: '\ud83c\udf31', label: 'Un petit coin', sub: '5-20 m\u00b2' },
+      { value: 'familial', emoji: '\ud83c\udfe1', label: 'Un beau potager', sub: '20-100 m\u00b2' },
+      { value: 'grand', emoji: '\ud83c\udf04', label: 'On a de la place !', sub: '100 m\u00b2 et +' }
+    ]
+  },
+  {
+    id: 'budget',
+    title: 'Et le budget graines ?',
+    multi: false,
+    options: [
+      { value: 'petit', emoji: '\ud83d\udc9a', label: '30-50\u20ac', sub: "L'essentiel pour commencer" },
+      { value: 'moyen', emoji: '\ud83d\udc9b', label: '50-100\u20ac', sub: 'Un potager bien garni' },
+      { value: 'genereux', emoji: '\ud83e\udde1', label: '100-200\u20ac', sub: 'La totale' },
+      { value: 'illimite', emoji: '\u2764\ufe0f', label: 'Pas de limite', sub: 'Collectionneuse !' }
+    ]
+  }
+];
+
+// ========== ZONE LOOKUP ==========
+function getZone(dept) {
+  for (const [key, zone] of Object.entries(ZONES)) {
+    if (zone.deps.includes(dept)) {
+      return { key, ...zone };
+    }
+  }
+  return { key: 'montagne', ...ZONES.montagne };
+}
+
+// ========== CALENDAR ADJUSTMENT ==========
+function adjustMonths(months, zoneKey, altitude, type) {
+  if (!months || !months.length) return [];
+  const zoneOff = { mediterraneenne:-1, atlantique:0, oceanique:0, semi_continentale:0, montagne:0, idf_nord:0 }[zoneKey] || 0;
+  let altOff = 0;
+  if (type === 'indoor') {
+    altOff = 0; // Sous abri : pas de décalage
+  } else if (type === 'outdoor' || type === 'transplant') {
+    if (altitude >= 1200) altOff = 2;
+    else if (altitude >= 800) altOff = 1;
+    else if (altitude >= 600) altOff = 1;
+  } else if (type === 'harvest') {
+    if (altitude >= 1200) altOff = 1;
+    else if (altitude >= 800) altOff = 1;
+  }
+  const off = zoneOff + altOff;
+  return [...new Set(months.map(m => Math.min(12, Math.max(1, m + off))))].sort((a,b) => a-b);
+}
+
+// ========== SEASON GROUP ==========
+function getSeasonGroup(v) {
+  const zoneKey = state.location.zone.key;
+  const altitude = state.location.altitude;
+  const indoor = adjustMonths(v.sowing_indoor, zoneKey, altitude, 'indoor');
+  const outdoor = adjustMonths(v.sowing_outdoor, zoneKey, altitude, 'outdoor');
+  if (indoor.some(m => m <= 4)) return 'abri';
+  if (outdoor.some(m => m <= 6)) return 'terre';
+  return 'ete';
+}
+
+// ========== RECOMMENDATION ENGINE ==========
+function generateBasket() {
+  const loc = state.location;
+  const altitude = loc.altitude;
+  const zoneKey = loc.zone.key;
+  const objectives = state.answers.objectifs || ['autonomie'];
+  const experience = state.answers.experience || 'quelques';
+  const surface = state.answers.surface || 'familial';
+  const budgetKey = state.answers.budget || 'moyen';
+
+  const budgetMap = { petit:{max:50,sachets:15}, moyen:{max:100,sachets:25}, genereux:{max:200,sachets:50}, illimite:{max:9999,sachets:100} };
+  const surfaceMap = { petit:20, familial:100, grand:500 };
+  const budget = budgetMap[budgetKey] || budgetMap.moyen;
+  const maxSurface = surfaceMap[surface] || 100;
+
+  let scored = [];
+  VARIETIES.forEach(v => {
+    if (v.altitude_max + 150 < altitude) return;
+    if (v.category === 'engrais-verts' && surface === 'petit') return;
+    if (surface === 'petit' && v.space_m2 > 0.5) return;
+
+    let score = 50;
+    if (objectives.includes('autonomie') && (v.tags.includes('productif') || v.category === 'legumes-fruits' || v.category === 'legumes-racines')) score += 20;
+    if (objectives.includes('originalite') && (v.tags.includes('original') || v.tags.includes('rare') || v.tags.includes('gout_exceptionnel'))) score += 20;
+    if (objectives.includes('medicinales') && v.medicinal) score += 25;
+    if (objectives.includes('pollinisateurs') && v.pollinator_friendly) score += 25;
+    if (objectives.includes('conserves') && v.tags.includes('conserves')) score += 20;
+    if (objectives.includes('enfants') && v.kids_friendly) score += 15;
+
+    if (experience === 'debutant' && v.beginner_friendly) score += 15;
+    if (experience === 'debutant' && v.difficulty >= 4) score -= 15;
+    if (experience === 'expert' && v.difficulty >= 4) score += 10;
+
+    if (v.heat_preference === 'forte' && zoneKey === 'montagne' && altitude > 800) score -= 10;
+    if (zoneKey === 'montagne' && v.cold_tolerance === 'forte') score += 10;
+    if (altitude > 600 && v.cold_tolerance === 'faible') score -= 10;
+    if (altitude > 1000 && v.cold_tolerance !== 'forte') score -= 20;
+
+    scored.push({ ...v, score });
+  });
+
+  scored.sort((a, b) => b.score - a.score);
+  state.allCompatible = scored;
+
+  let basket = [];
+  let spent = 0, usedSpace = 0, catCount = {};
+
+  function canAdd(v) {
+    if (spent + v.price > budget.max && budget.max < 9999) return false;
+    if (usedSpace + v.space_m2 > maxSurface) return false;
+    const sc = v.subcategory;
+    let maxPerSub = surface === 'grand' ? 5 : surface === 'familial' ? 3 : 2;
+    if (sc === 'tomates') maxPerSub = Math.min(maxPerSub + 2, 8);
+    if ((catCount[sc] || 0) >= maxPerSub) return false;
+    return true;
+  }
+  function doAdd(v) {
+    basket.push(v);
+    spent += v.price;
+    usedSpace += v.space_m2;
+    const sc = v.subcategory;
+    catCount[sc] = (catCount[sc] || 0) + 1;
+  }
+
+  // Pass 1: Ensure at least 1 variety from each compatible category
+  const compatCats = [...new Set(scored.map(v => v.category))];
+  compatCats.forEach(cat => {
+    if (basket.length >= budget.sachets) return;
+    const best = scored.find(v => v.category === cat && !basket.some(b => b.id === v.id) && canAdd(v));
+    if (best) doAdd(best);
+  });
+
+  // Pass 2: Fill by score
+  scored.forEach(v => {
+    if (basket.length >= budget.sachets) return;
+    if (basket.some(b => b.id === v.id)) return;
+    if (!canAdd(v)) return;
+    doAdd(v);
+  });
+
+  state.basket = basket;
+}
+
+// ========== NAVIGATION ==========
+function canGoTo(n) {
+  if (n <= 2) return true;
+  if (n === 3 && !state.location) return false;
+  if (n >= 4 && (!state.location || !state.answers.objectifs)) return false;
+  if (n >= 5 && (!state.basket || !state.basket.length)) return false;
+  return true;
+}
+
+function goTo(n) {
+  if (!canGoTo(n)) return;
+  const screens = document.querySelectorAll('.screen');
+  screens.forEach(s => { s.classList.remove('active'); });
+  const target = document.getElementById('s' + n);
+  if (target) {
+    target.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+  state.currentScreen = n;
+  // Persist current screen for restore
+  try {
+    const toSave = { location: state.location, answers: state.answers, basket: state.basket, currentScreen: n };
+    const json = JSON.stringify(toSave);
+    if (json.length < 500000) {
+      toSave.allCompatible = state.allCompatible;
+      localStorage.setItem('seedelli-session', JSON.stringify(toSave));
+    } else {
+      localStorage.setItem('seedelli-session', json);
+    }
+  } catch(e) {}
+  updateDots();
+  updateQuickNav();
+
+  if (n === 1) animateIntro();
+  if (n === 3) renderQuestion();
+  if (n === 4) showGrowthAnimation();
+  if (n === 5) renderBasket();
+  if (n === 6) renderCalendar();
+  if (n === 7) renderOrder();
+}
+
+function updateDots() {
+  const dots = document.querySelectorAll('.nav-dots .dot');
+  dots.forEach((d, i) => {
+    const n = i + 1;
+    d.classList.toggle('active', n === state.currentScreen);
+    d.classList.toggle('disabled', !canGoTo(n));
+  });
+}
+
+function updateQuickNav() {
+  const qn = document.getElementById('quick-nav');
+  if (state.currentScreen >= 5 && state.basket && state.basket.length > 0) {
+    qn.style.display = 'flex';
+  } else {
+    qn.style.display = 'none';
+  }
+}
+
+// ========== SCREEN 1 — INTRO ==========
+function animateIntro() {
+  const lines = ["Trouve les graines faites pour ton potager.", "", "Semences libres, reproductibles, adapt\u00e9es \u00e0 ta r\u00e9gion."];
+  const container = document.getElementById('s1-text');
+  if (container.children.length > 0) return;
+  let delay = 2000;
+  lines.forEach((line, i) => {
+    if (!line) return;
+    setTimeout(() => {
+      const p = document.createElement('p');
+      p.textContent = line;
+      p.style.cssText = 'font-size:1.25rem;opacity:0;transition:opacity 0.8s;margin:.75rem 0;';
+      if (i === 0) p.style.fontFamily = "'Playfair Display',serif";
+      container.appendChild(p);
+      requestAnimationFrame(() => { requestAnimationFrame(() => { p.style.opacity = '1'; }); });
+    }, delay);
+    delay += 1500;
+  });
+  setTimeout(() => { document.getElementById('s1-btn').style.opacity = '1'; }, delay + 500);
+}
+
+// ========== SCREEN 2 — GEOCODING ==========
+async function geocodeAddress() {
+  const q = document.getElementById('address-input').value.trim();
+  if (!q) return;
+  const resultDiv = document.getElementById('geo-result');
+  resultDiv.style.display = 'block';
+  resultDiv.innerHTML = '<p style="text-align:center;opacity:.6" class="pulse">Recherche en cours...</p>';
+
+  try {
+    const res = await fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(q + ', France') + '&format=json&limit=1&addressdetails=1', {
+      headers: { 'Accept-Language': 'fr' }
+    });
+    const data = await res.json();
+    if (data.length === 0) { showFallback(); return; }
+
+    const place = data[0];
+    const lat = parseFloat(place.lat);
+    const lon = parseFloat(place.lon);
+    const addr = place.address || {};
+    const postcode = addr.postcode || '';
+    const dept = postcode.substring(0, 2);
+    const commune = addr.village || addr.town || addr.city || addr.hamlet || q;
+    const departement = addr.county || addr.state || '';
+
+    let altitude = 900;
+    try {
+      const elevRes = await fetch('https://api.open-elevation.com/api/v1/lookup?locations=' + lat + ',' + lon);
+      const elevData = await elevRes.json();
+      if (elevData.results && elevData.results[0]) {
+        altitude = Math.round(elevData.results[0].elevation);
+      }
+    } catch(e) {}
+
+    const zone = getZone(dept);
+    state.location = { commune, dept, departement, altitude, lat, lon, zone, postcode };
+    localStorage.setItem('seedelli-session', JSON.stringify(state));
+    showLocationResult();
+  } catch(e) {
+    showFallback();
+  }
+}
+
+function showFallback() {
+  document.getElementById('geo-result').style.display = 'none';
+  const fb = document.getElementById('geo-fallback');
+  fb.style.display = 'block';
+  fb.innerHTML = '<p style="font-size:.9rem;opacity:.7;margin-bottom:1rem">Pas de connexion ? Pas de souci, on fait \u00e0 la main :</p>' +
+    '<label>D\u00e9partement :</label>' +
+    '<input id="manual-dept" type="text" placeholder="09" style="width:100%;padding:.75rem;border:2px solid #e8dcc8;border-radius:.5rem;margin:.5rem 0">' +
+    '<label>Altitude :</label>' +
+    '<div style="display:flex;align-items:center;gap:1rem;margin:.5rem 0">' +
+    '<input id="manual-alt" type="range" min="0" max="2000" step="50" value="900" style="flex:1;accent-color:var(--vert2)">' +
+    '<span id="manual-alt-val" style="font-weight:700;min-width:60px">900m</span></div>' +
+    '<button class="btn btn-primary" style="width:100%;margin-top:.5rem" onclick="manualLocation()">Valider</button>';
+  document.getElementById('manual-alt').addEventListener('input', function() {
+    document.getElementById('manual-alt-val').textContent = this.value + 'm';
+  });
+}
+
+function manualLocation() {
+  let dept = document.getElementById('manual-dept').value.trim().toUpperCase();
+  if (dept.length === 1) dept = '0' + dept;
+  const altitude = parseInt(document.getElementById('manual-alt').value);
+  const zone = getZone(dept);
+  state.location = { commune: '', dept, departement: '', altitude, lat: 0, lon: 0, zone, postcode: '' };
+  localStorage.setItem('seedelli-session', JSON.stringify(state));
+  showLocationResult();
+}
+
+function showLocationResult() {
+  const loc = state.location;
+  const resultDiv = document.getElementById('geo-result');
+  resultDiv.style.display = 'block';
+  document.getElementById('geo-fallback').style.display = 'none';
+
+  const zoneLabel = loc.zone.label || 'Montagne';
+  const lastFrost = loc.zone.lastFrost || '05-15';
+  const firstFrost = loc.zone.firstFrost || '09-15';
+  const lfParts = lastFrost.split('-');
+  const lfMonth = parseInt(lfParts[1]) <= 3 ? 'mi-mars' : parseInt(lfParts[1]) <= 4 ? 'mi-avril' : 'mi-mai';
+  const ffParts = firstFrost.split('-');
+  const ffMonth = parseInt(ffParts[1]) <= 9 ? 'd\u00e9but octobre' : parseInt(ffParts[1]) <= 10 ? 'mi-octobre' : 'mi-novembre';
+
+  let altNote = '';
+  if (loc.altitude >= 800) { altNote = 'Derni\u00e8res gel\u00e9es : mi-mai'; }
+  else if (loc.altitude >= 600) { altNote = 'Derni\u00e8res gel\u00e9es : d\u00e9but mai'; }
+
+  const seasonMonths = loc.altitude >= 800 ? '~5 mois (mai \u2192 septembre)' : loc.altitude >= 600 ? '~6 mois' : '~7 mois';
+
+  resultDiv.innerHTML =
+    '<div class="card" style="background:#f0f7eb;border-color:var(--vert2)">' +
+    '<p style="font-size:1.1rem;font-weight:700">\ud83d\udccd ' + (loc.commune ? loc.commune + ' \u2014 ' : '') + (loc.departement || 'D\u00e9partement ' + loc.dept) + ' (' + loc.dept + ')</p>' +
+    '<p style="margin:.5rem 0">\ud83c\udfd4\ufe0f Altitude : ~' + loc.altitude + 'm</p>' +
+    '<p>\ud83c\udf21\ufe0f Zone : ' + zoneLabel + '</p>' +
+    '<p style="margin:.5rem 0">\u2744\ufe0f ' + (altNote || 'Derni\u00e8res gel\u00e9es : ' + lfMonth) + ' | Premi\u00e8res gel\u00e9es : ' + ffMonth + '</p>' +
+    '<p>\u2600\ufe0f Saison de culture : ' + seasonMonths + '</p>' +
+    '<div style="display:flex;gap:.5rem;margin-top:1rem">' +
+    '<button class="btn btn-primary" style="flex:1" onclick="confirmLocation()">C\'est bien \u00e7a \u2713</button>' +
+    '<button class="btn" style="flex:0;background:#f5f5f5;color:#666;border:1px solid #ddd" onclick="editAltitude()">Corriger</button>' +
+    '</div>' +
+    '<div id="alt-edit" style="display:none;margin-top:.75rem">' +
+    '<label style="font-size:.9rem">Altitude :</label>' +
+    '<div style="display:flex;align-items:center;gap:1rem">' +
+    '<input id="alt-slider" type="range" min="0" max="2000" step="50" value="' + loc.altitude + '" style="flex:1;accent-color:var(--vert2)">' +
+    '<span id="alt-slider-val" style="font-weight:700">' + loc.altitude + 'm</span></div>' +
+    '<button class="btn btn-primary" style="width:100%;margin-top:.5rem" onclick="saveAltitude()">Valider</button>' +
+    '</div></div>';
+}
+
+function editAltitude() {
+  document.getElementById('alt-edit').style.display = 'block';
+  document.getElementById('alt-slider').addEventListener('input', function() {
+    document.getElementById('alt-slider-val').textContent = this.value + 'm';
+  });
+}
+
+function saveAltitude() {
+  state.location.altitude = parseInt(document.getElementById('alt-slider').value);
+  state.location.zone = getZone(state.location.dept);
+  localStorage.setItem('seedelli-session', JSON.stringify(state));
+  showLocationResult();
+}
+
+function confirmLocation() {
+  goTo(3);
+}
+
+// ========== SCREEN 3 — QUESTIONS ==========
+function renderQuestion() {
+  const container = document.getElementById('s3-content');
+  if (currentQ >= questions.length) {
+    goTo(4);
+    return;
+  }
+  const q = questions[currentQ];
+  const cols = q.options.length <= 3 ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)';
+
+  let html = '<div class="fade-up" style="text-align:center;padding-top:2rem">';
+  html += '<p style="font-size:.85rem;opacity:.5;margin-bottom:.5rem">' + (currentQ + 1) + ' / ' + questions.length + '</p>';
+  html += '<h2 style="font-size:1.5rem;margin-bottom:1.5rem">' + q.title + '</h2>';
+  if (q.multi) html += '<p style="font-size:.85rem;opacity:.6;margin-bottom:1rem">Choisis autant que tu veux</p>';
+  html += '<div style="display:grid;grid-template-columns:' + cols + ';gap:.75rem">';
+
+  q.options.forEach(opt => {
+    const selected = q.multi ? (state.answers[q.id] || []).includes(opt.value) : state.answers[q.id] === opt.value;
+    html += '<div class="opt' + (selected ? ' selected' : '') + '" data-qid="' + q.id + '" data-val="' + opt.value + '" data-multi="' + q.multi + '" onclick="selectOption(this)">';
+    html += '<span class="emoji">' + opt.emoji + '</span>';
+    html += '<span style="font-weight:600;font-size:.95rem">' + opt.label + '</span>';
+    if (opt.sub) html += '<br><span style="font-size:.8rem;opacity:.6">' + opt.sub + '</span>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  if (q.multi) {
+    html += '<button class="btn btn-primary" style="margin-top:1.5rem;width:100%" onclick="nextQuestion()">Suivant \u2192</button>';
+  }
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function selectOption(el) {
+  const qid = el.dataset.qid;
+  const val = el.dataset.val;
+  const multi = el.dataset.multi === 'true';
+
+  if (multi) {
+    if (!state.answers[qid]) state.answers[qid] = [];
+    const idx = state.answers[qid].indexOf(val);
+    if (idx >= 0) { state.answers[qid].splice(idx, 1); }
+    else { state.answers[qid].push(val); }
+    el.classList.toggle('selected');
+  } else {
+    state.answers[qid] = val;
+    el.parentNode.querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    setTimeout(() => nextQuestion(), 400);
+  }
+  localStorage.setItem('seedelli-session', JSON.stringify(state));
+}
+
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= questions.length) {
+    goTo(4);
+  } else {
+    renderQuestion();
+  }
+}
+
+// ========== SCREEN 4 — GROWTH ANIMATION ==========
+function showGrowthAnimation() {
+  const loc = state.location;
+  const altitude = loc.altitude;
+  const commune = loc.commune || 'ton jardin';
+
+  generateBasket();
+
+  const compatible = state.allCompatible.length;
+  const selected = state.basket.length;
+
+  const lines = [
+    { icon: '\ud83c\udf31', text: commune + ', ' + altitude + " m\u00e8tres d'altitude..." },
+    { icon: '\u2744\ufe0f', text: altitude >= 800 ? "L'hiver recule doucement en mars..." : 'Le printemps arrive...' },
+    { icon: '\ud83c\udfe0', text: altitude >= 800 ? 'Premiers semis sous abri en avril...' : 'Premiers semis sous abri en mars...' },
+    { icon: '\u2600\ufe0f', text: altitude >= 800 ? 'Repiquage mi-mai, apr\u00e8s les Saints de Glace...' : 'Repiquage en avril-mai...' },
+    { icon: '\ud83c\udf31', text: 'Les premi\u00e8res pousses pointent...' },
+    { icon: '\ud83c\udf45', text: altitude >= 800 ? 'Et les r\u00e9coltes de juillet \u00e0 octobre !' : 'Et les r\u00e9coltes de juin \u00e0 novembre !' },
+    { icon: '\ud83e\uddee', text: VARIETIES.length + ' vari\u00e9t\u00e9s analys\u00e9es...' },
+    { icon: '\u2705', text: compatible + ' compatibles avec ton climat' },
+    { icon: '\ud83c\udfaf', text: selected + ' s\u00e9lectionn\u00e9es pour ton potager' }
+  ];
+
+  const container = document.getElementById('s4-lines');
+  container.innerHTML = '';
+  document.getElementById('s4-btn').style.opacity = '0';
+
+  lines.forEach((line, i) => {
+    setTimeout(() => {
+      const div = document.createElement('div');
+      div.className = 'fade-up';
+      div.style.cssText = 'margin:.5rem 0;font-size:1.05rem;';
+      div.innerHTML = '<span style="margin-right:.5rem">' + line.icon + '</span>' + line.text;
+      container.appendChild(div);
+      if (i === lines.length - 1) {
+        setTimeout(() => { document.getElementById('s4-btn').style.opacity = '1'; }, 800);
+      }
+    }, i * 600);
+  });
+}
+
+// ========== SCREEN 5 — BASKET ==========
+const SUBCAT_LABELS = {
+  'tomates':'Tomates','poivrons':'Poivrons','piments':'Piments','aubergines':'Aubergines',
+  'courges':'Courges','courgettes':'Courgettes','concombres':'Concombres','melons':'Melons',
+  'haricots':'Haricots','laitues':'Laitues','mache':'Mâche','epinards':'Épinards',
+  'choux':'Choux','blettes':'Blettes','roquette':'Roquette','pourpier':'Pourpier','cresson':'Cresson',
+  'carottes':'Carottes','betteraves':'Betteraves','radis':'Radis','navets':'Navets','panais':'Panais',
+  'oignons':'Oignons','basilics':'Basilics','persil':'Persil','coriandre':'Coriandre','aneth':'Aneth',
+  'ciboulette':'Ciboulette','thym':'Thym','romarin':'Romarin','sauge':'Sauge','marjolaine':'Marjolaine',
+  'origan':'Origan','estragon':'Estragon','medicinales':'Médicinales','pavots':'Pavots',
+  'fleurs':'Fleurs','engrais-verts':'Engrais verts'
+};
+function formatCompanion(c) {
+  return c.charAt(0).toUpperCase() + c.slice(1).replace(/-/g, ' ');
+}
+const MONTH_NAMES = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+const MONTH_FULL = ['Janvier','F\u00e9vrier','Mars','Avril','Mai','Juin','Juillet','Ao\u00fbt','Septembre','Octobre','Novembre','D\u00e9cembre'];
+const CAT_EMOJI = {
+  'legumes-fruits':'\ud83c\udf45','legumes-racines':'\ud83e\udd55','legumes-feuilles':'\ud83e\udd6c','legumes-grains':'\ud83c\udf3d',
+  'aromatiques':'\ud83c\udf3f','fleurs':'\ud83c\udf3b','medicinales':'\ud83c\udf3e','engrais-verts':'\ud83c\udf31'
+};
+
+function renderMiniCal(v) {
+  const zk = state.location.zone.key;
+  const alt = state.location.altitude;
+  const indoor = adjustMonths(v.sowing_indoor, zk, alt, 'indoor');
+  const outdoor = adjustMonths(v.sowing_outdoor, zk, alt, 'outdoor');
+  const transplant = adjustMonths(v.transplant, zk, alt, 'transplant');
+  const harvest = adjustMonths(v.harvest, zk, alt, 'harvest');
+
+  let html = '<div class="mini-cal">';
+  for (let m = 1; m <= 12; m++) {
+    let bg = '#f0f0f0';
+    let action = '';
+    if (harvest.includes(m)) { bg = '#f87171'; action = 'Récolte'; }
+    if (transplant.includes(m)) { bg = '#60a5fa'; action = 'Repiquage'; }
+    if (outdoor.includes(m)) { bg = '#34d399'; action = 'Semis terre'; }
+    if (indoor.includes(m)) { bg = '#a78bfa'; action = 'Semis abri'; }
+    const tip = action ? ' onclick="showCalTooltip(event,\'' + v.name.replace(/'/g, "\\'") + '\',\'' + action + '\',\'' + MONTH_FULL[m-1] + '\')" style="background:' + bg + ';cursor:pointer"' : ' style="background:' + bg + '"';
+    html += '<div class="mc"' + tip + ' title="' + MONTH_FULL[m-1] + '">' + MONTH_NAMES[m-1] + '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function showCalTooltip(e, name, action, month) {
+  document.querySelectorAll('.cal-tooltip').forEach(t => t.remove());
+  const tip = document.createElement('div');
+  tip.className = 'cal-tooltip';
+  tip.textContent = name + ' — ' + action + ' en ' + month;
+  document.body.appendChild(tip);
+  const rect = e.target.getBoundingClientRect();
+  tip.style.left = Math.min(rect.left, window.innerWidth - tip.offsetWidth - 10) + 'px';
+  tip.style.top = (rect.top - tip.offsetHeight - 6) + 'px';
+  setTimeout(() => { if (tip.parentNode) tip.remove(); }, 2000);
+}
+
+function renderStars(diff) {
+  let s = '';
+  for (let i = 1; i <= 5; i++) s += i <= diff ? '\u2605' : '\u2606';
+  return '<span class="stars">' + s + '</span>';
+}
+
+function renderBasket() {
+  if (!state.basket || !state.basket.length) generateBasket();
+  const container = document.getElementById('s5-content');
+
+  const groups = { abri: [], terre: [], ete: [] };
+  state.basket.forEach(v => {
+    const g = getSeasonGroup(v);
+    groups[g].push(v);
+  });
+
+  const groupLabels = {
+    abri: { icon: '\ud83c\udfe0', title: 'Semis sous abri', sub: 'Mars-Avril' },
+    terre: { icon: '\u2600\ufe0f', title: 'Semis en pleine terre', sub: 'Mai-Juin' },
+    ete: { icon: '\ud83c\udf3b', title: 'Semis d\'\u00e9t\u00e9', sub: 'Juillet+' }
+  };
+
+  const total = state.basket.reduce((s, v) => s + v.price, 0);
+
+  // Shipping nudge
+  let shippingHtml = '';
+  const shipCost = getShipping(total);
+  if (total < 26) {
+    shippingHtml = '<p style="font-size:.85rem;opacity:.7">\ud83d\udce6 Livraison : 5,50\u20ac</p>';
+  } else if (total < 50) {
+    shippingHtml = '<p style="font-size:.85rem;opacity:.7">\ud83d\udce6 Livraison : 6,50\u20ac</p>';
+  } else if (total < 60) {
+    const diff = (60 - total).toFixed(2).replace('.', ',');
+    shippingHtml = '<p style="font-size:.85rem;color:var(--vert2);font-weight:600">\ud83d\udca1 Ajoute ' + diff + '\u20ac pour la livraison gratuite !</p>';
+  } else {
+    shippingHtml = '<p style="font-size:.85rem;color:var(--vert2);font-weight:600">\ud83d\udce6 Livraison : GRATUIT \u2705</p>';
+  }
+
+  let html = '<div id="basket-header" style="position:sticky;top:0;z-index:50;background:#FDF8F0;padding:.75rem 0;border-bottom:1px solid #e8dcc8">';
+  html += '<div style="text-align:center">';
+  html += '<h2 style="font-size:1.5rem">Ton potager</h2>';
+  html += '<p style="opacity:.6;margin-top:.25rem">' + state.basket.length + ' vari\u00e9t\u00e9s \u2022 ' + total.toFixed(2) + '\u20ac</p>';
+  html += shippingHtml;
+  html += '</div>';
+  html += '<div class="quick-adjust">';
+  html += '<button onclick="addCategory(&quot;medicinales&quot;)">+ Médicinales</button>';
+  html += '<button onclick="addCategory(&quot;fleurs&quot;)">+ Fleurs</button>';
+  html += '<button onclick="addCategory(&quot;aromatiques&quot;)">+ Aromatiques</button>';
+  html += '<button onclick="adjustBudget(1)">Budget +</button>';
+  html += '<button onclick="adjustBudget(-1)">Budget \u2212</button>';
+  html += '</div>';
+  html += '</div>';
+
+  html += '<div class="legend"><span class="l-indoor">Semis abri</span><span class="l-outdoor">Semis terre</span><span class="l-transplant">Repiquage</span><span class="l-harvest">R\u00e9colte</span></div>';
+
+  ['abri','terre','ete'].forEach(gKey => {
+    const items = groups[gKey];
+    if (!items.length) return;
+    const gl = groupLabels[gKey];
+    html += '<div class="season-group">';
+    html += '<h3>' + gl.icon + ' ' + gl.title + ' <span style="font-weight:400;font-size:.85rem;opacity:.6">' + gl.sub + '</span></h3>';
+    html += '<div class="variety-cards-grid">';
+
+    items.forEach(v => {
+      const catEmoji = CAT_EMOJI[v.category] || '\ud83c\udf31';
+      html += '<div class="variety-card" id="vc-' + v.id + '">';
+      html += '<div class="vc-header">';
+      html += '<div><span class="vc-name">' + catEmoji + ' ' + v.name + '</span>';
+      if (v.latin) html += '<div style="font-size:.75rem;font-style:italic;opacity:.5">' + v.latin + '</div>';
+      if (v.kokopelli_url) html += '<a href="' + v.kokopelli_url + '?ref=seedelli" target="_blank" rel="noopener" style="font-size:.7rem;color:var(--terre1);text-decoration:none;opacity:.6">Voir sur Kokopelli \u2197</a>';
+      html += '<div class="vc-desc">' + v.desc + '</div>';
+      html += renderStars(v.difficulty);
+      html += '</div>';
+      html += '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:.25rem">';
+      html += '<span class="vc-price">' + v.price.toFixed(2) + '\u20ac</span>';
+      html += '<button class="remove-btn" onclick="removeVariety(\'' + v.id + '\')" title="Retirer" aria-label="Retirer ' + v.name + '">\u2715</button>';
+      html += '</div></div>';
+      html += renderMiniCal(v);
+      if (v.companions && v.companions.length) {
+        html += '<p style="font-size:.75rem;opacity:.6;margin-top:.25rem">\ud83e\udd1d ' + v.companions.slice(0,4).map(formatCompanion).join(', ') + '</p>';
+      }
+      if (v.avoid_near && v.avoid_near.length) {
+        html += '<p style="font-size:.75rem;color:#c44;margin-top:.15rem">\u26a0\ufe0f \u00c9viter : ' + v.avoid_near.slice(0,3).map(formatCompanion).join(', ') + '</p>';
+      }
+      html += '</div>';
+    });
+    html += '</div>'; // close variety-cards-grid
+    html += '</div>'; // close season-group
+  });
+
+  html += '<div style="display:flex;gap:.75rem;margin-top:1.5rem">';
+  html += '<button class="btn btn-primary" style="flex:1" onclick="goTo(6)">Voir le calendrier \ud83d\udcc5</button>';
+  html += '</div>';
+  html += '<button class="btn btn-secondary" style="width:100%;margin-top:.75rem" onclick="goTo(7)">Valider mon choix \u2192</button>';
+
+  html += '<div style="text-align:center;margin-top:2rem;padding-top:1rem;border-top:1px solid #e8dcc8">';
+  html += '<button style="background:none;border:none;color:#999;font-size:.8rem;cursor:pointer;padding:.5rem" onclick="resetAll()">\u21bb Recommencer le questionnaire</button>';
+  html += '</div>';
+
+  container.innerHTML = html;
+}
+
+function resetAll() {
+  if (!confirm('Tu vas perdre ta s\u00e9lection actuelle. Continuer ?')) return;
+  localStorage.removeItem('seedelli-session');
+  state = { location: null, answers: {}, basket: [], allCompatible: [], currentScreen: 1 };
+  goTo(1);
+}
+
+function removeVariety(id) {
+  const removed = state.basket.find(v => v.id === id);
+  state.basket = state.basket.filter(v => v.id !== id);
+  localStorage.setItem('seedelli-session', JSON.stringify(state));
+  // FEATURE 4: Replacement suggestion
+  if (removed && state.allCompatible && state.allCompatible.length) {
+    const alt = state.allCompatible.find(v => v.subcategory === removed.subcategory && !state.basket.some(b => b.id === v.id) && v.id !== removed.id);
+    if (alt) {
+      showToast('🔄 ' + removed.name + ' retirée. Remplacer par ' + alt.name + ' ?',
+        [{ text: 'Oui', action: () => { state.basket.push(alt); localStorage.setItem('seedelli-session', JSON.stringify(state)); renderBasket(); } },
+         { text: 'Non', cls: 'toast-no', action: () => {} }]
+      );
+    }
+  }
+  renderBasket();
+}
+
+function showToast(msg, buttons) {
+  document.querySelectorAll('.toast').forEach(t => t.remove());
+  const div = document.createElement('div');
+  div.className = 'toast';
+  let html = '<span>' + msg + '</span>';
+  if (buttons) {
+    buttons.forEach(b => {
+      html += '<button class="' + (b.cls || '') + '" data-action="1">' + b.text + '</button>';
+    });
+  }
+  div.innerHTML = html;
+  document.body.appendChild(div);
+  if (buttons) {
+    div.querySelectorAll('button').forEach((btn, i) => {
+      btn.addEventListener('click', () => { buttons[i].action(); div.remove(); });
+    });
+  }
+  setTimeout(() => { if (div.parentNode) div.remove(); }, 6000);
+}
+
+function addCategory(cat) {
+  if (!state.allCompatible) return;
+  const candidates = state.allCompatible.filter(v => v.category === cat && !state.basket.some(b => b.id === v.id));
+  candidates.sort((a, b) => b.score - a.score);
+  const toAdd = candidates.slice(0, 3);
+  if (!toAdd.length) { showToast('Pas de variétés ' + cat + ' supplémentaires disponibles'); return; }
+  toAdd.forEach(v => state.basket.push(v));
+  localStorage.setItem('seedelli-session', JSON.stringify(state));
+  renderBasket();
+  showToast(toAdd.length + ' variété(s) ajoutée(s) ✅');
+}
+
+function adjustBudget(dir) {
+  if (!state.allCompatible) return;
+  if (dir > 0) {
+    const candidates = state.allCompatible.filter(v => !state.basket.some(b => b.id === v.id));
+    candidates.sort((a, b) => b.score - a.score);
+    const toAdd = candidates.slice(0, 3);
+    if (!toAdd.length) { showToast('Toutes les variétés compatibles sont déjà dans ton panier !'); return; }
+    toAdd.forEach(v => state.basket.push(v));
+    showToast(toAdd.length + ' variété(s) ajoutée(s) ✅');
+  } else {
+    if (state.basket.length <= 3) { showToast('Minimum 3 variétés !'); return; }
+    state.basket.sort((a, b) => a.score - b.score);
+    state.basket.splice(0, Math.min(3, state.basket.length - 3));
+    showToast('3 variété(s) retirée(s)');
+  }
+  localStorage.setItem('seedelli-session', JSON.stringify(state));
+  renderBasket();
+}
+
+// ========== SCREEN 6 — CALENDAR ==========
+function renderCalendar() {
+  if (!state.basket || !state.basket.length) generateBasket();
+  const container = document.getElementById('s6-content');
+  const curMonth = new Date().getMonth() + 1;
+  const loc = state.location;
+  const zk = loc.zone.key;
+  const alt = loc.altitude;
+
+  let html = '<div style="text-align:center;margin-bottom:1rem">';
+  html += '<h2 style="font-size:1.3rem">' + (loc.commune || 'Mon potager') + '</h2>';
+  html += '<p style="opacity:.6;font-size:.9rem">Calendrier des semis 2026 \u2014 ' + alt + 'm</p>';
+  html += '</div>';
+
+  html += '<div class="legend" style="margin-bottom:.5rem"><span class="l-indoor">Semis abri</span><span class="l-outdoor">Semis terre</span><span class="l-transplant">Repiquage</span><span class="l-harvest">R\u00e9colte</span></div>';
+
+  // ===== MOBILE: Card view =====
+  const actionLabels = { indoor:'Semer sous abri', outdoor:'Semer en terre', transplant:'Repiquer', harvest:'R\u00e9colter' };
+  const actionColors = { indoor:'#a78bfa', outdoor:'#34d399', transplant:'#60a5fa', harvest:'#f87171' };
+  html += '<div class="cal-cards">';
+  state.basket.forEach(function(v) {
+    const indoor = adjustMonths(v.sowing_indoor, zk, alt, 'indoor');
+    const outdoor = adjustMonths(v.sowing_outdoor, zk, alt, 'outdoor');
+    const transplant = adjustMonths(v.transplant, zk, alt, 'transplant');
+    const harvest = adjustMonths(v.harvest, zk, alt, 'harvest');
+    html += '<div class="cal-card">';
+    html += '<div class="cc-name">' + v.name + '</div>';
+    // What to do NOW
+    var nowActions = [];
+    if (indoor.includes(curMonth)) nowActions.push('\ud83c\udfe0 Semer sous abri');
+    if (outdoor.includes(curMonth)) nowActions.push('\u2600\ufe0f Semer en terre');
+    if (transplant.includes(curMonth)) nowActions.push('\ud83d\udc50 Repiquer');
+    if (harvest.includes(curMonth)) nowActions.push('\ud83c\udf3d R\u00e9colter');
+    if (nowActions.length) {
+      html += '<div class="cc-now" style="color:var(--vert2)">\u27a4 ' + MONTH_FULL[curMonth-1] + ' : ' + nowActions.join(', ') + '</div>';
+    } else {
+      html += '<div class="cc-now" style="opacity:.4">Rien \u00e0 faire en ' + MONTH_FULL[curMonth-1] + '</div>';
+    }
+    // 12-month bar
+    html += '<div class="cc-bar">';
+    for (var m = 1; m <= 12; m++) {
+      var bg = '#f0f0f0';
+      if (indoor.includes(m)) bg = actionColors.indoor;
+      else if (outdoor.includes(m)) bg = actionColors.outdoor;
+      else if (transplant.includes(m)) bg = actionColors.transplant;
+      else if (harvest.includes(m)) bg = actionColors.harvest;
+      var isCur = m === curMonth ? ' now' : '';
+      html += '<div class="cb' + isCur + '" style="background:' + bg + '">' + MONTH_NAMES[m-1] + '</div>';
+    }
+    html += '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  // ===== DESKTOP: Table view =====
+  html += '<div class="cal-scroll"><table class="cal-table"><thead><tr><th class="var-name">Vari\u00e9t\u00e9</th>';
+  for (let m = 1; m <= 12; m++) {
+    html += '<th' + (m === curMonth ? ' class="current-month"' : '') + '>' + MONTH_NAMES[m-1] + '</th>';
+  }
+  html += '</tr></thead><tbody>';
+
+  state.basket.forEach(v => {
+    const indoor = adjustMonths(v.sowing_indoor, zk, alt, 'indoor');
+    const outdoor = adjustMonths(v.sowing_outdoor, zk, alt, 'outdoor');
+    const transplant = adjustMonths(v.transplant, zk, alt, 'transplant');
+    const harvest = adjustMonths(v.harvest, zk, alt, 'harvest');
+
+    html += '<tr><td class="var-name">' + v.name + '</td>';
+    for (let m = 1; m <= 12; m++) {
+      let cls = m === curMonth ? ' class="current-month"' : '';
+      let cell = '';
+      let action = '';
+      if (indoor.includes(m))      { cell = '<div class="ci bar-indoor"></div>';     action = 'Semer sous abri'; }
+      else if (outdoor.includes(m))  { cell = '<div class="ci bar-outdoor"></div>';    action = 'Semer en terre'; }
+      else if (transplant.includes(m)){ cell = '<div class="ci bar-transplant"></div>'; action = 'Repiquer'; }
+      else if (harvest.includes(m))  { cell = '<div class="ci bar-harvest"></div>';    action = 'R\u00e9colter'; }
+      let tip = action
+        ? ' onclick="showCalTooltip(event,\'' + v.name.replace(/'/g, "\\'") + '\',\'' + action + '\',\'' + MONTH_FULL[m-1] + '\')" style="cursor:pointer"'
+        : '';
+      html += '<td' + cls + tip + '>' + cell + '</td>';
+    }
+    html += '</tr>';
+  });
+
+  html += '</tbody></table></div>';
+
+  html += '<div style="display:flex;gap:.75rem;margin-top:1.5rem" class="no-print">';
+  html += '<button class="btn btn-primary" style="flex:1" onclick="printCalendar()">\ud83d\udda8\ufe0f Imprimer</button>';
+  html += '<button class="btn btn-secondary" style="flex:1" onclick="shareCalendar()">\ud83d\udce4 Partager</button>';
+  html += '</div>';
+  html += '<div style="display:flex;gap:.75rem;margin-top:.75rem" class="no-print">';
+  html += '<button class="btn btn-secondary" style="flex:1" onclick="goTo(5)">\u2190 Mes graines</button>';
+  html += '<button class="btn btn-primary" style="flex:1" onclick="goTo(7)">Finaliser \u2192</button>';
+  html += '</div>';
+
+  container.innerHTML = html;
+  preparePrintElements();
+}
+
+function preparePrintElements() {
+  const loc = state.location;
+  const zk = loc.zone.key;
+  const alt = loc.altitude;
+  const curMonth = new Date().getMonth() + 1;
+
+  // Print calendar
+  let pcHtml = '<h1 style="text-align:center;font-family:Playfair Display,serif;margin-bottom:1rem">' + (loc.commune || 'Mon potager') + ' \u2014 Calendrier des semis 2026 \u2014 ' + alt + 'm</h1>';
+  pcHtml += '<div class="print-legend" style="display:flex;gap:1.5rem;margin-bottom:.75rem;font-size:.85rem">';
+  pcHtml += '<span><span class="pl-box" style="width:14px;height:14px;border-radius:2px;display:inline-block;background:#a78bfa"></span> Semis abri</span>';
+  pcHtml += '<span><span class="pl-box" style="width:14px;height:14px;border-radius:2px;display:inline-block;background:#34d399"></span> Semis terre</span>';
+  pcHtml += '<span><span class="pl-box" style="width:14px;height:14px;border-radius:2px;display:inline-block;background:#60a5fa"></span> Repiquage</span>';
+  pcHtml += '<span><span class="pl-box" style="width:14px;height:14px;border-radius:2px;display:inline-block;background:#f87171"></span> R\u00e9colte</span></div>';
+  pcHtml += '<table style="width:100%;border-collapse:collapse;font-size:.7rem"><thead><tr><th style="text-align:left;padding:4px;border:1px solid #ccc">Vari\u00e9t\u00e9</th>';
+  for (let m = 1; m <= 12; m++) pcHtml += '<th style="padding:4px;border:1px solid #ccc;' + (m===curMonth?'background:#e8f5e0':'') + '">' + MONTH_FULL[m-1] + '</th>';
+  pcHtml += '</tr></thead><tbody>';
+
+  state.basket.forEach(v => {
+    const indoor = adjustMonths(v.sowing_indoor, zk, alt, 'indoor');
+    const outdoor = adjustMonths(v.sowing_outdoor, zk, alt, 'outdoor');
+    const transplant = adjustMonths(v.transplant, zk, alt, 'transplant');
+    const harvest = adjustMonths(v.harvest, zk, alt, 'harvest');
+    pcHtml += '<tr><td style="text-align:left;padding:3px;border:1px solid #ccc;font-weight:600">' + v.name + '</td>';
+    for (let m = 1; m <= 12; m++) {
+      let bg = '#fff';
+      if (indoor.includes(m)) bg = '#a78bfa';
+      else if (outdoor.includes(m)) bg = '#34d399';
+      else if (transplant.includes(m)) bg = '#60a5fa';
+      else if (harvest.includes(m)) bg = '#f87171';
+      pcHtml += '<td style="padding:3px;border:1px solid #ccc;background:' + bg + (m===curMonth&&bg==='#fff'?';background:#f0f7eb':'') + '"></td>';
+    }
+    pcHtml += '</tr>';
+  });
+  pcHtml += '</tbody></table>';
+  pcHtml += '<div class="print-footer" style="text-align:center;font-family:Playfair Display,serif;margin-top:1.5rem;color:var(--vert1)">Mon Potager \u2014 ' + (loc.commune || 'Mon Jardin') + ', 2026 \ud83c\udf31</div>';
+  document.getElementById('print-calendar').innerHTML = pcHtml;
+
+  // Print list
+  let plHtml = '<h1 style="font-family:Playfair Display,serif;margin-bottom:1rem">Liste de graines \u2014 ' + (loc.commune || 'Mon potager') + '</h1>';
+  plHtml += '<table style="width:100%;border-collapse:collapse;font-size:.8rem"><thead><tr>';
+  plHtml += '<th style="text-align:left;padding:4px;border:1px solid #ccc">Vari\u00e9t\u00e9</th>';
+  plHtml += '<th style="text-align:left;padding:4px;border:1px solid #ccc">Cat\u00e9gorie</th>';
+  plHtml += '<th style="text-align:right;padding:4px;border:1px solid #ccc">Prix</th>';
+  plHtml += '</tr></thead><tbody>';
+  let printTotal = 0;
+  state.basket.forEach(v => {
+    printTotal += v.price;
+    plHtml += '<tr><td style="padding:3px;border:1px solid #ccc;font-weight:600">' + v.name + '</td>';
+    plHtml += '<td style="padding:3px;border:1px solid #ccc">' + (SUBCAT_LABELS[v.subcategory] || v.subcategory) + '</td>';
+    plHtml += '<td style="padding:3px;border:1px solid #ccc;text-align:right">' + v.price.toFixed(2) + '\u20ac</td></tr>';
+  });
+  plHtml += '<tr><td colspan="2" style="padding:4px;border:1px solid #ccc;font-weight:700">Total</td>';
+  plHtml += '<td style="padding:4px;border:1px solid #ccc;text-align:right;font-weight:700">' + printTotal.toFixed(2) + '\u20ac</td></tr>';
+  plHtml += '</tbody></table>';
+  plHtml += '<div class="print-footer" style="text-align:center;font-family:Playfair Display,serif;margin-top:2rem;color:var(--vert1)">Mon Potager \u2014 ' + (loc.commune || 'Mon Jardin') + ', 2026 \ud83c\udf31</div>';
+  document.getElementById('print-list').innerHTML = plHtml;
+}
+
+function printCalendar() {
+  preparePrintElements();
+  window.print();
+}
+
+async function shareCalendar() {
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: 'Mon calendrier potager', text: 'Mon calendrier de semis personnalis\u00e9', url: window.location.href });
+    } catch(e) {}
+  } else {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      alert('Lien copi\u00e9 !');
+    } catch(e) { alert('Partage non disponible'); }
+  }
+}
+
+// ========== SHIPPING ==========
+function getShipping(total) {
+  if (total >= 60) return 0;
+  if (total >= 26) return 6.50;
+  return 5.50;
+}
+
+// ========== SCREEN 7 — MA SÉLECTION ==========
+function renderOrder() {
+  const container = document.getElementById('s7-content');
+  const total = state.basket.reduce((s, v) => s + v.price, 0);
+  const nbVar = state.basket.length;
+  let shipping = getShipping(total);
+  const grandTotal = total + shipping;
+  const pollinators = state.basket.filter(v => v.pollinator_friendly).length;
+  const loc = state.location;
+
+  let html = '<div style="text-align:center;margin-bottom:1.5rem">';
+  html += '<h2 style="font-size:1.5rem">\ud83c\udf3f Ma s\u00e9lection</h2>';
+  html += '<p style="opacity:.6;font-size:.9rem;margin-top:.5rem">Commander directement sur Kokopelli</p>';
+  html += '</div>';
+
+  html += '<div class="card" style="margin-bottom:1.5rem">';
+  html += '<div class="summary-stat"><div class="ss-icon">\ud83c\udf31</div><div><div class="ss-value">' + nbVar + ' vari\u00e9t\u00e9s</div><div style="font-size:.85rem;opacity:.6">Graines libres et reproductibles</div></div></div>';
+  html += '<div class="summary-stat"><div class="ss-icon">\ud83d\udcb0</div><div><div class="ss-value">' + total.toFixed(2) + '\u20ac</div><div style="font-size:.85rem;opacity:.6">+ ' + (shipping === 0 ? 'livraison offerte' : shipping.toFixed(2) + '\u20ac de livraison') + ' = ' + grandTotal.toFixed(2) + '\u20ac</div></div></div>';
+  const harvestMonths = new Set();
+  state.basket.forEach(v => {
+    const adj = adjustMonths(v.harvest, loc.zone.key, loc.altitude, 'harvest');
+    adj.forEach(m => harvestMonths.add(m));
+  });
+  html += '<div class="summary-stat"><div class="ss-icon">\ud83c\udf3d</div><div><div class="ss-value">~' + (nbVar * 15) + '\u20ac de r\u00e9coltes</div><div style="font-size:.85rem;opacity:.6">Estimation \u00e0 15\u20ac/vari\u00e9t\u00e9</div></div></div>';
+  html += '<div class="summary-stat"><div class="ss-icon">\ud83d\udcc5</div><div><div class="ss-value">' + harvestMonths.size + ' mois de r\u00e9coltes</div><div style="font-size:.85rem;opacity:.6">De ' + MONTH_FULL[Math.min(...harvestMonths)-1] + ' \u00e0 ' + MONTH_FULL[Math.max(...harvestMonths)-1] + '</div></div></div>';
+  if (pollinators > 0) {
+    html += '<div class="summary-stat"><div class="ss-icon">\ud83d\udc1d</div><div><div class="ss-value">' + pollinators + ' vari\u00e9t\u00e9s pollinisatrices</div><div style="font-size:.85rem;opacity:.6">Pour les abeilles et papillons</div></div></div>';
+  }
+  html += '</div>';
+
+  html += '<div class="card" style="margin-bottom:1.5rem">';
+  html += '<h3 style="font-size:1.05rem;margin-bottom:1rem">\ud83d\udd17 Commander sur Kokopelli</h3>';
+  html += '<div style="display:flex;flex-direction:column;gap:.5rem">';
+  state.basket.forEach(function(v) {
+    const url = v.kokopelli_url ? v.kokopelli_url + '?ref=seedelli' : 'https://www.kokopelli-semences.fr?ref=seedelli';
+    html += '<a href="' + url + '" target="_blank" rel="noopener" style="display:flex;justify-content:space-between;align-items:center;padding:.6rem .75rem;border:1px solid #e8dcc8;border-radius:.5rem;text-decoration:none;color:var(--vert1);background:#fff">';
+    html += '<span style="font-size:.9rem">' + v.name + '</span>';
+    html += '<span style="font-size:.9rem;font-weight:600;color:var(--terre1)">' + v.price.toFixed(2) + '\u20ac \u2197</span>';
+    html += '</a>';
+  });
+  html += '</div>';
+  html += '</div>';
+
+  html += '<div style="display:flex;flex-direction:column;gap:.75rem;margin-top:.75rem">';
+  html += '<button class="btn btn-primary" onclick="printCalendar()">\ud83d\udda8\ufe0f Imprimer ma liste</button>';
+  html += '<button class="btn btn-secondary" onclick="goTo(5)">\u2190 Modifier mes graines</button>';
+  html += '</div>';
+
+  container.innerHTML = html;
+}
+
+// ========== RESTORE & INIT ==========
+function restoreState() {
+  const saved = localStorage.getItem('seedelli-session');
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (parsed.location) state.location = parsed.location;
+      if (parsed.answers) state.answers = parsed.answers;
+      if (parsed.basket && parsed.basket.length) state.basket = parsed.basket;
+      if (parsed.allCompatible) state.allCompatible = parsed.allCompatible;
+      if (state.location && state.answers.objectifs) {
+        if (!state.allCompatible || !state.allCompatible.length) generateBasket();
+        const resumeScreen = parsed.currentScreen || 5;
+        goTo(Math.min(resumeScreen, 7)); // Max screen 7 (selection)
+        return true;
+      }
+    } catch(e) {}
+  }
+  return false;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (!restoreState()) {
+    goTo(1);
+  }
+});
+</script>
+
+<!-- ========== SCREENS ========== -->
+
+<div class="screen" id="s1">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:90vh;text-align:center">
+    <div class="seed-anim">
+      <div class="seed">&#127793;</div>
+      <div class="stem"></div>
+      <div class="leaves">&#127807;</div>
+    </div>
+    <div id="s1-text" style="margin-top:2rem"></div>
+    <button class="btn btn-primary" id="s1-btn" style="margin-top:2rem;opacity:0;transition:opacity 1s" onclick="goTo(2)">
+      Commencer &#8594;
+    </button>
+  </div>
+</div>
+
+<div class="screen" id="s2">
+  <button class="back-btn" onclick="goTo(1)">&#8592;<span class="back-label">Retour</span></button>
+  <div style="text-align:center;padding-top:3rem">
+    <h1 style="font-size:1.75rem">Ton potager sur mesure &#127807;</h1>
+    <p style="margin:1.5rem 0;line-height:1.7;font-size:.95rem;opacity:.8">
+      Un assistant qui choisit tes graines,<br>
+      planifie tes semis, et te dit quoi faire chaque mois.<br>
+      Semences libres et reproductibles.
+    </p>
+    <p style="margin:2rem 0 1rem">Commence par...</p>
+
+    <div class="card" style="text-align:left;margin:1rem 0">
+      <label style="font-weight:600;font-size:1.1rem">&#128205; O&#249; est ton jardin ?</label>
+      <input id="address-input" type="text" placeholder="Votre ville ou code postal..."
+        style="margin-top:.75rem"
+        onfocus="this.style.borderColor='var(--vert2)'" onblur="this.style.borderColor='#e8dcc8'">
+      <button class="btn btn-primary" style="width:100%;margin-top:.75rem" onclick="geocodeAddress()">Chercher &#128270;</button>
+      <div id="geo-result" style="display:none;margin-top:1rem"></div>
+      <div id="geo-fallback" style="display:none;margin-top:1rem"></div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="s3">
+  <button class="back-btn" onclick="if(currentQ>0){currentQ--;renderQuestion();}else{goTo(2);}">&#8592;<span class="back-label">Retour</span></button>
+  <div id="s3-content"></div>
+</div>
+
+<div class="screen" id="s4">
+  <button class="back-btn" onclick="currentQ=questions.length-1;goTo(3)">&#8592;<span class="back-label">Retour</span></button>
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:90vh;text-align:center">
+    <h2 style="font-size:1.3rem;margin-bottom:1.5rem;font-family:'Playfair Display',serif;color:var(--vert1)">Ton potager prend forme...</h2>
+    <div id="s4-lines" style="text-align:left;max-width:350px;width:100%"></div>
+    <button class="btn btn-primary" id="s4-btn" style="margin-top:2rem;opacity:0;transition:opacity 1s" onclick="goTo(5)">
+      D&#233;couvrir mes graines &#127793;
+    </button>
+  </div>
+</div>
+
+<div class="screen" id="s5">
+  <button class="back-btn" onclick="goTo(4)">&#8592;<span class="back-label">Retour</span></button>
+  <div id="s5-content" style="padding-top:2.5rem"></div>
+</div>
+
+<div class="screen" id="s6">
+  <button class="back-btn" onclick="goTo(5)">&#8592;<span class="back-label">Retour</span></button>
+  <div id="s6-content" style="padding-top:2.5rem"></div>
+</div>
+
+<div class="screen" id="s7">
+  <button class="back-btn" onclick="goTo(5)">&#8592;<span class="back-label">Retour</span></button>
+  <div id="s7-content" style="padding-top:2.5rem"></div>
+</div>
+
+<!-- Nav dots -->
+<div class="nav-dots no-print">
+  <div class="dot" onclick="goTo(1)" role="tab" aria-label="Accueil" tabindex="0"></div>
+  <div class="dot" onclick="goTo(2)" role="tab" aria-label="Jardin" tabindex="0"></div>
+  <div class="dot" onclick="goTo(3)" role="tab" aria-label="Questions" tabindex="0"></div>
+  <div class="dot" onclick="goTo(4)" role="tab" aria-label="Analyse" tabindex="0"></div>
+  <div class="dot" onclick="goTo(5)" role="tab" aria-label="Graines" tabindex="0"></div>
+  <div class="dot" onclick="goTo(6)" role="tab" aria-label="Calendrier" tabindex="0"></div>
+  <div class="dot" onclick="goTo(7)" role="tab" aria-label="S\u00e9lection" tabindex="0"></div>
+</div>
+
+<!-- Quick nav (visible after screen 5) -->
+<div class="quick-nav no-print" id="quick-nav" style="display:none">
+  <div class="qn-btn" onclick="goTo(5)" title="Mes graines" data-label="Mes graines">&#127793;<span class="qn-label">Mes graines</span></div>
+  <div class="qn-btn" onclick="goTo(6)" title="Calendrier" data-label="Calendrier">&#128197;<span class="qn-label">Calendrier</span></div>
+</div>
+
+<!-- Print elements -->
+<div id="print-calendar" style="display:none"></div>
+<div id="print-list" style="display:none"></div>
+
+</body>
+</html>
