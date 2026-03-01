@@ -1,157 +1,110 @@
-# Brief — Contact Kokopelli Semences
+# Brief Contact Kokopelli — pour Bernard
 
-**Statut :** Recherche complète — prêt à contacter
-**Dernière mise à jour :** 2026-03-01
+**Contexte Mael :**
+- Déjà en contact avec **Leentje Van Doorslaer** (Responsable Service Solidarité — programme Semences Sans Frontières)
+- A reçu un lot de graines Kokopelli pour des communautés paysannes à Lombok Nord (Indonésie)
+- **Ananda Guillet** (famille du fondateur Dominique Guillet) est dans ses contacts LinkedIn
+- Ces personnes sont proches de la terre, probablement méfiantes envers la tech commerciale
 
----
-
-## Ce qu'on sait
-
-### Plateforme e-commerce
-**Sylius** (pas PrestaShop) — framework e-commerce open-source sur Symfony.
-Point crucial : Sylius a une **API REST native**. Si elle est activée chez Kokopelli,
-cart injection et accès catalogue sont techniquement possibles sans module tiers.
-
-### Programme partenaire
-- **Programme revendeur** : existe pour retailers physiques (compte pro + documents légaux)
-- Pas d'affiliation digitale/commission documentée publiquement
-- Réseau actuel : ~30 producteurs certifiés bio, revendeurs en France/Europe
-
-### Contacts
-| Rôle | Contact |
-|------|---------|
-| Presse / Communications | Nathalie Lespes — press@kokopelli-semences.fr — +33 7 86 25 01 84 |
-| Service client / réclamations | reclamation@kokopelli-semences.fr |
-| Fondateur (retraité 2018) | Dominique Guillet ("Xochi") — Substack actif |
-
-**Adresse** : Forêt de Castagnès, Route de Sabarat, 09290 Le Mas d'Azil, Ariège
-→ Note : Le Mas d'Azil est à ~30km de Biert (09400). Connexion régionale possible.
-
-### Analytics
-Kokopelli utilise Google Analytics + Matomo + Google Tag Manager.
-Ils **voient déjà** les sources de trafic — `?ref=seedelli` sera visible dans GA
-comme paramètre UTM si on le formate correctement : `?utm_source=seedelli&utm_medium=referral`
+**Ce que Seedelli est vraiment :**
+Un outil gratuit et ouvert qui aide les gens à retrouver le chemin des semences libres.
+Pas un outil de vente. Un outil de transmission.
 
 ---
 
-## Stratégie de contact recommandée
+## Angle — ne pas pitcher la tech
 
-### Angle
-Pas "affilié qui veut une commission" mais **partenaire technique qui envoie du trafic qualifié**.
-Montrer d'abord la valeur, négocier ensuite.
+Ne pas mentionner :
+- UTM, affiliation, commission, trafic, conversion
+- "partenariat commercial", "programme affilié"
+- Cart injection, API, Sylius
 
-### Interlocuteur cible
-**Nathalie Lespes** (Communications) est le meilleur premier contact.
-Si connexion régionale Ariège possible → mentionner.
-
-### Séquence
-1. **Email court** (Nathalie) — présenter Seedelli, demander si intéressés pour discuter
-2. **Appel 20 min** — montrer le flow, les stats de clics (même faibles au départ)
-3. **Proposition technique** — selon leur réponse : affiliation simple OU intégration API Sylius
+Mentionner :
+- Lombok Nord, les communautés paysannes → montre l'alignement de mission
+- Seedelli comme outil de médiation entre les gens et les semences libres
+- 161 variétés Kokopelli → c'est leur catalogue, pas un outil de vente parallèle
+- Gratuité totale, open source, zéro monétisation à ce stade
 
 ---
 
-## Template email — version courte (recommandée)
+## Contact 1 — Leentje Van Doorslaer (email existant)
 
-**À :** press@kokopelli-semences.fr
-**Objet :** Outil de recommandation gratuit — 161 de vos variétés, trafic qualifié
+**Canal :** Email direct (Mael a déjà l'adresse)
+**Relation :** Déjà établie via programme Semences Sans Frontières / Lombok Nord
+**Objectif :** Lui montrer Seedelli, demander si pertinent pour leur réseau, et si elle peut
+             orienter vers la bonne personne pour une collaboration simple
 
----
-
-Bonjour Nathalie,
-
-Je me permets de vous contacter au sujet d'un outil que nous avons développé :
-**Seedelli** (https://domnumb.github.io/seedelli/).
-
-En 2 minutes, un jardinier répond à quelques questions (sa région, son altitude,
-ses objectifs) et obtient une sélection personnalisée parmi 161 de vos variétés,
-avec un calendrier de semis adapté à son climat.
-
-Chaque variété sélectionnée renvoie directement sur votre fiche produit.
-
-Nous aimerions savoir si vous avez un programme partenaire pour ce type
-d'apporteur de trafic qualifié, et si une intégration plus poussée vous
-semblerait pertinente.
-
-Seriez-vous disponible pour un échange de 20 minutes ?
-
-Cordialement,
-[Prénom Nom]
-Seedelli
+**Message — court, chaleureux, pas de demande explicite**
 
 ---
 
-## Template email — version longue (si pas de réponse après 1 semaine)
+Bonjour Leentje,
 
-**À :** press@kokopelli-semences.fr
-**Objet :** Suite — Seedelli & Kokopelli, partenariat possible
+J'espère que vous allez bien.
 
----
+Depuis notre échange sur le programme Semences Sans Frontières et les graines
+pour Lombok Nord, j'ai développé un petit outil que j'aimerais vous montrer :
 
-Bonjour Nathalie,
+https://domnumb.github.io/seedelli/
 
-Je reviens vers vous suite à mon précédent email.
+L'idée est simple : aider les gens à trouver les variétés Kokopelli adaptées
+à leur région et leur altitude, en 2 minutes. Tout le catalogue est celui de
+Kokopelli — l'outil ne fait que guider vers vos graines.
 
-Pour vous donner une meilleure idée de ce que fait Seedelli :
-- L'utilisateur complète un questionnaire de 7 questions (2 minutes)
-- Il obtient une sélection de 8 à 15 variétés Kokopelli adaptées à sa région et son budget
-- Un calendrier de semis personnalisé selon son altitude et sa zone climatique
-- Chaque variété est liée directement à votre page produit
+Je ne sais pas si ça peut être utile à votre réseau ou à l'association.
+Mais j'avais envie de vous le partager.
 
-Techniquement, tous les liens sortants portent déjà un paramètre de tracking
-(ref=seedelli) visible dans vos analytics — vous pouvez donc mesurer
-le trafic que nous vous envoyons indépendamment de toute discussion commerciale.
-
-Ce qui nous intéresserait à terme :
-1. Un programme d'affiliation simple (commission sur ventes générées)
-2. Un accès à un export de votre catalogue pour maintenir nos 161 variétés à jour
-3. Si faisable techniquement : une intégration permettant de pré-remplir
-   le panier Kokopelli depuis notre interface (Sylius dispose d'une API REST)
-
-Nous sommes une petite équipe et l'outil est entièrement gratuit pour les utilisateurs.
-L'objectif est d'envoyer vers vous des acheteurs qui ont déjà décidé ce qu'ils veulent.
-
-Seriez-vous disponible la semaine prochaine ?
-
-Cordialement,
-[Prénom Nom]
-Seedelli
+Bien cordialement,
+Mael
 
 ---
 
-## Notes techniques — API Sylius
+## Contact 2 — Ananda Guillet (LinkedIn)
 
-Sylius expose nativement une API REST et GraphQL.
-Endpoints pertinents si activés chez Kokopelli :
-- `GET /api/v2/shop/products` — catalogue complet avec prix et stock
-- `POST /api/v2/shop/orders` — création de panier
-- `PATCH /api/v2/shop/orders/{token}/items` — ajout de produits au panier
+**Canal :** Message LinkedIn direct (contact existant)
+**Relation :** Contact LinkedIn établi
+**Objectif :** Message très court, montrer l'outil, voir si ça résonne
 
-Si leur API est publique (même partiellement), on peut :
-1. Sync automatique du catalogue (prix, disponibilité, nouveaux produits)
-2. Créer un panier pré-rempli et rediriger l'utilisateur directement en checkout
-
-À explorer lors du contact technique.
+**Message — ultra court, pas de demande**
 
 ---
 
-## UTM tracking — correction immédiate
+Bonjour Ananda,
 
-Actuellement les liens sortants utilisent `?ref=seedelli`.
-Pour être visible dans Google Analytics de Kokopelli, le format correct est :
-```
-?utm_source=seedelli&utm_medium=referral&utm_campaign=recommandation
-```
-→ **TODO** : mettre à jour les URLs dans index.html avant le premier contact
-  (pour pouvoir leur montrer les stats depuis leur GA dès la prise de contact)
+J'ai développé un outil autour du catalogue Kokopelli :
+https://domnumb.github.io/seedelli/
+
+Ça aide les gens à trouver les variétés adaptées à leur région et leur altitude.
+Tout gratuit, rien à vendre. J'avais envie de vous montrer.
+
+Mael
 
 ---
 
-## Statut checklist
-- [x] Recherche plateforme (Sylius)
-- [x] Contacts identifiés
-- [x] Brief rédigé
-- [x] Templates email prêts
-- [ ] UTM format corrigé dans index.html
-- [ ] Premier contact envoyé
-- [ ] Réponse reçue
+## Ce qu'on cherche à obtenir (dans l'ordre)
+
+1. **Feedback humain** — est-ce que l'outil résonne avec leur mission ?
+2. **Diffusion naturelle** — si ça leur plaît, ils peuvent partager à leur communauté
+3. **À terme, si relation se développe** : accès catalogue structuré pour maintenir les données
+   (pas besoin de le mentionner maintenant)
+
+---
+
+## Ce que Bernard doit faire
+
+1. Lire ce brief
+2. Demander à Mael : "Je t'envoie le message à Leentje depuis ton adresse email ?"
+3. Rédiger le message final selon le template ci-dessus, l'adapter si besoin
+4. Attendre confirmation de Mael avant d'envoyer
+5. Pour Ananda LinkedIn : préparer le texte, Mael envoie lui-même (pas d'accès LinkedIn agent)
+
+**Ne pas envoyer sans validation de Mael.**
+
+---
+
+## Informations techniques en réserve (si demandées plus tard)
+
+- Plateforme Kokopelli : Sylius (API REST native probable)
+- Potentiel cart injection via API Sylius si relation se développe
+- UTM actifs : `utm_source=seedelli&utm_medium=referral` visible dans leur Google Analytics
+- Contact presse officiel : Nathalie Lespes — press@kokopelli-semences.fr
