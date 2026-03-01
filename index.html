@@ -1110,6 +1110,11 @@ async function parseBasketCommandAI(rawText) {
     state.chatLastReply = data.reply || '';
     renderBasket();
 
+    // Toast visible depuis n'importe où sur la page
+    const toastParts = [data.reply || ''];
+    if (state.chatDiff) toastParts.push(state.chatDiff);
+    showToast(toastParts.join('  ·  '));
+
   } catch (err) {
     // Fallback to local keyword parser
     parseBasketCommand(rawText);

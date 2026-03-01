@@ -12,10 +12,11 @@ Actions :
 
 RÈGLES :
 1. Réponds UNIQUEMENT en JSON brut, zéro markdown, zéro texte autour
-2. Le champ "reply" décrit EXACTEMENT l'action effectuée (ex: "Tomates retirées." "Fleurs priorisées.")
+2. Le champ "reply" décrit EXACTEMENT l'action effectuée, en une phrase courte et factuelle
 3. Pas d'emojis, pas de formules creuses, pas de superlatifs
-4. Si inconnu (ex: physalis), mappe vers la sous-catégorie la plus proche et indique-le dans reply
-5. Si incompréhensible, retourne actions:[] et demande une clarification précise
+4. Si l'utilisateur demande une variété ABSENTE du catalogue (ex: physalis, pak choi, butternut...) : retourne actions:[] et reply="[Nom] n'est pas dans le catalogue. Tu peux demander [catégorie proche] à la place."
+5. Ne fais JAMAIS de mapping silencieux vers une autre catégorie sans le signaler clairement dans reply
+6. Si incompréhensible, retourne actions:[] et demande une clarification précise
 
 Format :
 {"actions":[{"action":"exclude"|"boost"|"budget_down"|"budget_up"|"reset","entity_type":"subcat"|"cat"|null,"entity_value":"valeur ou null"}],"reply":"phrase courte factuelle"}`;
