@@ -99,6 +99,8 @@ input[type="text"]:focus,input[type="email"]:focus{border-color:var(--vert2)}
 .quick-adjust button{padding:.4rem .75rem;border-radius:2rem;border:1.5px solid var(--vert2);background:#fff;color:var(--vert1);font-size:.8rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .2s}
 .quick-adjust button:active{background:var(--vert2);color:#fff}
 .form-errors{color:#c44;font-size:.85rem;margin-bottom:1rem;padding:.75rem;background:#fef2f2;border-radius:.5rem;display:none}
+.chat-zone{background:#faf7f2;border-radius:1rem;padding:1rem;border:1.5px solid #e8dcc8}
+.chat-zone input:focus{border-color:var(--vert2)!important;box-shadow:0 0 0 3px rgba(93,140,72,.15)}
 
 /* Guided checkout overlay */
 .guided-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;display:flex;align-items:flex-end;justify-content:center}
@@ -250,7 +252,10 @@ let state = {
   answers: {},
   basket: [],
   allCompatible: [],
-  currentScreen: 1
+  currentScreen: 1,
+  chatExclusions: [],  // [{type:'subcat'|'cat', value:'...'}]
+  chatBoosts: [],      // [{type:'subcat'|'cat', value:'...'}]
+  chatLastReply: ''
 };
 
 let currentQ = 0;
@@ -858,8 +863,201 @@ function renderDifficulty(diff) {
   return '<span style="font-size:.75rem;font-weight:600;color:' + color + ';background:' + color + '18;padding:.15rem .5rem;border-radius:2rem">' + label + '</span>';
 }
 
+// ========== CHAT BASKET ENGINE ==========
+const CHAT_ENTITIES = [
+  ['tomat', {type:'subcat', value:'tomates'}],
+  ['poivron', {type:'subcat', value:'poivrons'}],
+  ['piment', {type:'subcat', value:'piments'}],
+  ['aubergine', {type:'subcat', value:'aubergines'}],
+  ['courge', {type:'subcat', value:'courges'}],
+  ['courgette', {type:'subcat', value:'courgettes'}],
+  ['concombre', {type:'subcat', value:'concombres'}],
+  ['melon', {type:'subcat', value:'melons'}],
+  ['laitue', {type:'subcat', value:'laitues'}],
+  ['salade', {type:'subcat', value:'laitues'}],
+  ['carotte', {type:'subcat', value:'carottes'}],
+  ['betterave', {type:'subcat', value:'betteraves'}],
+  ['radis', {type:'subcat', value:'radis'}],
+  ['navet', {type:'subcat', value:'navets'}],
+  ['panais', {type:'subcat', value:'panais'}],
+  ['haricot', {type:'subcat', value:'haricots'}],
+  ['basilic', {type:'subcat', value:'basilics'}],
+  ['persil', {type:'subcat', value:'persil'}],
+  ['coriandr', {type:'subcat', value:'coriandre'}],
+  ['aneth', {type:'subcat', value:'aneth'}],
+  ['ciboulett', {type:'subcat', value:'ciboulette'}],
+  ['thym', {type:'subcat', value:'thym'}],
+  ['fleur', {type:'cat', value:'fleurs'}],
+  ['aromatique', {type:'cat', value:'aromatiques'}],
+  ['aromate', {type:'cat', value:'aromatiques'}],
+  ['herbe', {type:'cat', value:'aromatiques'}],
+  ['medicinal', {type:'cat', value:'medicinales'}],
+  ['engrais', {type:'cat', value:'engrais-verts'}],
+  ['legume', {type:'group', value:'legumes'}],
+];
+
+function normText(s) {
+  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+function detectEntity(t) {
+  for (const [kw, ent] of CHAT_ENTITIES) {
+    if (t.includes(kw)) return ent;
+  }
+  return null;
+}
+
+function applyBasketAdjustments() {
+  const budgetMap = { petit:{max:50,sachets:15}, moyen:{max:100,sachets:25}, genereux:{max:200,sachets:50}, illimite:{max:9999,sachets:100} };
+  const surfaceMap = { petit:20, familial:100, grand:500 };
+  const budgetKey = state.answers.budget || 'moyen';
+  const surface = state.answers.surface || 'familial';
+  const budget = budgetMap[budgetKey] || budgetMap.moyen;
+  const maxSurface = surfaceMap[surface] || 100;
+
+  // Filter pool: remove exclusions
+  let pool = state.allCompatible.filter(v => {
+    for (const ex of state.chatExclusions) {
+      if (ex.type === 'subcat' && v.subcategory === ex.value) return false;
+      if (ex.type === 'cat' && v.category === ex.value) return false;
+      if (ex.type === 'group' && ex.value === 'legumes' &&
+          (v.category === 'legumes-fruits' || v.category === 'legumes-racines' || v.category === 'legumes-feuilles')) return false;
+    }
+    return true;
+  });
+
+  // Sort: boosted entities rise to top while keeping score order
+  pool.sort((a, b) => {
+    const aB = state.chatBoosts.some(e =>
+      (e.type === 'subcat' && a.subcategory === e.value) ||
+      (e.type === 'cat' && a.category === e.value) ||
+      (e.type === 'group' && e.value === 'legumes' && (a.category.startsWith('legumes')))
+    ) ? 1 : 0;
+    const bB = state.chatBoosts.some(e =>
+      (e.type === 'subcat' && b.subcategory === e.value) ||
+      (e.type === 'cat' && b.category === e.value) ||
+      (e.type === 'group' && e.value === 'legumes' && (b.category.startsWith('legumes')))
+    ) ? 1 : 0;
+    if (aB !== bB) return bB - aB;
+    return (b.score || 0) - (a.score || 0);
+  });
+
+  // Rebuild basket
+  let basket = [], spent = 0, usedSpace = 0, catCount = {};
+  function canAdd(v) {
+    if (spent + v.price > budget.max && budget.max < 9999) return false;
+    if (usedSpace + (v._spaceM2 || 0.25) > maxSurface) return false;
+    const sc = v.subcategory;
+    let maxPerSub = surface === 'grand' ? 5 : surface === 'familial' ? 3 : 2;
+    if (sc === 'tomates') maxPerSub = Math.min(maxPerSub + 2, 8);
+    // Boosted subcats get +2 slots
+    if (state.chatBoosts.some(e => e.type === 'subcat' && e.value === sc)) maxPerSub += 2;
+    if (state.chatBoosts.some(e => e.type === 'cat' && e.value === v.category)) maxPerSub += 1;
+    if ((catCount[sc] || 0) >= maxPerSub) return false;
+    return true;
+  }
+  function doAdd(v) {
+    basket.push(v); spent += v.price; usedSpace += (v._spaceM2 || 0.25);
+    catCount[v.subcategory] = (catCount[v.subcategory] || 0) + 1;
+  }
+  const cats = [...new Set(pool.map(v => v.category))];
+  cats.forEach(cat => {
+    if (basket.length >= budget.sachets) return;
+    const best = pool.find(v => v.category === cat && !basket.some(b => b.id === v.id) && canAdd(v));
+    if (best) doAdd(best);
+  });
+  pool.forEach(v => {
+    if (basket.length >= budget.sachets) return;
+    if (basket.some(b => b.id === v.id)) return;
+    if (canAdd(v)) doAdd(v);
+  });
+  state.basket = basket;
+}
+
+function parseBasketCommand(rawText) {
+  const t = normText(rawText.trim());
+  if (!t) return;
+
+  const isExclude = /j.?ai deja|deja|pas de|sans |enlev|retir|suppr|j.?en ai|pas envie|je n.?aime pas|j.?ai/.test(t);
+  const isBoost   = /plus de|plus |davantage|ajoute|j.?aime|j.?adore|veux plus|beaucoup|priorite|prioris/.test(t);
+  const isReduce  = /moins de|moins |pas trop|limit|redui/.test(t);
+  const isBudgetDown = /budget serr|reduis|diminue|moins cher|economis|trop cher/.test(t);
+  const isBudgetUp   = /plus de budget|augmente|genereux|illimit|sans limite/.test(t);
+  const isReset  = /recommenc|tout reaffich|remet|reinitialis|efface|reset/.test(t);
+
+  function reply(msg) {
+    state.chatLastReply = msg;
+    const el = document.getElementById('chat-reply');
+    if (el) { el.textContent = msg; el.style.opacity = '1'; }
+  }
+
+  if (isReset) {
+    state.chatExclusions = []; state.chatBoosts = [];
+    generateBasket(); renderBasket();
+    reply('Panier remis à zéro !'); return;
+  }
+  if (isBudgetDown) {
+    const order = ['illimite','genereux','moyen','petit'];
+    const i = order.indexOf(state.answers.budget || 'moyen');
+    state.answers.budget = order[Math.min(i + 1, 3)];
+    generateBasket(); applyBasketAdjustments(); renderBasket();
+    reply('Budget réduit — ' + state.basket.length + ' variétés maintenant.'); return;
+  }
+  if (isBudgetUp) {
+    const order = ['illimite','genereux','moyen','petit'];
+    const i = order.indexOf(state.answers.budget || 'moyen');
+    state.answers.budget = order[Math.max(i - 1, 0)];
+    generateBasket(); applyBasketAdjustments(); renderBasket();
+    reply('Budget élargi — ' + state.basket.length + ' variétés maintenant.'); return;
+  }
+
+  const entity = detectEntity(t);
+  if (!entity) {
+    reply('Je n\'ai pas compris. Essaie : "j\'ai déjà des tomates", "plus de fleurs", "moins de courges".');
+    return;
+  }
+
+  const label = entity.type === 'group' ? entity.value : entity.value;
+  const inExcl = state.chatExclusions.some(e => e.type === entity.type && e.value === entity.value);
+  const inBoost = state.chatBoosts.some(e => e.type === entity.type && e.value === entity.value);
+
+  if (isExclude || isReduce) {
+    state.chatBoosts = state.chatBoosts.filter(e => !(e.type === entity.type && e.value === entity.value));
+    if (!inExcl) state.chatExclusions.push(entity);
+    generateBasket(); applyBasketAdjustments(); renderBasket();
+    reply('Retiré les ' + label + ' de ton panier.'); return;
+  }
+  if (isBoost) {
+    state.chatExclusions = state.chatExclusions.filter(e => !(e.type === entity.type && e.value === entity.value));
+    if (!inBoost) state.chatBoosts.push(entity);
+    generateBasket(); applyBasketAdjustments(); renderBasket();
+    reply('Ajouté plus de ' + label + ' dans ton panier !'); return;
+  }
+
+  // Ambiguous — entity detected but no clear intent
+  const inBasket = state.basket.some(v =>
+    (entity.type === 'subcat' && v.subcategory === entity.value) ||
+    (entity.type === 'cat' && v.category === entity.value)
+  );
+  reply(inBasket
+    ? 'Tu as des ' + label + ' dans ton panier. Dis "enlève les ' + label + '" ou "plus de ' + label + '".'
+    : 'Pas de ' + label + ' actuellement. Dis "ajoute des ' + label + '" si tu en veux !');
+}
+
+function chatSubmit(e) {
+  if (e && e.key && e.key !== 'Enter') return;
+  const input = document.getElementById('chat-input');
+  if (!input || !input.value.trim()) return;
+  const val = input.value.trim();
+  input.value = '';
+  parseBasketCommand(val);
+}
+
 function renderBasket() {
-  if (!state.basket || !state.basket.length) generateBasket();
+  if (!state.basket || !state.basket.length) {
+    generateBasket();
+    if (state.chatExclusions.length || state.chatBoosts.length) applyBasketAdjustments();
+  }
   const container = document.getElementById('s5-content');
 
   const groups = { abri: [], terre: [], ete: [] };
@@ -943,6 +1141,18 @@ function renderBasket() {
     html += '</div>'; // close season-group
   });
 
+  // Chat zone
+  const replyText = state.chatLastReply || '';
+  html += '<div class="chat-zone" style="margin-top:1.5rem">';
+  html += '<p style="font-size:.8rem;opacity:.6;margin-bottom:.5rem;text-align:center">Ajuste ton panier en langage naturel</p>';
+  if (replyText) html += '<div id="chat-reply" style="font-size:.85rem;padding:.6rem .75rem;background:#f0f7ec;border-radius:.75rem;margin-bottom:.5rem;color:#2d5a27">' + replyText + '</div>';
+  else html += '<div id="chat-reply" style="font-size:.85rem;padding:.6rem .75rem;background:#f0f7ec;border-radius:.75rem;margin-bottom:.5rem;color:#2d5a27;opacity:0"> </div>';
+  html += '<div style="display:flex;gap:.5rem">';
+  html += '<input id="chat-input" type="text" placeholder="J\'ai déjà des tomates, plus de fleurs..." style="flex:1;padding:.65rem .85rem;border:1.5px solid #d5c8b0;border-radius:2rem;font-size:.9rem;background:#fff;font-family:inherit;outline:none" onkeydown="chatSubmit(event)">';
+  html += '<button onclick="chatSubmit()" style="background:var(--vert2);color:#fff;border:none;border-radius:50%;width:2.5rem;height:2.5rem;font-size:1.1rem;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">↑</button>';
+  html += '</div>';
+  html += '</div>';
+
   html += '<div style="display:flex;gap:.75rem;margin-top:1.5rem">';
   html += '<button class="btn btn-primary" style="flex:1" onclick="goTo(6)">Voir le calendrier \ud83d\udcc5</button>';
   html += '</div>';
@@ -958,7 +1168,7 @@ function renderBasket() {
 function resetAll() {
   if (!confirm('Tu vas perdre ta s\u00e9lection actuelle. Continuer ?')) return;
   localStorage.removeItem('seedelli-session');
-  state = { location: null, answers: {}, basket: [], allCompatible: [], currentScreen: 1 };
+  state = { location: null, answers: {}, basket: [], allCompatible: [], currentScreen: 1, chatExclusions: [], chatBoosts: [], chatLastReply: '' };
   goTo(1);
 }
 
