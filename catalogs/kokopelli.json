@@ -8749,5 +8749,195 @@
     "medicinal": false,
     "pollinator_friendly": true,
     "kids_friendly": true
+  },
+  {
+    "id": "PHY-purple-de-milpa",
+    "name": "Physalis Purple de Milpa",
+    "latin": "Physalis philadelphica",
+    "category": "legumes-fruits",
+    "subcategory": "physalis",
+    "kokopelli_url": "https://kokopelli-semences.fr/fr/c/search?search=Purple+de+Milpa+Physalis",
+    "price": 3.4,
+    "difficulty": 3,
+    "desc": "Petits fruits violet-pourpre à saveur acidulée et sucrée, proche de la tomatille. Idéal pour salsas et préparations mexicaines.",
+    "altitude_max": 700,
+    "cold_tolerance": "faible",
+    "heat_preference": "forte",
+    "sun_need": "plein soleil",
+    "water_need": "modéré",
+    "space_m2": 0.5,
+    "sowing_indoor": [
+      2,
+      3,
+      4
+    ],
+    "sowing_outdoor": [],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      8,
+      9,
+      10
+    ],
+    "companions": [
+      "tomates",
+      "basilics",
+      "poivrons"
+    ],
+    "avoid_near": [],
+    "yield_desc": "Bonne production",
+    "tags": [
+      "original",
+      "rare",
+      "gout_exceptionnel"
+    ],
+    "beginner_friendly": false,
+    "medicinal": true,
+    "pollinator_friendly": true,
+    "kids_friendly": true
+  },
+  {
+    "id": "PHY-goldie",
+    "name": "Physalis Goldie",
+    "latin": "Physalis pubescens",
+    "category": "legumes-fruits",
+    "subcategory": "physalis",
+    "kokopelli_url": "https://kokopelli-semences.fr/fr/c/search?search=Goldie+Physalis",
+    "price": 3.4,
+    "difficulty": 2,
+    "desc": "Petits fruits dorés sucrés, très parfumés. Facile à cultiver, production abondante. Excellents crus ou en confiture.",
+    "altitude_max": 700,
+    "cold_tolerance": "faible",
+    "heat_preference": "forte",
+    "sun_need": "plein soleil",
+    "water_need": "modéré",
+    "space_m2": 0.5,
+    "sowing_indoor": [
+      2,
+      3,
+      4
+    ],
+    "sowing_outdoor": [],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      8,
+      9,
+      10
+    ],
+    "companions": [
+      "tomates",
+      "basilics"
+    ],
+    "avoid_near": [],
+    "yield_desc": "Très productive",
+    "tags": [
+      "original",
+      "gout_exceptionnel",
+      "productif"
+    ],
+    "beginner_friendly": true,
+    "medicinal": true,
+    "pollinator_friendly": true,
+    "kids_friendly": true
+  },
+  {
+    "id": "PHY-cape-gooseberry",
+    "name": "Physalis Cape Gooseberry",
+    "latin": "Physalis peruviana",
+    "category": "legumes-fruits",
+    "subcategory": "physalis",
+    "kokopelli_url": "https://kokopelli-semences.fr/fr/c/search?search=Cape+Gooseberry+Physalis",
+    "price": 3.4,
+    "difficulty": 3,
+    "desc": "Le physalis classique des marchés, fruit orange-doré dans son calice papyracé. Saveur exotique sucrée-acidulée, riche en vitamines.",
+    "altitude_max": 800,
+    "cold_tolerance": "faible",
+    "heat_preference": "forte",
+    "sun_need": "plein soleil",
+    "water_need": "modéré",
+    "space_m2": 0.5,
+    "sowing_indoor": [
+      2,
+      3,
+      4
+    ],
+    "sowing_outdoor": [],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      8,
+      9,
+      10
+    ],
+    "companions": [
+      "tomates",
+      "basilics"
+    ],
+    "avoid_near": [],
+    "yield_desc": "Bonne production",
+    "tags": [
+      "original",
+      "rare",
+      "gout_exceptionnel"
+    ],
+    "beginner_friendly": false,
+    "medicinal": true,
+    "pollinator_friendly": true,
+    "kids_friendly": true
+  },
+  {
+    "id": "PHY-toma-verde",
+    "name": "Physalis Toma Verde",
+    "latin": "Physalis ixocarpa",
+    "category": "legumes-fruits",
+    "subcategory": "physalis",
+    "kokopelli_url": "https://kokopelli-semences.fr/fr/c/search?search=Toma+Verde+Physalis",
+    "price": 3.4,
+    "difficulty": 2,
+    "desc": "Tomatille verte mexicaine, base de la salsa verde. Fruit juteux légèrement acidulé. Variété productive et rustique.",
+    "altitude_max": 800,
+    "cold_tolerance": "faible",
+    "heat_preference": "forte",
+    "sun_need": "plein soleil",
+    "water_need": "modéré",
+    "space_m2": 0.5,
+    "sowing_indoor": [
+      2,
+      3,
+      4
+    ],
+    "sowing_outdoor": [],
+    "transplant": [
+      5,
+      6
+    ],
+    "harvest": [
+      7,
+      8,
+      9
+    ],
+    "companions": [
+      "tomates",
+      "piments",
+      "basilics"
+    ],
+    "avoid_near": [],
+    "yield_desc": "Très productive",
+    "tags": [
+      "original",
+      "productif",
+      "conserves"
+    ],
+    "beginner_friendly": true,
+    "medicinal": false,
+    "pollinator_friendly": true,
+    "kids_friendly": false
   }
 ]

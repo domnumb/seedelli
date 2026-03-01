@@ -794,7 +794,7 @@ const SUBCAT_LABELS = {
   'oignons':'Oignons','basilics':'Basilics','persil':'Persil','coriandre':'Coriandre','aneth':'Aneth',
   'ciboulette':'Ciboulette','thym':'Thym','romarin':'Romarin','sauge':'Sauge','marjolaine':'Marjolaine',
   'origan':'Origan','estragon':'Estragon','medicinales':'Médicinales','pavots':'Pavots',
-  'fleurs':'Fleurs','engrais-verts':'Engrais verts'
+  'fleurs':'Fleurs','engrais-verts':'Engrais verts','physalis':'Physalis'
 };
 function formatCompanion(c) {
   return c.charAt(0).toUpperCase() + c.slice(1).replace(/-/g, ' ');
@@ -815,7 +815,8 @@ const SUBCAT_EMOJI = {
   'basilics':'\ud83c\udf3f','persil':'\ud83c\udf3f','coriandre':'\ud83c\udf3f','aneth':'\ud83c\udf3f',
   'ciboulette':'\ud83c\udf3f','thym':'\ud83e\uded6','romarin':'\ud83e\uded6','sauge':'\ud83e\uded6',
   'marjolaine':'\ud83e\uded6','origan':'\ud83e\uded6','estragon':'\ud83e\uded6',
-  'medicinales':'\ud83c\udf3c','pavots':'\ud83c\udf38','fleurs':'\ud83c\udf38','engrais-verts':'\ud83c\udf3e'
+  'medicinales':'\ud83c\udf3c','pavots':'\ud83c\udf38','fleurs':'\ud83c\udf38','engrais-verts':'\ud83c\udf3e',
+  'physalis':'\ud83c\udf1f'
 };
 function getVarietyEmoji(v) {
   return SUBCAT_EMOJI[v.subcategory] || CAT_EMOJI[v.category] || '\ud83c\udf31';
@@ -865,6 +866,8 @@ function renderDifficulty(diff) {
 
 // ========== CHAT BASKET ENGINE ==========
 const CHAT_ENTITIES = [
+  ['physal', {type:'subcat', value:'physalis'}],
+  ['tomatill', {type:'subcat', value:'physalis'}],
   ['tomat', {type:'subcat', value:'tomates'}],
   ['poivron', {type:'subcat', value:'poivrons'}],
   ['piment', {type:'subcat', value:'piments'}],
