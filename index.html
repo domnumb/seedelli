@@ -788,13 +788,20 @@ function showGrowthAnimation() {
 const SUBCAT_LABELS = {
   'tomates':'Tomates','poivrons':'Poivrons','piments':'Piments','aubergines':'Aubergines',
   'courges':'Courges','courgettes':'Courgettes','concombres':'Concombres','melons':'Melons',
-  'haricots':'Haricots','laitues':'Laitues','mache':'Mâche','epinards':'Épinards',
+  'haricots':'Haricots','laitues':'Laitues','salades':'Salades','mache':'Mâche','epinards':'Épinards',
   'choux':'Choux','blettes':'Blettes','roquette':'Roquette','pourpier':'Pourpier','cresson':'Cresson',
-  'carottes':'Carottes','betteraves':'Betteraves','radis':'Radis','navets':'Navets','panais':'Panais',
-  'oignons':'Oignons','basilics':'Basilics','persil':'Persil','coriandre':'Coriandre','aneth':'Aneth',
+  'carottes':'Carottes','betteraves':'Betteraves','radis':'Radis','navets':'Navets','panais':'Panais','salsifis':'Salsifis',
+  'oignons':'Oignons','ail':'Ail','poireaux':'Poireaux','celeri':'Céleri','artichauts':'Artichauts',
+  'basilics':'Basilics','basilic':'Basilic','persil':'Persil','coriandre':'Coriandre','aneth':'Aneth',
   'ciboulette':'Ciboulette','thym':'Thym','romarin':'Romarin','sauge':'Sauge','marjolaine':'Marjolaine',
-  'origan':'Origan','estragon':'Estragon','medicinales':'Médicinales','pavots':'Pavots',
-  'fleurs':'Fleurs','engrais-verts':'Engrais verts','physalis':'Physalis'
+  'origan':'Origan','estragon':'Estragon','anis':'Anis','menthe':'Menthe','hysope':'Hysope','sarriette':'Sarriette',
+  'medicinales':'Médicinales','echinacea':'Échinacée','ashwagandha':'Ashwagandha',
+  'millepertuis':'Millepertuis','valeriane':'Valériane','artemisia':'Artémisia','agastache':'Agastache',
+  'pavots':'Pavots','fleurs':'Fleurs','cosmos':'Cosmos','capucines':'Capucines',
+  'tournesols':'Tournesols','roses-tremiere':'Roses trémière','marguerites':'Marguerites','phacelies':'Phacélies',
+  'pois-de-senteur':'Pois de senteur',
+  'mais':'Maïs','cereales':'Céréales','soja':'Soja','pois':'Pois','feves':'Fèves','okra':'Okra',
+  'engrais-verts':'Engrais verts','physalis':'Physalis','divers':'Divers'
 };
 function formatCompanion(c) {
   return c.charAt(0).toUpperCase() + c.slice(1).replace(/-/g, ' ');
@@ -806,17 +813,33 @@ const CAT_EMOJI = {
   'aromatiques':'\ud83c\udf3f','fleurs':'\ud83c\udf3b','medicinales':'\ud83c\udf3e','engrais-verts':'\ud83c\udf31'
 };
 const SUBCAT_EMOJI = {
-  'tomates':'\ud83c\udf45','poivrons':'\ud83e\uded1','piments':'\ud83c\udf36\ufe0f','aubergines':'\ud83c\udf46',
-  'courges':'\ud83c\udf83','courgettes':'\ud83e\udd52','concombres':'\ud83e\udd52','melons':'\ud83c\udf48',
-  'haricots':'\ud83e\udeab','laitues':'\ud83e\udd6c','mache':'\ud83c\udf43','epinards':'\ud83e\udd6c',
-  'choux':'\ud83e\udd66','blettes':'\ud83c\udf43','roquette':'\ud83c\udf43','pourpier':'\ud83c\udf43','cresson':'\ud83c\udf43',
-  'carottes':'\ud83e\udd55','betteraves':'\ud83d\udfe3','radis':'\ud83d\udfe5','navets':'\ud83e\udd54','panais':'\ud83e\udd54',
-  'oignons':'\ud83e\uddc5','ail':'\ud83e\uddc4','poireaux':'\ud83e\uddc5',
-  'basilics':'\ud83c\udf3f','persil':'\ud83c\udf3f','coriandre':'\ud83c\udf3f','aneth':'\ud83c\udf3f',
-  'ciboulette':'\ud83c\udf3f','thym':'\ud83e\uded6','romarin':'\ud83e\uded6','sauge':'\ud83e\uded6',
-  'marjolaine':'\ud83e\uded6','origan':'\ud83e\uded6','estragon':'\ud83e\uded6',
-  'medicinales':'\ud83c\udf3c','pavots':'\ud83c\udf38','fleurs':'\ud83c\udf38','engrais-verts':'\ud83c\udf3e',
-  'physalis':'\ud83c\udf1f'
+  // Légumes fruits
+  'tomates':'🍅','poivrons':'🫑','piments':'🌶️','aubergines':'🍆','physalis':'🌟',
+  'courges':'🎃','courgettes':'🥒','concombres':'🥒','melons':'🍈','okra':'🌿',
+  // Légumes feuilles
+  'laitues':'🥬','salades':'🥬','mache':'🍃','epinards':'🥬',
+  'choux':'🥦','blettes':'🍃','roquette':'🍃','pourpier':'🍃','cresson':'🍃','celeri':'🌿',
+  // Légumes racines
+  'carottes':'🥕','betteraves':'🟣','radis':'🔴','navets':'🥔','panais':'🥕','salsifis':'🥕','artichauts':'🌿',
+  // Alliums
+  'oignons':'🧅','ail':'🧄','poireaux':'🧅',
+  // Légumineuses / grains
+  'haricots':'🫘','pois':'🫛','feves':'🫘','soja':'🫘',
+  'mais':'🌽','cereales':'🌾','divers':'🌱',
+  // Aromatiques
+  'basilics':'🌿','basilic':'🌿','persil':'🌿','coriandre':'🌿','aneth':'🌿',
+  'ciboulette':'🌿','thym':'🫚','romarin':'🫚','sauge':'🫚',
+  'marjolaine':'🫚','origan':'🫚','estragon':'🫚','anis':'🌿','menthe':'🌿',
+  'hysope':'🌿','sarriette':'🌿','agastache':'🌿',
+  // Médicinales
+  'medicinales':'🌼','echinacea':'🌸','ashwagandha':'🌿','artemisia':'🌿',
+  'millepertuis':'🌼','valeriane':'🌿',
+  // Fleurs
+  'pavots':'🌸','fleurs':'🌸','cosmos':'🌸','capucines':'🌺',
+  'tournesols':'🌻','roses-tremiere':'🌹','marguerites':'🌼',
+  'phacelies':'💜','pois-de-senteur':'🌸',
+  // Engrais verts
+  'engrais-verts':'🌱',
 };
 function getVarietyEmoji(v) {
   return SUBCAT_EMOJI[v.subcategory] || CAT_EMOJI[v.category] || '\ud83c\udf31';
