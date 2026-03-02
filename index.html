@@ -259,9 +259,11 @@ let state = {
   basket: [],
   allCompatible: [],
   currentScreen: 1,
-  chatExclusions: [],  // [{type:'subcat'|'cat', value:'...'}]
-  chatBoosts: [],      // [{type:'subcat'|'cat', value:'...'}]
-  chatLastReply: ''
+  chatExclusions: [],  // [{type:'subcat'|'cat'|'group', value:'...'}]
+  chatBoosts: [],      // [{type:'subcat'|'cat'|'group', value:'...'}]
+  chatReduces: [],     // [{type:'subcat'|'cat', value:'...'}] — halve maxPerSub
+  chatLastReply: '',
+  chatDiff: ''
 };
 
 let currentQ = 0;
@@ -953,6 +955,7 @@ function renderDifficulty(diff) {
 
 // ========== CHAT BASKET ENGINE ==========
 const CHAT_ENTITIES = [
+  // Légumes fruits
   ['physal', {type:'subcat', value:'physalis'}],
   ['tomatill', {type:'subcat', value:'physalis'}],
   ['tomat', {type:'subcat', value:'tomates'}],
@@ -963,27 +966,79 @@ const CHAT_ENTITIES = [
   ['courgette', {type:'subcat', value:'courgettes'}],
   ['concombre', {type:'subcat', value:'concombres'}],
   ['melon', {type:'subcat', value:'melons'}],
+  ['haricot', {type:'subcat', value:'haricots'}],
+  ['okra', {type:'subcat', value:'okra'}],
+  // Légumes feuilles
   ['laitue', {type:'subcat', value:'laitues'}],
   ['salade', {type:'subcat', value:'laitues'}],
+  ['epinard', {type:'subcat', value:'epinards'}],
+  ['chou', {type:'subcat', value:'choux'}],
+  ['blette', {type:'subcat', value:'blettes'}],
+  ['bette', {type:'subcat', value:'blettes'}],
+  ['roquett', {type:'subcat', value:'roquette'}],
+  ['mach', {type:'subcat', value:'mache'}],
+  ['doucett', {type:'subcat', value:'mache'}],
+  ['pourpier', {type:'subcat', value:'pourpier'}],
+  // Légumes racines
   ['carotte', {type:'subcat', value:'carottes'}],
   ['betterave', {type:'subcat', value:'betteraves'}],
   ['radis', {type:'subcat', value:'radis'}],
   ['navet', {type:'subcat', value:'navets'}],
+  ['rutabaga', {type:'subcat', value:'navets'}],
   ['panais', {type:'subcat', value:'panais'}],
-  ['haricot', {type:'subcat', value:'haricots'}],
+  ['salsifi', {type:'subcat', value:'salsifis'}],
+  ['scorsonere', {type:'subcat', value:'salsifis'}],
+  ['oignon', {type:'subcat', value:'oignons'}],
+  ['echalot', {type:'subcat', value:'oignons'}],
+  ['ail', {type:'subcat', value:'ail'}],
+  ['poireau', {type:'subcat', value:'poireaux'}],
+  ['celeri', {type:'subcat', value:'celeri'}],
+  ['artichaut', {type:'subcat', value:'artichauts'}],
+  // Aromatiques
   ['basilic', {type:'subcat', value:'basilics'}],
   ['persil', {type:'subcat', value:'persil'}],
   ['coriandr', {type:'subcat', value:'coriandre'}],
   ['aneth', {type:'subcat', value:'aneth'}],
   ['ciboulett', {type:'subcat', value:'ciboulette'}],
   ['thym', {type:'subcat', value:'thym'}],
+  ['romarin', {type:'subcat', value:'romarin'}],
+  ['sauge', {type:'subcat', value:'sauge'}],
+  ['origan', {type:'subcat', value:'origan'}],
+  ['marjolaine', {type:'subcat', value:'marjolaine'}],
+  ['menthe', {type:'subcat', value:'menthe'}],
+  ['estragon', {type:'subcat', value:'estragon'}],
+  ['fines herbes', {type:'cat', value:'aromatiques'}],
+  // Fleurs
+  ['cosmos', {type:'subcat', value:'cosmos'}],
+  ['capucine', {type:'subcat', value:'capucines'}],
+  ['tournesol', {type:'subcat', value:'tournesols'}],
+  ['marguerite', {type:'subcat', value:'marguerites'}],
+  ['phacel', {type:'subcat', value:'phacelies'}],
+  ['pois de senteur', {type:'subcat', value:'pois-de-senteur'}],
+  ['rose tremiere', {type:'subcat', value:'roses-tremiere'}],
   ['fleur', {type:'cat', value:'fleurs'}],
+  // Médicinales
+  ['echinacea', {type:'subcat', value:'echinacea'}],
+  ['echinace', {type:'subcat', value:'echinacea'}],
+  ['ashwagandha', {type:'subcat', value:'ashwagandha'}],
+  ['millepertuis', {type:'subcat', value:'millepertuis'}],
+  ['valeriane', {type:'subcat', value:'valeriane'}],
+  ['medicinal', {type:'cat', value:'medicinales'}],
+  ['plante qui soign', {type:'cat', value:'medicinales'}],
+  // Céréales / légumineuses
+  ['mais', {type:'subcat', value:'mais'}],
+  ['pois ', {type:'subcat', value:'pois'}],
+  ['feve', {type:'subcat', value:'feves'}],
+  ['soja', {type:'subcat', value:'soja'}],
+  ['cereable', {type:'subcat', value:'cereales'}],
+  ['ble', {type:'subcat', value:'cereales'}],
+  // Catégories globales
   ['aromatique', {type:'cat', value:'aromatiques'}],
   ['aromate', {type:'cat', value:'aromatiques'}],
   ['herbe', {type:'cat', value:'aromatiques'}],
-  ['medicinal', {type:'cat', value:'medicinales'}],
   ['engrais', {type:'cat', value:'engrais-verts'}],
   ['legume', {type:'group', value:'legumes'}],
+  ['potager', {type:'group', value:'legumes'}],
 ];
 
 function normText(s) {
@@ -1040,9 +1095,14 @@ function applyBasketAdjustments() {
     const sc = v.subcategory;
     let maxPerSub = surface === 'grand' ? 5 : surface === 'familial' ? 3 : 2;
     if (sc === 'tomates') maxPerSub = Math.min(maxPerSub + 2, 8);
-    // Boosted subcats get +2 slots
+    // Boosted: +2 slots per subcat, +1 per cat, group legumes +1
     if (state.chatBoosts.some(e => e.type === 'subcat' && e.value === sc)) maxPerSub += 2;
     if (state.chatBoosts.some(e => e.type === 'cat' && e.value === v.category)) maxPerSub += 1;
+    if (state.chatBoosts.some(e => e.type === 'group' && e.value === 'legumes' && v.category.startsWith('legumes'))) maxPerSub += 1;
+    // Reduced: halve maxPerSub (minimum 1)
+    const isReduced = state.chatReduces && state.chatReduces.some(e =>
+      (e.type === 'subcat' && e.value === sc) || (e.type === 'cat' && e.value === v.category));
+    if (isReduced) maxPerSub = Math.max(1, Math.floor(maxPerSub / 2));
     if ((catCount[sc] || 0) >= maxPerSub) return false;
     return true;
   }
@@ -1082,7 +1142,7 @@ function parseBasketCommand(rawText) {
   }
 
   if (isReset) {
-    state.chatExclusions = []; state.chatBoosts = [];
+    state.chatExclusions = []; state.chatBoosts = []; state.chatReduces = [];
     generateBasket(); renderBasket();
     reply('Panier remis à zéro !'); return;
   }
@@ -1162,8 +1222,12 @@ async function parseBasketCommandAI(rawText) {
 
       for (const a of data.actions) {
         const entity = a.entity_type && a.entity_value ? { type: a.entity_type, value: a.entity_value } : null;
+        const ALL_CATS = ['legumes-fruits','legumes-racines','legumes-feuilles','aromatiques','fleurs','medicinales','engrais-verts','cereales'];
+        const ALL_SUBCATS = Object.keys(SUBCAT_LABELS);
+        const isLegumes = v => v.category === 'legumes-fruits' || v.category === 'legumes-racines' || v.category === 'legumes-feuilles';
+
         if (a.action === 'reset') {
-          state.chatExclusions = []; state.chatBoosts = []; needsRegen = true;
+          state.chatExclusions = []; state.chatBoosts = []; state.chatReduces = []; needsRegen = true;
         } else if (a.action === 'budget_down') {
           const order = ['illimite','genereux','moyen','petit'];
           const i = order.indexOf(state.answers.budget || 'moyen');
@@ -1176,22 +1240,27 @@ async function parseBasketCommandAI(rawText) {
           needsRegen = true;
         } else if (entity && a.action === 'exclude') {
           state.chatBoosts = state.chatBoosts.filter(e => !(e.type === entity.type && e.value === entity.value));
+          state.chatReduces = (state.chatReduces||[]).filter(e => !(e.type === entity.type && e.value === entity.value));
           if (!state.chatExclusions.some(e => e.type === entity.type && e.value === entity.value))
             state.chatExclusions.push(entity);
         } else if (entity && a.action === 'boost') {
           state.chatExclusions = state.chatExclusions.filter(e => !(e.type === entity.type && e.value === entity.value));
           if (!state.chatBoosts.some(e => e.type === entity.type && e.value === entity.value))
             state.chatBoosts.push(entity);
+        } else if (entity && a.action === 'reduce') {
+          state.chatExclusions = state.chatExclusions.filter(e => !(e.type === entity.type && e.value === entity.value));
+          if (!(state.chatReduces||[]).some(e => e.type === entity.type && e.value === entity.value))
+            (state.chatReduces = state.chatReduces||[]).push(entity);
         } else if (entity && a.action === 'only') {
-          // Exclusive: keep only this entity, exclude everything else
           state.chatBoosts = [entity];
-          const ALL_CATS = ['legumes-fruits','legumes-racines','legumes-feuilles','aromatiques','fleurs','medicinales','engrais-verts','cereales'];
-          const ALL_SUBCATS = Object.keys(SUBCAT_LABELS);
+          state.chatReduces = [];
           state.chatExclusions = [];
           if (entity.type === 'cat') {
             ALL_CATS.filter(c => c !== entity.value).forEach(c => state.chatExclusions.push({type:'cat',value:c}));
           } else if (entity.type === 'subcat') {
             ALL_SUBCATS.filter(s => s !== entity.value).forEach(s => state.chatExclusions.push({type:'subcat',value:s}));
+          } else if (entity.type === 'group' && entity.value === 'legumes') {
+            ALL_CATS.filter(c => !c.startsWith('legumes')).forEach(c => state.chatExclusions.push({type:'cat',value:c}));
           }
           needsRegen = true;
         }
@@ -1357,7 +1426,7 @@ async function renderBasket() {
 function resetAll() {
   if (!confirm('Tu vas perdre ta s\u00e9lection actuelle. Continuer ?')) return;
   localStorage.removeItem('seedelli-session');
-  state = { location: null, answers: {}, basket: [], allCompatible: [], currentScreen: 1, chatExclusions: [], chatBoosts: [], chatLastReply: '', chatDiff: '' };
+  state = { location: null, answers: {}, basket: [], allCompatible: [], currentScreen: 1, chatExclusions: [], chatBoosts: [], chatReduces: [], chatLastReply: '', chatDiff: '' };
   goTo(1);
 }
 
