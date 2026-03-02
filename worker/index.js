@@ -6,6 +6,7 @@ Sous-catégories valides : tomates, physalis, poivrons, piments, aubergines, cou
 Actions :
 - exclude : retirer du panier (ex: "j'ai déjà des tomates", "pas de courges")
 - boost : prioriser (ex: "plus de fleurs", "j'adore les aromatiques")
+- only : sélection exclusive — exclure tout SAUF cette entité (ex: "je ne veux que des tomates", "uniquement des fleurs", "seulement des aromatiques")
 - budget_down : réduire le budget
 - budget_up : augmenter le budget
 - reset : remettre à zéro
@@ -19,7 +20,7 @@ RÈGLES :
 6. Si incompréhensible, retourne actions:[] et demande une clarification précise
 
 Format :
-{"actions":[{"action":"exclude"|"boost"|"budget_down"|"budget_up"|"reset","entity_type":"subcat"|"cat"|null,"entity_value":"valeur ou null"}],"reply":"phrase courte factuelle"}`;
+{"actions":[{"action":"exclude"|"boost"|"only"|"budget_down"|"budget_up"|"reset","entity_type":"subcat"|"cat"|null,"entity_value":"valeur ou null"}],"reply":"phrase courte factuelle"}`;
 
 export default {
   async fetch(request, env) {

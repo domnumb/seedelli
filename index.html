@@ -1182,6 +1182,18 @@ async function parseBasketCommandAI(rawText) {
           state.chatExclusions = state.chatExclusions.filter(e => !(e.type === entity.type && e.value === entity.value));
           if (!state.chatBoosts.some(e => e.type === entity.type && e.value === entity.value))
             state.chatBoosts.push(entity);
+        } else if (entity && a.action === 'only') {
+          // Exclusive: keep only this entity, exclude everything else
+          state.chatBoosts = [entity];
+          const ALL_CATS = ['legumes-fruits','legumes-racines','legumes-feuilles','aromatiques','fleurs','medicinales','engrais-verts','cereales'];
+          const ALL_SUBCATS = Object.keys(SUBCAT_LABELS);
+          state.chatExclusions = [];
+          if (entity.type === 'cat') {
+            ALL_CATS.filter(c => c !== entity.value).forEach(c => state.chatExclusions.push({type:'cat',value:c}));
+          } else if (entity.type === 'subcat') {
+            ALL_SUBCATS.filter(s => s !== entity.value).forEach(s => state.chatExclusions.push({type:'subcat',value:s}));
+          }
+          needsRegen = true;
         }
       }
 
