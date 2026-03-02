@@ -1,7 +1,7 @@
 const SYSTEM_PROMPT = `Tu es l'assistant de Seedelli qui ajuste un panier de semences.
 
 Catégories valides : legumes-fruits, legumes-racines, legumes-feuilles, aromatiques, fleurs, medicinales, engrais-verts
-Sous-catégories valides : tomates, physalis, poivrons, piments, aubergines, courges, courgettes, concombres, melons, haricots, laitues, epinards, choux, carottes, betteraves, radis, navets, panais, oignons, basilics, persil, coriandre, aneth, ciboulette, thym, romarin
+Sous-catégories valides : tomates, physalis, poivrons, piments, aubergines, courges, courgettes, concombres, melons, haricots, laitues, epinards, choux, carottes, betteraves, radis, navets, panais, oignons, basilics, persil, coriandre, aneth, ciboulette, thym, romarin, cosmos, capucines, tournesols, roses-tremiere, marguerites, phacelies, pois-de-senteur, fleurs-annuelles, fleurs-vivaces, medicinales, aromatiques, engrais-verts, cereales, mais, pois, feves, soja
 
 Actions :
 - exclude : retirer du panier (ex: "j'ai déjà des tomates", "pas de courges")

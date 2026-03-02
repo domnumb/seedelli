@@ -219,22 +219,28 @@ let SEMENCIER = {
   utm: 'utm_source=seedelli&utm_medium=referral&utm_campaign=recommandation'
 };
 
-async function loadCatalog() {
+let _catalogPromise = null;
+
+function loadCatalog() {
   const params = new URLSearchParams(window.location.search);
   const source = params.get('source') || 'kokopelli';
   const base = window.location.pathname.replace(/\/[^/]*$/, '/');
-  try {
-    const [varieties, meta] = await Promise.all([
-      fetch(base + 'catalogs/' + source + '.json').then(r => r.json()),
-      fetch(base + 'catalogs/' + source + '-meta.json').then(r => r.json()).catch(() => null)
-    ]);
+  _catalogPromise = Promise.all([
+    fetch(base + 'catalogs/' + source + '.json').then(r => r.json()),
+    fetch(base + 'catalogs/' + source + '-meta.json').then(r => r.json()).catch(() => null)
+  ]).then(([varieties, meta]) => {
     VARIETIES = varieties;
     if (meta) SEMENCIER = meta;
-  } catch(e) {
+  }).catch(async () => {
     if (source !== 'kokopelli') {
       VARIETIES = await fetch(base + 'catalogs/kokopelli.json').then(r => r.json());
     }
-  }
+  });
+  return _catalogPromise;
+}
+
+async function ensureCatalog() {
+  if (_catalogPromise) await _catalogPromise;
 }
 
 const ZONES={
@@ -348,7 +354,8 @@ function getSeasonGroup(v) {
 }
 
 // ========== RECOMMENDATION ENGINE ==========
-function generateBasket() {
+async function generateBasket() {
+  await ensureCatalog();
   const loc = state.location;
   const altitude = loc.altitude;
   const zoneKey = loc.zone.key;
@@ -431,6 +438,55 @@ function generateBasket() {
   });
 
   state.basket = basket;
+}
+
+function surprendsMoi() {
+  if (!state.allCompatible || !state.allCompatible.length) return;
+  const budgetKey = state.answers.budget || 'moyen';
+  const surface = state.answers.surface || 'familial';
+  const budgetMap = { petit:{max:50,sachets:15}, moyen:{max:100,sachets:25}, genereux:{max:200,sachets:50}, illimite:{max:9999,sachets:100} };
+  const surfaceMap = { petit:20, familial:100, grand:500 };
+  const budget = budgetMap[budgetKey] || budgetMap.moyen;
+  const maxSurface = surfaceMap[surface] || 100;
+
+  // Shuffle compatible pool (respecting exclusions)
+  let pool = state.allCompatible.filter(v => {
+    for (const ex of state.chatExclusions) {
+      if (ex.type === 'subcat' && v.subcategory === ex.value) return false;
+      if (ex.type === 'cat' && v.category === ex.value) return false;
+    }
+    return true;
+  });
+  // Fisher-Yates shuffle
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+
+  let basket = [], spent = 0, usedSpace = 0, catCount = {};
+  function canAdd(v) {
+    if (spent + v.price > budget.max && budget.max < 9999) return false;
+    if (usedSpace + (v._spaceM2 || v.space_m2 || 0.25) > maxSurface) return false;
+    const sc = v.subcategory;
+    let maxPerSub = surface === 'grand' ? 5 : surface === 'familial' ? 3 : 2;
+    if (sc === 'tomates') maxPerSub = Math.min(maxPerSub + 2, 8);
+    if ((catCount[sc] || 0) >= maxPerSub) return false;
+    return true;
+  }
+  pool.forEach(v => {
+    if (basket.length >= budget.sachets) return;
+    if (!canAdd(v)) return;
+    basket.push(v);
+    spent += v.price;
+    usedSpace += (v._spaceM2 || v.space_m2 || 0.25);
+    catCount[v.subcategory] = (catCount[v.subcategory] || 0) + 1;
+  });
+
+  state.basket = basket;
+  state.chatLastReply = 'Nouvelle sélection surprise — ' + basket.length + ' variétés !';
+  state.chatDiff = '';
+  renderBasket();
+  showToast('🎲 Nouvelle sélection !');
 }
 
 // ========== NAVIGATION ==========
@@ -748,12 +804,12 @@ function nextQuestion() {
 }
 
 // ========== SCREEN 4 — GROWTH ANIMATION ==========
-function showGrowthAnimation() {
+async function showGrowthAnimation() {
   const loc = state.location;
   const altitude = loc.altitude;
   const commune = loc.commune || 'ton jardin';
 
-  generateBasket();
+  await generateBasket();
 
   const compatible = state.allCompatible.length;
   const selected = state.basket.length;
@@ -801,7 +857,11 @@ const SUBCAT_LABELS = {
   'tournesols':'Tournesols','roses-tremiere':'Roses trémière','marguerites':'Marguerites','phacelies':'Phacélies',
   'pois-de-senteur':'Pois de senteur',
   'mais':'Maïs','cereales':'Céréales','soja':'Soja','pois':'Pois','feves':'Fèves','okra':'Okra',
-  'engrais-verts':'Engrais verts','physalis':'Physalis','divers':'Divers'
+  'engrais-verts':'Engrais verts','physalis':'Physalis',
+  'fleurs-annuelles':'Fleurs annuelles','fleurs-vivaces':'Fleurs vivaces',
+  'legumes-racines':'Légumes racines','legumes-feuilles':'Légumes feuilles',
+  'aromatiques':'Aromatiques',
+  'divers':'Divers','coton':'Coton'
 };
 function formatCompanion(c) {
   return c.charAt(0).toUpperCase() + c.slice(1).replace(/-/g, ' ');
@@ -840,6 +900,10 @@ const SUBCAT_EMOJI = {
   'phacelies':'💜','pois-de-senteur':'🌸',
   // Engrais verts
   'engrais-verts':'🌱',
+  // New from reclassification
+  'fleurs-annuelles':'🌸','fleurs-vivaces':'🌼',
+  'legumes-racines':'🥕','legumes-feuilles':'🥬','aromatiques':'🌿',
+  'coton':'🪡',
 };
 function getVarietyEmoji(v) {
   return SUBCAT_EMOJI[v.subcategory] || CAT_EMOJI[v.category] || '\ud83c\udf31';
@@ -1156,9 +1220,9 @@ function chatSubmit(e) {
   parseBasketCommandAI(val);
 }
 
-function renderBasket() {
+async function renderBasket() {
   if (!state.basket || !state.basket.length) {
-    generateBasket();
+    await generateBasket();
     if (state.chatExclusions.length || state.chatBoosts.length) applyBasketAdjustments();
   }
   const container = document.getElementById('s5-content');
@@ -1198,6 +1262,7 @@ function renderBasket() {
   html += shippingHtml;
   html += '</div>';
   html += '<div class="quick-adjust">';
+  html += '<button onclick="surprendsMoi()" title="Nouvelle sélection aléatoire">🎲 Surprends-moi</button>';
   html += '<button onclick="addCategory(&quot;medicinales&quot;)">+ Médicinales</button>';
   html += '<button onclick="addCategory(&quot;fleurs&quot;)">+ Fleurs</button>';
   html += '<button onclick="addCategory(&quot;aromatiques&quot;)">+ Aromatiques</button>';
@@ -1634,9 +1699,10 @@ function applyBranding() {
   if (badge) badge.textContent = SEMENCIER.logo_emoji + ' ' + SEMENCIER.name;
 }
 
-document.addEventListener('DOMContentLoaded', async function() {
-  await loadCatalog();
-  applyBranding();
+document.addEventListener('DOMContentLoaded', function() {
+  loadCatalog(); // fire-and-forget — catalog loads in background
+  // applyBranding after meta is ready (small file, loads fast)
+  _catalogPromise.then(() => applyBranding()).catch(() => {});
   if (!restoreState()) {
     goTo(1);
   }
