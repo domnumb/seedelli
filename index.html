@@ -202,6 +202,15 @@ body{background:#fff!important;background-image:none!important}
 .print-legend span{display:flex;align-items:center;gap:.35rem}
 .print-legend .pl-box{width:14px;height:14px;border-radius:2px;display:inline-block}
 }
+/* Commander en 1 clic — modal */
+#order-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem}
+#order-modal-box{background:#FDF8F0;border-radius:1.5rem;padding:1.75rem 1.5rem;max-width:22rem;width:100%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.2)}
+#order-modal-title{font-size:1.15rem;font-weight:700;margin-bottom:.5rem;color:var(--vert1)}
+#order-modal-sub{font-size:.85rem;opacity:.7;margin-bottom:1.25rem}
+#order-modal-bar-wrap{background:#e8dcc8;border-radius:1rem;height:.6rem;overflow:hidden;margin-bottom:.75rem}
+#order-modal-bar{height:100%;background:var(--vert2);border-radius:1rem;transition:width .3s ease;width:0%}
+#order-modal-count{font-size:.9rem;font-weight:600;color:var(--vert2);margin-bottom:1.25rem}
+#order-modal-close{background:var(--vert2);color:#fff;border:none;border-radius:2rem;padding:.6rem 1.5rem;font-size:.95rem;font-weight:600;cursor:pointer;font-family:inherit}
 </style>
 </head>
 <body>
@@ -1725,13 +1734,18 @@ function renderOrder() {
   });
   html += '</div>';
 
+  // Commander en 1 clic — primary CTA
+  html += '<button class="btn btn-primary" style="width:100%;font-size:1.1rem;margin-bottom:.75rem" onclick="commanderEnUnClic()">\ud83d\uded2 Commander en 1 clic</button>';
+
   // Actions secondaires
   html += '<div style="display:flex;gap:.75rem;margin-bottom:.75rem">';
   html += '<button class="btn btn-secondary" style="flex:1" onclick="copyAndGoKokopelli()">\ud83d\udccb Copier la liste</button>';
-  html += '<button class="btn btn-secondary" style="flex:1" onclick="printCalendar()">\ud83d\udda8\ufe0f Imprimer</button>';
+  html += '<button class="btn btn-secondary" style="flex:1" onclick="generateShareUrl()">\ud83c\udf81 Offrir ce potager</button>';
   html += '</div>';
-
-  html += '<button class="btn btn-secondary" style="width:100%;" onclick="goTo(5)">\u2190 Modifier mes graines</button>';
+  html += '<div style="display:flex;gap:.75rem;margin-bottom:.75rem">';
+  html += '<button class="btn btn-secondary" style="flex:1" onclick="printCalendar()">\ud83d\udda8\ufe0f Imprimer</button>';
+  html += '<button class="btn btn-secondary" style="flex:1" onclick="goTo(5)">\u2190 Modifier</button>';
+  html += '</div>';
 
   container.innerHTML = html;
 }
@@ -1746,6 +1760,90 @@ function copyAndGoKokopelli() {
   navigator.clipboard.writeText(lines.join('\n')).then(() => {
     showToast('\ud83d\udccb Liste copiée dans le presse-papier !');
   }).catch(() => {});
+}
+
+// ========== COMMANDER EN 1 CLIC ==========
+function commanderEnUnClic() {
+  if (!state.basket || !state.basket.length) return;
+  const urls = state.basket.map(v => {
+    const base = v.product_url || v.kokopelli_url || (SEMENCIER.url + '/fr/c/search?search=' + encodeURIComponent(v.name));
+    return base + (base.includes('?') ? '&' : '?') + SEMENCIER.utm;
+  });
+
+  // Build modal
+  let box = '<div id="order-modal-box">';
+  box += '<div id="order-modal-title">\ud83d\uded2 Ouverture de votre panier\u2026</div>';
+  box += '<div id="order-modal-sub">Chaque fiche produit s\u2019ouvre dans un onglet.<br>Cliquez \u00ab\u00a0Ajouter au panier\u00a0\u00bb sur chaque page.</div>';
+  box += '<div id="order-modal-bar-wrap"><div id="order-modal-bar"></div></div>';
+  box += '<div id="order-modal-count">0 / ' + urls.length + ' vari\u00e9t\u00e9s</div>';
+  box += '<button id="order-modal-close" onclick="document.getElementById(\'order-modal\').remove()" style="display:none">Fermer \u2713</button>';
+  box += '</div>';
+
+  const overlay = document.createElement('div');
+  overlay.id = 'order-modal';
+  overlay.innerHTML = box;
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+
+  let opened = 0;
+  function openNext() {
+    if (opened >= urls.length) {
+      const countEl = document.getElementById('order-modal-count');
+      const closeEl = document.getElementById('order-modal-close');
+      const titleEl = document.getElementById('order-modal-title');
+      if (titleEl) titleEl.textContent = '\u2705 ' + urls.length + ' onglets ouverts !';
+      if (countEl) countEl.textContent = 'Ajoutez chaque vari\u00e9t\u00e9 \u00e0 votre panier Kokopelli.';
+      if (closeEl) closeEl.style.display = 'inline-block';
+      return;
+    }
+    window.open(urls[opened], '_blank', 'noopener,noreferrer');
+    opened++;
+    const pct = Math.round((opened / urls.length) * 100);
+    const bar = document.getElementById('order-modal-bar');
+    const count = document.getElementById('order-modal-count');
+    if (bar) bar.style.width = pct + '%';
+    if (count) count.textContent = opened + ' / ' + urls.length + ' vari\u00e9t\u00e9s';
+    setTimeout(openNext, 350);
+  }
+  setTimeout(openNext, 300);
+}
+
+// ========== PANIER PARTAGEABLE ==========
+function generateShareUrl() {
+  if (!state.basket || !state.basket.length) { showToast('Panier vide !'); return; }
+  const ids = state.basket.map(v => v.id);
+  const encoded = btoa(unescape(encodeURIComponent(JSON.stringify({ b: ids }))));
+  const base = window.location.origin + window.location.pathname;
+  const url = base + '?basket=' + encoded;
+  navigator.clipboard.writeText(url).then(() => {
+    showToast('\ud83c\udf81 Lien copié ! Partage-le pour offrir ce potager.');
+  }).catch(() => {
+    prompt('Copie ce lien :', url);
+  });
+}
+
+function loadBasketFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const basketParam = params.get('basket');
+  if (!basketParam) return false;
+  try {
+    const decoded = JSON.parse(decodeURIComponent(escape(atob(basketParam))));
+    if (!decoded.b || !Array.isArray(decoded.b) || !decoded.b.length) return false;
+    ensureCatalog().then(() => {
+      const basket = decoded.b.map(id => VARIETIES.find(v => v.id === id)).filter(Boolean);
+      if (!basket.length) return;
+      state.basket = basket;
+      // Use a generic location if none
+      if (!state.location) {
+        state.location = { zone: { key: 'oceanique', label: 'Océanique' }, altitude: 100, dept: '75', commune: 'Sélection partagée' };
+      }
+      localStorage.setItem('seedelli-session', JSON.stringify(state));
+      goTo(7);
+      showToast('\ud83c\udf31 Potager de ' + basket.length + ' vari\u00e9t\u00e9s chargé !');
+    });
+    return true;
+  } catch(e) {}
+  return false;
 }
 
 // ========== RESTORE & INIT ==========
@@ -1788,7 +1886,8 @@ document.addEventListener('DOMContentLoaded', function() {
   loadCatalog(); // fire-and-forget — catalog loads in background
   // applyBranding after meta is ready (small file, loads fast)
   _catalogPromise.then(() => applyBranding()).catch(() => {});
-  if (!restoreState()) {
+  // ?basket= shared URL takes priority, then saved session, then onboarding
+  if (!loadBasketFromUrl() && !restoreState()) {
     goTo(1);
   }
 });

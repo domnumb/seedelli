@@ -97,6 +97,17 @@ function parseListingPage(html) {
   return Array.from(urls);
 }
 
+// Extract French product URL from hreflang tag
+function extractFrenchUrl(html) {
+  const m = html.match(/<link[^>]+hreflang=["']fr["'][^>]+href=["']([^"']+)["']/i)
+           || html.match(/<link[^>]+href=["']([^"']+)["'][^>]+hreflang=["']fr["']/i);
+  if (m) return m[1];
+  // Fallback: look for /fr/p/ links in the HTML
+  const fp = html.match(/href=["'](https?:\/\/[^"']*\/fr\/p\/[a-z0-9][a-z0-9-]*[a-z0-9])["']/i);
+  if (fp) return fp[1];
+  return null;
+}
+
 // Convert month names to numbers
 const MONTH_MAP = {
   'january': 1, 'february': 2, 'march': 3, 'april': 4,
@@ -743,6 +754,10 @@ function parseProductPage(html, productUrl) {
 
   const slug = generateSlug(name, subcategory);
 
+  // Try to get the French product URL from hreflang
+  const frenchUrl = extractFrenchUrl(html);
+  const productPageUrl = frenchUrl || productUrl;
+
   return {
     id: slug,
     name: name,
@@ -750,6 +765,7 @@ function parseProductPage(html, productUrl) {
     category: category,
     subcategory: subcategory,
     kokopelli_url: `https://kokopelli-semences.fr/fr/c/search?search=${encodeURIComponent(name)}`,
+    product_url: productPageUrl,
     price: typeof price === 'number' ? price : parseFloat(String(price)) || 3.40,
     difficulty: defaults.difficulty,
     desc: desc,
